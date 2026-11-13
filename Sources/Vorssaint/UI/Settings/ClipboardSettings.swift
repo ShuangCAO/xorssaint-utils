@@ -18,6 +18,7 @@ struct ClipboardSettings: View {
     @AppStorage(DefaultsKey.clipboardHistoryIncludeImagesFiles) private var includeImagesFiles = true
     @AppStorage(DefaultsKey.clipboardHistoryShortcutEnabled) private var shortcutEnabled = true
     @AppStorage(DefaultsKey.clipboardHistoryShowSourceAppIcons) private var showSourceAppIcons = false
+    @AppStorage(DefaultsKey.clipboardHistoryLayout) private var historyLayout = ClipboardHistoryLayout.list
     @AppStorage(DefaultsKey.clipboardHistoryMenuBarPreview) private var menuBarPreview = false
     @AppStorage(DefaultsKey.clipboardHistoryMenuBarPreviewLength)
     private var menuBarPreviewLength = Defaults.defaultClipboardMenuBarPreviewLength
@@ -202,6 +203,13 @@ struct ClipboardSettings: View {
             Text(text.shortcutCaption)
                 .font(.caption)
                 .foregroundStyle(.secondary)
+            // Not disabled with capture off: the window still opens on the
+            // saved items, like the button below.
+            Picker(text.historyLayout, selection: $historyLayout) {
+                Text(text.historyLayoutList).tag(ClipboardHistoryLayout.list)
+                Text(text.historyLayoutCards).tag(ClipboardHistoryLayout.cards)
+            }
+            .pickerStyle(.segmented)
             Toggle(text.showSourceAppIconsInList, isOn: $showSourceAppIcons)
             Button {
                 ClipboardHistoryService.shared.showHistoryWindow()
