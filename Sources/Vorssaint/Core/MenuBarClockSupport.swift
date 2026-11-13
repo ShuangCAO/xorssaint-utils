@@ -21,6 +21,11 @@ enum MenuBarClockSupport {
     /// a paste accident than an intended format.
     static let maximumFormatLength = 60
 
+    /// The pattern reference tinyCal points at: Unicode TR35's date format
+    /// patterns, the specification `DateFormatter` follows.
+    static let formatDocumentationURL = URL(
+        string: "https://www.unicode.org/reports/tr35/tr35-31/tr35-dates.html#Date_Format_Patterns")
+
     /// A single-line pattern, or the default when nothing usable was typed.
     static func sanitizedFormat(_ rawValue: String?) -> String {
         let trimmed = (rawValue ?? "").trimmingCharacters(in: .whitespacesAndNewlines)

@@ -20,20 +20,31 @@ struct MenuBarClockSettings: View {
                     .labelsHidden()
             }
             if enabled {
-                SettingsRow(symbol: nil, title: text.clockFormatTitle,
-                            caption: text.clockFormatCaption) {
+                VStack(alignment: .leading, spacing: 8) {
+                    SettingsRow(symbol: "textformat", title: text.clockFormatTitle,
+                                caption: text.clockFormatCaption) { EmptyView() }
+                    // The field and the reset button get their own line: as a
+                    // row accessory the narrow Settings window squeezed the
+                    // button's label and pushed the field away from the text.
                     HStack(spacing: 8) {
                         TextField(MenuBarClockSupport.defaultFormat, text: $format)
                             .textFieldStyle(.roundedBorder)
-                            .frame(width: 230)
+                            .frame(maxWidth: .infinity)
                         Button(text.clockFormatReset) {
                             format = MenuBarClockSupport.defaultFormat
                         }
-                        .disabled(MenuBarClockSupport.sanitizedFormat(format)
-                                  == MenuBarClockSupport.defaultFormat)
+                        .fixedSize()
+                        .layoutPriority(1)
+                        .disabled(format == MenuBarClockSupport.defaultFormat)
                     }
+                    .padding(.leading, settingsRowTextInset)
+                    if let url = MenuBarClockSupport.formatDocumentationURL {
+                        Link(text.clockFormatHelp, destination: url)
+                            .font(.caption)
+                            .padding(.leading, settingsRowTextInset)
+                    }
+                    preview
                 }
-                preview
             }
         }
     }
