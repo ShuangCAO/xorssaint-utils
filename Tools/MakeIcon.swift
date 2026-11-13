@@ -6,10 +6,12 @@
 //   adaptive source (Resources/Brand/AppIcon-Default.png)
 // - the menu bar template glyph and BrandMark from the wordmark master
 //   (Resources/Brand/logo.png)
-// AppIcon-Default.png is a hand-exported twin of Resources/Brand/AppIcon.icon;
-// re-export it whenever the Icon Composer project changes. The build cannot read
-// .icon bundles directly: actool exists only inside full Xcode 26, and the
-// supported local floor is Command Line Tools alone.
+// AppIcon-Default.png is the finished warm-sand master used by the build.
+// Resources/Brand/AppIcon.icon still carries the earlier light adaptive
+// rendition; re-export from Icon Composer if the macOS 26 adaptive icon must
+// match this master. The build cannot read .icon bundles directly: actool
+// exists only inside full Xcode 26, and the supported local floor is Command
+// Line Tools alone.
 import AppKit
 
 // Current macOS misreads PNG payloads in the legacy small chunks. It downsamples
