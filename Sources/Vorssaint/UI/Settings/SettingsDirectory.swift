@@ -210,6 +210,7 @@ enum SettingsDirectory {
             keywords: [s.showMenuBarIcon, general.menuBarIconTitle,
                        general.iconMissingTitle, "SF Symbols",
                        general.panelHeaderIconTitle,
+                       general.panelMiniTabsTitle,
                        general.clockTitle, general.clockFormatTitle, general.clockSizeTitle,
                        calendar.title, calendar.weekStartTitle]))
         items.append(SettingsSearchSupport.scrollingScreenshotItem(language: language))

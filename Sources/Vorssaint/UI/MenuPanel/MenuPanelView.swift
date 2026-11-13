@@ -81,6 +81,7 @@ struct MenuPanelView: View {
     @AppStorage(DefaultsKey.panelShowKeepAwake) private var showKeepAwake = true
     @AppStorage(DefaultsKey.panelShowCalendar) private var showCalendar = true
     @AppStorage(DefaultsKey.panelShowHeaderIcon) private var showHeaderIcon = true
+    @AppStorage(DefaultsKey.panelMiniSectionBar) private var miniSectionBar = false
     @AppStorage(DefaultsKey.panelShowBrightness) private var showBrightness = true
     @AppStorage(DefaultsKey.brightnessControlEnabled) private var brightnessEnabled = false
     @AppStorage(DefaultsKey.panelShowUtilities) private var showUtilities = true
@@ -278,19 +279,30 @@ struct MenuPanelView: View {
 
     private var metricScrollHeight: CGFloat {
         let measured = metricContentHeight == 0 ? estimatedMetricContentHeight : metricContentHeight
-        return min(measured, max(80, maxHeight - navigableChromeHeight))
+        return min(measured, max(80, maxHeight - metricChromeHeight))
     }
 
     private var metricPanelHeight: CGFloat {
-        min(maxHeight, max(220, metricScrollHeight + navigableChromeHeight))
+        min(maxHeight, max(220, metricScrollHeight + metricChromeHeight))
     }
 
     private var navigableChromeHeight: CGFloat {
         let bannerHeight = updates.state.showsMenuPanelBanner
             ? (max(updateBannerHeight, 48) + 12)
             : 0
-        // The 180 pt chrome budget includes the 36 pt brand row. Hiding the
-        // row reclaims that space instead of leaving it blank at the bottom.
+        // 144 pt covers everything but the header and the section tabs. A
+        // hidden header or the mini tabs reclaim exactly that much height.
+        let headerHeight: CGFloat = (showHeaderIcon || AppInfo.isBeta) ? 36 : 0
+        let navigationHeight: CGFloat = miniSectionBar ? 26 : 38
+        return 106 + navigationHeight + headerHeight + bannerHeight
+    }
+
+    /// The metric detail panel swaps the section tabs for a back row, so it
+    /// keeps the standard chrome budget instead of following the mini tabs.
+    private var metricChromeHeight: CGFloat {
+        let bannerHeight = updates.state.showsMenuPanelBanner
+            ? (max(updateBannerHeight, 48) + 12)
+            : 0
         let headerHeight: CGFloat = (showHeaderIcon || AppInfo.isBeta) ? 36 : 0
         return 144 + headerHeight + bannerHeight
     }
@@ -376,7 +388,8 @@ struct MenuPanelView: View {
     }
 
     private var sectionNavigation: some View {
-        HStack(spacing: 2) {
+        let mini = miniSectionBar
+        return HStack(spacing: mini ? 1 : 2) {
             ForEach(visibleSections) { id in
                 let isActive = activeSection == id
                 Button {
@@ -384,16 +397,17 @@ struct MenuPanelView: View {
                     focusedSection = id
                 } label: {
                     Image(systemName: id.symbolName)
-                        .font(.system(size: 13.5, weight: .semibold))
+                        .font(.system(size: mini ? 11 : 13.5, weight: .semibold))
                         .frame(maxWidth: .infinity)
-                        .frame(height: 30)
-                        .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        .frame(height: mini ? 22 : 30)
+                        .contentShape(RoundedRectangle(cornerRadius: mini ? 6 : 8,
+                                                        style: .continuous))
                 }
                 .buttonStyle(.plain)
                 .focused($focusedSection, equals: id)
                 .foregroundStyle(isActive ? (notchSize != nil ? Color.white : Color.accentColor) : Color.secondary.opacity(0.86))
                 .background(
-                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    RoundedRectangle(cornerRadius: mini ? 6 : 8, style: .continuous)
                         .fill(isActive ? navigationActiveFill : Color.clear)
                 )
                 .help(id.title(l10n.s))
@@ -403,14 +417,15 @@ struct MenuPanelView: View {
                 .accessibilityAddTraits(isActive ? .isSelected : [])
             }
         }
-        .padding(4)
+        .padding(mini ? 2 : 4)
         .background(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            RoundedRectangle(cornerRadius: mini ? 8 : 12, style: .continuous)
                 .fill(notchSize != nil ? .black : PanelSurface.cardFill(for: colorScheme))
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .strokeBorder(PanelSurface.border(for: colorScheme), lineWidth: 0.7)
+            RoundedRectangle(cornerRadius: mini ? 8 : 12, style: .continuous)
+                .strokeBorder(PanelSurface.border(for: colorScheme),
+                              lineWidth: mini ? 0.6 : 0.7)
         )
     }
 

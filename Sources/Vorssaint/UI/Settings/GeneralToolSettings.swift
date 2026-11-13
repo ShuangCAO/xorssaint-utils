@@ -11,6 +11,7 @@ struct GeneralToolSettings: View {
     @ObservedObject private var l10n = L10n.shared
     @AppStorage(DefaultsKey.calendarWeekStartsMonday) private var calendarWeekStartsMonday = true
     @AppStorage(DefaultsKey.panelShowHeaderIcon) private var showHeaderIcon = true
+    @AppStorage(DefaultsKey.panelMiniSectionBar) private var miniSectionBar = false
 
     private var text: GeneralSettingsStrings { FeatureStrings.generalSettings(l10n.language) }
     private var calendarText: CalendarPanelStrings { FeatureStrings.calendarPanel(l10n.language) }
@@ -30,6 +31,13 @@ struct GeneralToolSettings: View {
                         SettingsRow(symbol: "menubar.rectangle", title: text.panelHeaderIconTitle,
                                     caption: text.panelHeaderIconCaption) {
                             Toggle(text.panelHeaderIconTitle, isOn: $showHeaderIcon)
+                                .labelsHidden()
+                        }
+                        Divider()
+                        SettingsRow(symbol: "rectangle.compress.vertical",
+                                    title: text.panelMiniTabsTitle,
+                                    caption: text.panelMiniTabsCaption) {
+                            Toggle(text.panelMiniTabsTitle, isOn: $miniSectionBar)
                                 .labelsHidden()
                         }
                         Divider()
