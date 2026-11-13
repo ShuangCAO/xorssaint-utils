@@ -42,6 +42,7 @@ struct MenuBarMetricsPreview: View {
     @AppStorage(DefaultsKey.menuBarSeparateMetrics) private var separateMetrics = false
     @AppStorage(DefaultsKey.menuBarClockEnabled) private var clockEnabled = true
     @AppStorage(DefaultsKey.menuBarClockFormat) private var clockFormat = MenuBarClockSupport.defaultFormat
+    @AppStorage(DefaultsKey.menuBarClockFontSize) private var clockFontSize = MenuBarClockSupport.defaultFontSize
     @ObservedObject private var l10n = L10n.shared
 
     var body: some View {
@@ -61,6 +62,7 @@ struct MenuBarMetricsPreview: View {
         let _ = networkSpeedUnit
         let _ = metricSpacing
         let _ = clockFormat
+        let _ = clockFontSize
         let metrics = activeMetrics
         let lines = separateMetrics ? [] : MenuBarRenderer.lines(for: monitor.snapshot, metrics: metrics)
         // Separate items are their own status items, which macOS seats to
@@ -92,7 +94,7 @@ struct MenuBarMetricsPreview: View {
                     if clockEnabled {
                         TimelineView(.periodic(from: .now, by: 1)) { context in
                             Text(MenuBarClockSupport.text(for: context.date, format: clockFormat))
-                                .font(.system(size: MenuBarRenderer.clockFontSize,
+                                .font(.system(size: CGFloat(clockFontSize),
                                               weight: .regular))
                                 .monospacedDigit()
                                 .foregroundStyle(.white)

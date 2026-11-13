@@ -278,13 +278,11 @@ enum MenuBarRenderer {
                                     weight: stacked ? .semibold : .medium)
     }
 
-    /// The clock reads at the system menu bar's own size and weight, so it
-    /// sits next to Apple's clock without looking shrunken. Tabular digits
-    /// keep the item's width steady as the seconds change.
-    static let clockFontSize: CGFloat = NSFont.systemFontSize
-
-    static func clockFont() -> NSFont {
-        NSFont.monospacedDigitSystemFont(ofSize: clockFontSize, weight: .regular)
+    /// The clock sizes itself like the system menu bar's clock: regular weight
+    /// and tabular digits, at whichever point size the user picked, so the
+    /// seconds never shift the item's width.
+    static func clockFont(size: Int) -> NSFont {
+        NSFont.monospacedDigitSystemFont(ofSize: CGFloat(size), weight: .regular)
     }
 
     static func statusFontSize(stacked: Bool) -> CGFloat {

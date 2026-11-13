@@ -10,6 +10,7 @@ struct MenuBarClockSettings: View {
     @ObservedObject private var l10n = L10n.shared
     @AppStorage(DefaultsKey.menuBarClockEnabled) private var enabled = true
     @AppStorage(DefaultsKey.menuBarClockFormat) private var format = MenuBarClockSupport.defaultFormat
+    @AppStorage(DefaultsKey.menuBarClockFontSize) private var fontSize = MenuBarClockSupport.defaultFontSize
 
     private var text: GeneralSettingsStrings { FeatureStrings.generalSettings(l10n.language) }
 
@@ -43,6 +44,17 @@ struct MenuBarClockSettings: View {
                             .font(.caption)
                             .padding(.leading, settingsRowTextInset)
                     }
+                    SettingsRow(symbol: "textformat.size", title: text.clockSizeTitle,
+                                caption: text.clockSizeCaption) { EmptyView() }
+                    Picker(text.clockSizeTitle, selection: $fontSize) {
+                        ForEach(Array(MenuBarClockSupport.fontSizeRange), id: \.self) { size in
+                            Text("\(size) pt").tag(size)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .labelsHidden()
+                    .frame(maxWidth: 320)
+                    .padding(.leading, settingsRowTextInset)
                     preview
                 }
             }
@@ -56,7 +68,7 @@ struct MenuBarClockSettings: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 Text(MenuBarClockSupport.text(for: context.date, format: format))
-                    .font(.system(size: MenuBarRenderer.clockFontSize, weight: .regular))
+                    .font(.system(size: CGFloat(fontSize), weight: .regular))
                     .monospacedDigit()
                     .foregroundStyle(.white)
                     .lineLimit(1)
@@ -76,13 +88,16 @@ struct MenuBarClockSettings: View {
 struct MenuBarIdlePreview: View {
     @AppStorage(DefaultsKey.menuBarClockEnabled) private var enabled = true
     @AppStorage(DefaultsKey.menuBarClockFormat) private var format = MenuBarClockSupport.defaultFormat
+    @AppStorage(DefaultsKey.menuBarClockFontSize) private var fontSize = MenuBarClockSupport.defaultFontSize
 
     var body: some View {
         Group {
             if enabled {
                 TimelineView(.periodic(from: .now, by: 1)) { context in
                     Text(MenuBarClockSupport.text(for: context.date, format: format))
-                        .font(.system(size: MenuBarRenderer.clockFontSize - 1, weight: .regular))
+                        // The miniature bar is shorter than the real one, so
+                        // the chosen size scales down with it.
+                        .font(.system(size: max(11, CGFloat(fontSize) - 1), weight: .regular))
                         .monospacedDigit()
                         .foregroundStyle(.white)
                         .lineLimit(1)

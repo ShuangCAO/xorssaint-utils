@@ -7,7 +7,7 @@ All notable changes to this project are documented here. The format follows
 ## [Unreleased]
 
 ### Added
-- The menu bar can show a date and time clock instead of the icon. Choose its format in General settings; the icon still returns for updates, a muted microphone and Keep Awake.
+- The menu bar can show a date and time clock instead of the icon. Choose its format and 12–16 pt size in General settings; the icon still returns for updates, a muted microphone and Keep Awake.
 
 ## [3.4.4] - 2026-11-11
 

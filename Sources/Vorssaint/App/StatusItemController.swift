@@ -516,6 +516,8 @@ final class StatusItemController {
             ? MenuBarClockSupport.text(for: Date(),
                                        format: defaults.string(forKey: DefaultsKey.menuBarClockFormat) ?? "")
             : ""
+        let clockFontSize = Defaults.sanitizedMenuBarClockFontSize(
+            defaults.integer(forKey: DefaultsKey.menuBarClockFontSize))
 
         syncTitleTimer(keepAwakeActive: manager.isActive,
                        showsCountdown: defaults.bool(forKey: DefaultsKey.showCountdown),
@@ -611,7 +613,7 @@ final class StatusItemController {
             let clockLength = (clockText as NSString).length
             let hasClock = clockLength > 0 && clockStart + clockLength <= full.length
             if hasClock {
-                full.addAttribute(.font, value: MenuBarRenderer.clockFont(),
+                full.addAttribute(.font, value: MenuBarRenderer.clockFont(size: clockFontSize),
                                   range: NSRange(location: clockStart, length: clockLength))
             }
             if stacked {
@@ -628,7 +630,7 @@ final class StatusItemController {
                                   range: NSRange(location: 0, length: full.length))
             }
             if !full.isEqual(to: button.attributedTitle) {
-                button.font = hasClock ? MenuBarRenderer.clockFont() : font
+                button.font = hasClock ? MenuBarRenderer.clockFont(size: clockFontSize) : font
                 button.attributedTitle = full
             }
             if button.imagePosition != .imageLeading {

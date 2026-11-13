@@ -105,6 +105,14 @@ enum MenuBarClockTests {
         suite.expect(abs(seconds(exactMinute, since: date(hour: 10, minute: 31, second: 0))) < 0.001,
                      "an exact minute waits for the next one instead of firing immediately")
 
+        suite.expect(MenuBarClockSupport.sanitizedFontSize(12) == 12
+                     && MenuBarClockSupport.sanitizedFontSize(16) == 16,
+                     "the clock font size accepts both ends of its range")
+        suite.expect(MenuBarClockSupport.sanitizedFontSize(11) == MenuBarClockSupport.defaultFontSize
+                     && MenuBarClockSupport.sanitizedFontSize(17) == MenuBarClockSupport.defaultFontSize
+                     && MenuBarClockSupport.sanitizedFontSize(0) == MenuBarClockSupport.defaultFontSize,
+                     "a size outside the range, including a missing key, falls back to the system size")
+
         // One cached formatter must not leak a previous pattern into the next
         // call: the settings field changes the pattern while the app runs.
         _ = MenuBarClockSupport.text(for: date(hour: 10, minute: 30, second: 45),

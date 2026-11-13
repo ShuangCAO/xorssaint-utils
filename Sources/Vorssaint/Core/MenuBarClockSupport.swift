@@ -26,6 +26,17 @@ enum MenuBarClockSupport {
     static let formatDocumentationURL = URL(
         string: "https://www.unicode.org/reports/tr35/tr35-31/tr35-dates.html#Date_Format_Patterns")
 
+    /// The sizes the clock may use, in points. 13 is the system menu bar's
+    /// own size; the ends still fit the bar without clipping.
+    static let fontSizeRange = 12...16
+    static let defaultFontSize = 13
+
+    /// A size inside the range, or the system size for anything else,
+    /// including the zero `UserDefaults.integer` reports for a missing key.
+    static func sanitizedFontSize(_ rawValue: Int) -> Int {
+        fontSizeRange.contains(rawValue) ? rawValue : defaultFontSize
+    }
+
     /// A single-line pattern, or the default when nothing usable was typed.
     static func sanitizedFormat(_ rawValue: String?) -> String {
         let trimmed = (rawValue ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
