@@ -65,6 +65,7 @@ struct ClipyStrings {
     let edit: String
     let addFolder: String
     let selectFolder: String
+    let renameFolder: String
 }
 
 extension FeatureStrings {
@@ -119,7 +120,7 @@ extension ClipyStrings {
         titleLength: "Maximum title length",
         showNumbers: "Number menu items",
         startAtZero: "Start numbering at 0",
-        numericShortcuts: "Use number keys as shortcuts",
+        numericShortcuts: "Use ⌘1–9 and ⌘0 to select items",
         highlightFirst: "Highlight the first item",
         showImages: "Show image thumbnails",
         thumbnailWidth: "Thumbnail width",
@@ -151,7 +152,8 @@ extension ClipyStrings {
         delete: "Delete",
         edit: "Edit",
         addFolder: "Add Folder",
-        selectFolder: "Select a folder"
+        selectFolder: "Select a folder",
+        renameFolder: "Rename Folder"
     )
 
     static let ptBR = ClipyStrings(
@@ -183,7 +185,7 @@ extension ClipyStrings {
         titleLength: "Maximum title length",
         showNumbers: "Number menu items",
         startAtZero: "Start numbering at 0",
-        numericShortcuts: "Use number keys as shortcuts",
+        numericShortcuts: "Use ⌘1–9 and ⌘0 to select items",
         highlightFirst: "Highlight the first item",
         showImages: "Show image thumbnails",
         thumbnailWidth: "Thumbnail width",
@@ -215,7 +217,8 @@ extension ClipyStrings {
         delete: "Delete",
         edit: "Edit",
         addFolder: "Add Folder",
-        selectFolder: "Select a folder"
+        selectFolder: "Select a folder",
+        renameFolder: "Rename Folder"
     )
 
     static let tr = ClipyStrings(
@@ -247,7 +250,7 @@ extension ClipyStrings {
         titleLength: "Maximum title length",
         showNumbers: "Number menu items",
         startAtZero: "Start numbering at 0",
-        numericShortcuts: "Use number keys as shortcuts",
+        numericShortcuts: "Use ⌘1–9 and ⌘0 to select items",
         highlightFirst: "Highlight the first item",
         showImages: "Show image thumbnails",
         thumbnailWidth: "Thumbnail width",
@@ -279,7 +282,8 @@ extension ClipyStrings {
         delete: "Delete",
         edit: "Edit",
         addFolder: "Add Folder",
-        selectFolder: "Select a folder"
+        selectFolder: "Select a folder",
+        renameFolder: "Rename Folder"
     )
 
     static let ru = ClipyStrings(
@@ -311,7 +315,7 @@ extension ClipyStrings {
         titleLength: "Maximum title length",
         showNumbers: "Number menu items",
         startAtZero: "Start numbering at 0",
-        numericShortcuts: "Use number keys as shortcuts",
+        numericShortcuts: "Use ⌘1–9 and ⌘0 to select items",
         highlightFirst: "Highlight the first item",
         showImages: "Show image thumbnails",
         thumbnailWidth: "Thumbnail width",
@@ -343,7 +347,8 @@ extension ClipyStrings {
         delete: "Delete",
         edit: "Edit",
         addFolder: "Add Folder",
-        selectFolder: "Select a folder"
+        selectFolder: "Select a folder",
+        renameFolder: "Rename Folder"
     )
 
     static let es = ClipyStrings(
@@ -375,7 +380,7 @@ extension ClipyStrings {
         titleLength: "Maximum title length",
         showNumbers: "Number menu items",
         startAtZero: "Start numbering at 0",
-        numericShortcuts: "Use number keys as shortcuts",
+        numericShortcuts: "Use ⌘1–9 and ⌘0 to select items",
         highlightFirst: "Highlight the first item",
         showImages: "Show image thumbnails",
         thumbnailWidth: "Thumbnail width",
@@ -407,7 +412,8 @@ extension ClipyStrings {
         delete: "Delete",
         edit: "Edit",
         addFolder: "Add Folder",
-        selectFolder: "Select a folder"
+        selectFolder: "Select a folder",
+        renameFolder: "Rename Folder"
     )
 
     static let sk = ClipyStrings(
@@ -439,7 +445,7 @@ extension ClipyStrings {
         titleLength: "Maximum title length",
         showNumbers: "Number menu items",
         startAtZero: "Start numbering at 0",
-        numericShortcuts: "Use number keys as shortcuts",
+        numericShortcuts: "Use ⌘1–9 and ⌘0 to select items",
         highlightFirst: "Highlight the first item",
         showImages: "Show image thumbnails",
         thumbnailWidth: "Thumbnail width",
@@ -471,7 +477,8 @@ extension ClipyStrings {
         delete: "Delete",
         edit: "Edit",
         addFolder: "Add Folder",
-        selectFolder: "Select a folder"
+        selectFolder: "Select a folder",
+        renameFolder: "Rename Folder"
     )
 
     static let de = ClipyStrings(
@@ -503,7 +510,7 @@ extension ClipyStrings {
         titleLength: "Maximum title length",
         showNumbers: "Number menu items",
         startAtZero: "Start numbering at 0",
-        numericShortcuts: "Use number keys as shortcuts",
+        numericShortcuts: "Use ⌘1–9 and ⌘0 to select items",
         highlightFirst: "Highlight the first item",
         showImages: "Show image thumbnails",
         thumbnailWidth: "Thumbnail width",
@@ -535,7 +542,8 @@ extension ClipyStrings {
         delete: "Delete",
         edit: "Edit",
         addFolder: "Add Folder",
-        selectFolder: "Select a folder"
+        selectFolder: "Select a folder",
+        renameFolder: "Rename Folder"
     )
 
     static let fr = ClipyStrings(
@@ -567,7 +575,7 @@ extension ClipyStrings {
         titleLength: "Maximum title length",
         showNumbers: "Number menu items",
         startAtZero: "Start numbering at 0",
-        numericShortcuts: "Use number keys as shortcuts",
+        numericShortcuts: "Use ⌘1–9 and ⌘0 to select items",
         highlightFirst: "Highlight the first item",
         showImages: "Show image thumbnails",
         thumbnailWidth: "Thumbnail width",
@@ -599,7 +607,8 @@ extension ClipyStrings {
         delete: "Delete",
         edit: "Edit",
         addFolder: "Add Folder",
-        selectFolder: "Select a folder"
+        selectFolder: "Select a folder",
+        renameFolder: "Rename Folder"
     )
 
     static let it = ClipyStrings(
@@ -631,7 +640,7 @@ extension ClipyStrings {
         titleLength: "Maximum title length",
         showNumbers: "Number menu items",
         startAtZero: "Start numbering at 0",
-        numericShortcuts: "Use number keys as shortcuts",
+        numericShortcuts: "Use ⌘1–9 and ⌘0 to select items",
         highlightFirst: "Highlight the first item",
         showImages: "Show image thumbnails",
         thumbnailWidth: "Thumbnail width",
@@ -663,7 +672,8 @@ extension ClipyStrings {
         delete: "Delete",
         edit: "Edit",
         addFolder: "Add Folder",
-        selectFolder: "Select a folder"
+        selectFolder: "Select a folder",
+        renameFolder: "Rename Folder"
     )
 
     static let ja = ClipyStrings(
@@ -695,7 +705,7 @@ extension ClipyStrings {
         titleLength: "Maximum title length",
         showNumbers: "Number menu items",
         startAtZero: "Start numbering at 0",
-        numericShortcuts: "Use number keys as shortcuts",
+        numericShortcuts: "Use ⌘1–9 and ⌘0 to select items",
         highlightFirst: "Highlight the first item",
         showImages: "Show image thumbnails",
         thumbnailWidth: "Thumbnail width",
@@ -727,7 +737,8 @@ extension ClipyStrings {
         delete: "Delete",
         edit: "Edit",
         addFolder: "Add Folder",
-        selectFolder: "Select a folder"
+        selectFolder: "Select a folder",
+        renameFolder: "Rename Folder"
     )
 
     static let ko = ClipyStrings(
@@ -759,7 +770,7 @@ extension ClipyStrings {
         titleLength: "Maximum title length",
         showNumbers: "Number menu items",
         startAtZero: "Start numbering at 0",
-        numericShortcuts: "Use number keys as shortcuts",
+        numericShortcuts: "Use ⌘1–9 and ⌘0 to select items",
         highlightFirst: "Highlight the first item",
         showImages: "Show image thumbnails",
         thumbnailWidth: "Thumbnail width",
@@ -791,7 +802,8 @@ extension ClipyStrings {
         delete: "Delete",
         edit: "Edit",
         addFolder: "Add Folder",
-        selectFolder: "Select a folder"
+        selectFolder: "Select a folder",
+        renameFolder: "Rename Folder"
     )
 
     static let uk = ClipyStrings(
@@ -823,7 +835,7 @@ extension ClipyStrings {
         titleLength: "Maximum title length",
         showNumbers: "Number menu items",
         startAtZero: "Start numbering at 0",
-        numericShortcuts: "Use number keys as shortcuts",
+        numericShortcuts: "Use ⌘1–9 and ⌘0 to select items",
         highlightFirst: "Highlight the first item",
         showImages: "Show image thumbnails",
         thumbnailWidth: "Thumbnail width",
@@ -855,7 +867,8 @@ extension ClipyStrings {
         delete: "Delete",
         edit: "Edit",
         addFolder: "Add Folder",
-        selectFolder: "Select a folder"
+        selectFolder: "Select a folder",
+        renameFolder: "Rename Folder"
     )
 
     static let zhHans = ClipyStrings(
@@ -887,7 +900,7 @@ extension ClipyStrings {
         titleLength: "标题最大长度",
         showNumbers: "显示菜单编号",
         startAtZero: "从 0 开始编号",
-        numericShortcuts: "用数字键快速选择",
+        numericShortcuts: "用 ⌘1–9 和 ⌘0 快速选择",
         highlightFirst: "打开时高亮第一项",
         showImages: "显示图片缩略图",
         thumbnailWidth: "缩略图宽度",
@@ -919,7 +932,8 @@ extension ClipyStrings {
         delete: "删除",
         edit: "编辑",
         addFolder: "添加文件夹",
-        selectFolder: "选择一个文件夹"
+        selectFolder: "选择一个文件夹",
+        renameFolder: "重命名文件夹"
     )
 
     static let zhTW = ClipyStrings(
@@ -951,7 +965,7 @@ extension ClipyStrings {
         titleLength: "標題最大長度",
         showNumbers: "顯示選單編號",
         startAtZero: "從 0 開始編號",
-        numericShortcuts: "用數字鍵快速選擇",
+        numericShortcuts: "用 ⌘1–9 和 ⌘0 快速選擇",
         highlightFirst: "開啟時醒目標示第一項",
         showImages: "顯示圖片縮圖",
         thumbnailWidth: "縮圖寬度",
@@ -983,7 +997,8 @@ extension ClipyStrings {
         delete: "刪除",
         edit: "編輯",
         addFolder: "新增資料夾",
-        selectFolder: "選擇一個資料夾"
+        selectFolder: "選擇一個資料夾",
+        renameFolder: "重新命名資料夾"
     )
 
     static let zhHK = ClipyStrings(
@@ -1015,7 +1030,7 @@ extension ClipyStrings {
         titleLength: "標題最大長度",
         showNumbers: "顯示選單編號",
         startAtZero: "從 0 開始編號",
-        numericShortcuts: "用數字鍵快速選擇",
+        numericShortcuts: "用 ⌘1–9 和 ⌘0 快速選擇",
         highlightFirst: "開啟時醒目標示第一項",
         showImages: "顯示圖片縮圖",
         thumbnailWidth: "縮圖寬度",
@@ -1047,7 +1062,8 @@ extension ClipyStrings {
         delete: "刪除",
         edit: "編輯",
         addFolder: "新增資料夾",
-        selectFolder: "選擇一個資料夾"
+        selectFolder: "選擇一個資料夾",
+        renameFolder: "重新命名資料夾"
     )
 
 }

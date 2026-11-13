@@ -169,7 +169,9 @@ final class ClipyMenuController {
         }
         if modifiers == [.command],
            UserDefaults.standard.bool(forKey: DefaultsKey.clipyNumericShortcuts),
-           let index = ClipyMenuBuilder.digitIndex(for: Int64(event.keyCode)) {
+           let rawIndex = ClipyMenuBuilder.digitIndex(for: Int64(event.keyCode)) {
+            let startsAtZero = UserDefaults.standard.bool(forKey: DefaultsKey.clipyStartsAtZero)
+            let index = startsAtZero ? (rawIndex + 1) % 10 : rawIndex
             if let open = model.openFolder {
                 switch open {
                 case .history(let folder):
