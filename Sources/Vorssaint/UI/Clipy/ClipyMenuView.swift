@@ -67,10 +67,6 @@ struct ClipyMenuView: View {
             }
             Divider()
             HStack(spacing: 10) {
-                Button(strings.clearHistory) {
-                    service.confirmClearHistory()
-                }
-                .disabled(service.entries.isEmpty)
                 Spacer()
                 Button(strings.editSnippets) {
                     service.editSnippets()

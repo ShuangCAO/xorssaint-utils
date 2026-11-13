@@ -45,8 +45,9 @@ struct ClipySettings: View {
             Section {
                 Toggle(text.enabled, isOn: $enabled)
                 Toggle(text.autoPaste, isOn: $autoPaste)
-                Stepper("\(text.historyLimit): \(historyLimit)",
-                        value: $historyLimit, in: 1...1000)
+                ClipyNumberRow(title: text.historyLimit,
+                               value: $historyLimit,
+                               range: 1...1000)
                 Picker(text.sort, selection: $sortByLastUsed) {
                     Text(text.sortCreated).tag(false)
                     Text(text.sortLastUsed).tag(true)
@@ -72,23 +73,18 @@ struct ClipySettings: View {
             }
 
             Section {
-                Stepper("\(text.inlineLimit): \(inlineLimit)",
-                        value: $inlineLimit, in: 0...100)
-                Stepper("\(text.folderLimit): \(folderLimit)",
-                        value: $folderLimit, in: 1...100)
-                Stepper("\(text.titleLength): \(titleLength)",
-                        value: $titleLength, in: 1...1000)
+                ClipyNumberRow(title: text.inlineLimit, value: $inlineLimit, range: 0...100)
+                ClipyNumberRow(title: text.folderLimit, value: $folderLimit, range: 1...100)
+                ClipyNumberRow(title: text.titleLength, value: $titleLength, range: 1...1000)
                 Toggle(text.showNumbers, isOn: $marksNumbers)
                 Toggle(text.startAtZero, isOn: $startsAtZero)
                     .disabled(!marksNumbers)
                 Toggle(text.numericShortcuts, isOn: $numericShortcuts)
                 Toggle(text.highlightFirst, isOn: $highlightFirst)
                 Toggle(text.showImages, isOn: $showImages)
-                Stepper("\(text.thumbnailWidth): \(thumbnailWidth)",
-                        value: $thumbnailWidth, in: 1...512)
+                ClipyNumberRow(title: text.thumbnailWidth, value: $thumbnailWidth, range: 1...512)
                     .disabled(!showImages)
-                Stepper("\(text.thumbnailHeight): \(thumbnailHeight)",
-                        value: $thumbnailHeight, in: 1...512)
+                ClipyNumberRow(title: text.thumbnailHeight, value: $thumbnailHeight, range: 1...512)
                     .disabled(!showImages)
                 Toggle(text.colorPreview, isOn: $showColorPreview)
                 Toggle(text.parseWithoutHash, isOn: $parseWithoutHash)
@@ -196,6 +192,30 @@ struct ClipySettings: View {
             folderShortcuts = cleaned
             ClipySnippetFolderShortcuts.save(cleaned)
             service.syncWithPreferences()
+        }
+    }
+}
+
+private struct ClipyNumberRow: View {
+    let title: String
+    @Binding var value: Int
+    let range: ClosedRange<Int>
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Text(title)
+            Spacer()
+            TextField("", value: $value, format: .number.grouping(.never))
+                .textFieldStyle(.roundedBorder)
+                .multilineTextAlignment(.trailing)
+                .frame(width: 76)
+                .accessibilityLabel(Text(title))
+                .onChange(of: value) { _, newValue in
+                    let clamped = min(max(newValue, range.lowerBound), range.upperBound)
+                    if clamped != newValue { value = clamped }
+                }
+            Stepper("", value: $value, in: range)
+                .labelsHidden()
         }
     }
 }
