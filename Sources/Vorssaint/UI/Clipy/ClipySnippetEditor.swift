@@ -12,7 +12,9 @@ struct ClipySnippetEditor: View {
     @State private var snippets: [ClipySnippet]
     @State private var selectedFolder: String?
     @State private var selectedSnippet: UUID?
+    @State private var editingFolder: String?
     @State private var folderNameDraft = ""
+    @FocusState private var folderNameFocused: Bool
 
     init() {
         let store = ClipySnippetStore.load()
@@ -21,6 +23,8 @@ struct ClipySnippetEditor: View {
         let first = store.folders.first
         _selectedFolder = State(initialValue: first)
         _selectedSnippet = State(initialValue: store.snippets.first { $0.folder == first }?.id)
+        _editingFolder = State(initialValue: first)
+        _folderNameDraft = State(initialValue: first ?? "")
     }
 
     private var text: ClipyStrings { FeatureStrings.clipy(l10n.language) }
@@ -49,10 +53,18 @@ struct ClipySnippetEditor: View {
             .padding(12)
         }
         .frame(width: 720, height: 480)
-        .onAppear { folderNameDraft = selectedFolder ?? "" }
+        .onAppear {
+            editingFolder = selectedFolder
+            folderNameDraft = selectedFolder ?? ""
+        }
         .onChange(of: selectedFolder) { _, folder in
+            commitPendingRename()
+            editingFolder = folder
             folderNameDraft = folder ?? ""
             selectedSnippet = snippets.first { $0.folder == folder }?.id
+        }
+        .onChange(of: folderNameFocused) { _, focused in
+            if !focused { commitPendingRename() }
         }
     }
 
@@ -103,7 +115,8 @@ struct ClipySnippetEditor: View {
                 HStack(spacing: 8) {
                     TextField(text.snippetFolder, text: $folderNameDraft)
                         .textFieldStyle(.roundedBorder)
-                        .onSubmit { renameSelectedFolder() }
+                        .focused($folderNameFocused)
+                        .onSubmit { commitPendingRename() }
                 }
                 .padding(12)
                 Divider()
@@ -189,6 +202,7 @@ struct ClipySnippetEditor: View {
         folders.append(name)
         folders.sort { $0.localizedStandardCompare($1) == .orderedAscending }
         selectedFolder = name
+        editingFolder = name
         selectedSnippet = nil
         folderNameDraft = name
     }
@@ -202,11 +216,20 @@ struct ClipySnippetEditor: View {
             ClipySnippetFolderShortcuts.save(shortcuts)
         }
         selectedFolder = folders.first
+        editingFolder = selectedFolder
+        folderNameDraft = selectedFolder ?? ""
         selectedSnippet = nil
     }
 
-    private func renameSelectedFolder() {
-        guard let old = selectedFolder else { return }
+    /// Applies the folder name in the field, whether the edit ended with
+    /// Return, focus loss, a folder switch or the Save button.
+    private func commitPendingRename() {
+        guard let old = editingFolder else { return }
+        guard folders.contains(old) else {
+            editingFolder = selectedFolder
+            folderNameDraft = selectedFolder ?? ""
+            return
+        }
         let name = folderNameDraft.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !name.isEmpty, name != old, !folders.contains(name) else {
             folderNameDraft = old
@@ -222,8 +245,11 @@ struct ClipySnippetEditor: View {
             shortcuts[name] = value
             ClipySnippetFolderShortcuts.save(shortcuts)
         }
-        selectedFolder = name
+        editingFolder = name
         folderNameDraft = name
+        if selectedFolder == old {
+            selectedFolder = name
+        }
     }
 
     private func addSnippet(to folder: String) {
@@ -239,6 +265,7 @@ struct ClipySnippetEditor: View {
     }
 
     private func save() {
+        commitPendingRename()
         ClipySnippetStore.save(folders: folders, snippets: snippets)
         ClipyService.shared.syncWithPreferences()
         dismiss()
