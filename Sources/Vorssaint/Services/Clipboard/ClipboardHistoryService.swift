@@ -69,6 +69,9 @@ final class ClipboardHistoryService: ObservableObject {
     /// Read again on every opening, so the window's frame and its content
     /// always agree, even if the setting changes while it is open.
     @Published private(set) var quickLayout = ClipboardHistoryLayout.current()
+    /// What the compact panel shows: history, snippets, or both. The panel
+    /// writes it as the user changes scope; the key monitor reads it.
+    var hubScope: ClipboardCompactScope = .all
 
     private var timer: Timer?
     /// Entries age out with nothing new copied, so the retention window is
@@ -1273,6 +1276,7 @@ final class ClipboardHistoryService: ObservableObject {
         refreshQuickLayout()
         quickWindowPresentationID = UUID()
         quickQuery = ""
+        hubScope = .all
         clearQuickBatchSelection()
         resetQuickSelection()
         position(panel)
@@ -1378,7 +1382,7 @@ final class ClipboardHistoryService: ObservableObject {
                                                visibleFrame: { $0.screen?.visibleFrame ?? NSScreen.pointerVisibleFrame })
         panel.delegate = sizeLimit
         panelSizeLimit = sizeLimit
-        let host = NSHostingController(rootView: ClipboardQuickPanelView())
+        let host = NSHostingController(rootView: ClipboardCompactPanelView())
         // AppKit owns the window size; SwiftUI fills its content view.
         host.sizingOptions = []
         panel.contentViewController = host
@@ -1408,78 +1412,49 @@ final class ClipboardHistoryService: ObservableObject {
     /// Read on every opening, so a layout picked in Settings applies the next
     /// time the window opens.
     private func refreshQuickLayout() {
-        let layout = ClipboardHistoryLayout.current(in: UserDefaults.standard)
-        if quickLayout != layout { quickLayout = layout }
+        // The compact panel is a single list; the old cards layout is gone.
+        if quickLayout != .list { quickLayout = .list }
     }
 
     /// The list keeps room for the batch actions and the preview while the
     /// user resizes it. The shelf does not resize.
     private func panelMinimumContentSize() -> NSSize? {
-        quickLayout == .list ? ClipboardHistoryWindowSizing.minimumSize(preview: quickPreviewPresented) : nil
+        // The compact panel has a fixed size.
+        nil
     }
 
     private func preferredPanelSize(visibleFrame: NSRect) -> NSSize {
-        let defaults = UserDefaults.standard
-        return ClipboardHistoryWindowSizing.contentSize(
-            preview: quickPreviewPresented,
-            savedWidth: defaults.double(forKey: DefaultsKey.clipboardHistoryWindowWidth),
-            savedHeight: defaults.double(forKey: DefaultsKey.clipboardHistoryWindowHeight),
-            visibleFrame: visibleFrame)
+        ClipboardHistoryWindowSizing.constrainedSize(ClipboardHistoryWindowSizing.compactPanelSize,
+                                                     visibleFrame: visibleFrame)
     }
 
     private func savePanelSize(_ panel: NSPanel) {
-        guard quickLayout == .list,
-              let size = ClipboardHistoryWindowSizing.savedCompactSize(
-                  from: panel.contentRect(forFrameRect: panel.frame).size,
-                  preview: quickPreviewPresented)
-        else { return }
-        UserDefaults.standard.set(Double(size.width), forKey: DefaultsKey.clipboardHistoryWindowWidth)
-        UserDefaults.standard.set(Double(size.height), forKey: DefaultsKey.clipboardHistoryWindowHeight)
+        // The compact panel is not resizable.
     }
 
     private func savePanelPosition(_ panel: NSPanel) {
-        guard panel.isVisible, quickLayout == .list, !adjustingPanelFrame else { return }
-        UserDefaults.standard.set(Double(panel.frame.minX), forKey: DefaultsKey.clipboardHistoryWindowX)
-        UserDefaults.standard.set(Double(panel.frame.minY), forKey: DefaultsKey.clipboardHistoryWindowY)
+        // The compact panel is centered on the pointer's display each time.
     }
 
     /// Placed again on every open, so a changed display never strands it.
     /// Cards make a shelf along the bottom of the screen the pointer is on.
     /// The list keeps its chosen location when that display is still usable.
+    /// The compact panel is always the same size and opens centered on the
+    /// display holding the pointer.
     private func position(_ panel: NSPanel) {
         adjustingPanelFrame = true
         defer { adjustingPanelFrame = false }
         let screen = NSScreen.pointerVisibleFrame
-        switch quickLayout {
-        case .cards:
-            panel.styleMask.remove(.resizable)
-            panel.setFrame(NSRect(x: screen.minX + 16, y: screen.minY + 8,
-                                  width: screen.width - 32, height: min(318, screen.height - 16)),
-                           display: true,
-                           animate: false)
-        case .list:
-            panel.styleMask.insert(.resizable)
-            let defaults = UserDefaults.standard
-            if defaults.object(forKey: DefaultsKey.clipboardHistoryWindowX) != nil,
-               defaults.object(forKey: DefaultsKey.clipboardHistoryWindowY) != nil,
-               let restored = ClipboardHistoryWindowPlacement.restoredFrame(
-                   origin: NSPoint(x: defaults.double(forKey: DefaultsKey.clipboardHistoryWindowX),
-                                   y: defaults.double(forKey: DefaultsKey.clipboardHistoryWindowY)),
-                   visibleFrames: NSScreen.screens.map(\.visibleFrame),
-                   size: preferredPanelSize(visibleFrame:)) {
-                panel.setFrame(restored, display: true, animate: false)
-                return
-            }
-            let size = preferredPanelSize(visibleFrame: screen)
-            let x = screen.midX - size.width / 2
-            let y = min(screen.maxY - size.height - 54, screen.midY - size.height / 2)
-            panel.setFrame(NSRect(x: max(screen.minX + 16, min(x, screen.maxX - size.width - 16)),
-                                  y: max(screen.minY + 16, y),
-                                  width: size.width,
-                                  height: size.height),
-                           display: true,
-                           animate: false)
-        }
+        panel.styleMask.remove(.resizable)
+        let size = preferredPanelSize(visibleFrame: screen)
+        let x = screen.midX - size.width / 2
+        let y = min(screen.maxY - size.height - 54, screen.midY - size.height / 2)
+        panel.setFrame(NSRect(x: max(screen.minX + 16, min(x, screen.maxX - size.width - 16)),
+                              y: max(screen.minY + 16, y),
+                              width: size.width,
+                              height: size.height),
+                       display: true,
+                       animate: false)
     }
 
     private func resize(_ panel: NSPanel, to contentSize: NSSize,
@@ -1517,19 +1492,42 @@ final class ClipboardHistoryService: ObservableObject {
                 return event
             }
             let modifiers = event.modifierFlags.intersection([.command, .option, .shift, .control])
+            // The snippets half of the compact panel has its own keys: the
+            // history actions would otherwise act on a list nobody can see.
+            if self.hubScope == .snippets {
+                if event.keyCode == UInt16(kVK_Escape) {
+                    self.hideHistoryWindow()
+                    return nil
+                }
+                if event.keyCode == UInt16(kVK_Return)
+                    || event.keyCode == UInt16(kVK_ANSI_KeypadEnter) {
+                    guard modifiers.isEmpty else { return event }
+                    self.hideHistoryWindow()
+                    SnippetLibraryService.shared.insertSelection()
+                    return nil
+                }
+                if modifiers.isEmpty || modifiers == [.shift] {
+                    if event.keyCode == UInt16(kVK_UpArrow) {
+                        SnippetLibraryService.shared.moveSelection(by: -1)
+                        return nil
+                    }
+                    if event.keyCode == UInt16(kVK_DownArrow) {
+                        SnippetLibraryService.shared.moveSelection(by: 1)
+                        return nil
+                    }
+                }
+                if modifiers == [.command], let index = Self.digitIndex(for: event.keyCode) {
+                    self.hideHistoryWindow()
+                    SnippetLibraryService.shared.insert(at: index)
+                    return nil
+                }
+                return event
+            }
             if event.keyCode == UInt16(kVK_Escape) {
                 switch ClipboardHistoryEscape.action(batchCount: self.quickBatchCount) {
                 case .clearBatchSelection: self.clearQuickBatchSelection()
                 case .hideWindow: self.hideHistoryWindow()
                 }
-                return nil
-            }
-            // Finder-style Quick Look without stealing ordinary spaces typed
-            // into search: the list claims Space only after arrow navigation.
-            if event.keyCode == UInt16(kVK_Space),
-               ClipboardHistoryPreview.handlesSpace(selectionIsVisible: self.quickSelectionIsVisible,
-                                                     hasModifiers: !modifiers.isEmpty) {
-                self.toggleQuickPreview()
                 return nil
             }
             if event.keyCode == UInt16(kVK_Return) || event.keyCode == UInt16(kVK_ANSI_KeypadEnter) {

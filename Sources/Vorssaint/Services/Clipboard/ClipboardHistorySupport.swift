@@ -23,7 +23,18 @@ enum ClipboardHistoryLayout: String, CaseIterable {
     var sideArrowsMoveSelection: Bool { self == .cards }
 }
 
+/// What the compact clipboard panel is showing. History and snippets share
+/// one list; the scope only decides which sections take part.
+enum ClipboardCompactScope: String, CaseIterable {
+    case all
+    case history
+    case snippets
+}
+
 enum ClipboardHistoryWindowSizing {
+    /// The compact panel's fixed size. Kept here, away from the view, so the
+    /// generated test sources can compile the service that places it.
+    static let compactPanelSize = NSSize(width: 380, height: 460)
     static let compactDefault = NSSize(width: 560, height: 420)
     static let compactMinimum = NSSize(width: 560, height: 300)
     static let previewExtra = NSSize(width: 280, height: 80)

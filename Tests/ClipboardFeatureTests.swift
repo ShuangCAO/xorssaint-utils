@@ -107,143 +107,6 @@ enum ClipboardFeatureTests {
         static let rules = URLCleaning.Rules.none
     }
 
-    private static func panelGeometryPersistence(_ suite: TestSuite) {
-        let defaults = PanelPlacementHost.UserDefaults.standard
-        let screen = PanelPlacementHost.Screen.pointerVisibleFrame
-        let screens = PanelPlacementHost.Screen.screens
-        defaults.removePersistentDomain(forName: PanelPlacementHost.UserDefaults.name)
-        defer {
-            defaults.removePersistentDomain(forName: PanelPlacementHost.UserDefaults.name)
-            PanelPlacementHost.Screen.screens = screens
-        }
-        let host = PanelPlacementHost()
-        let panel = PanelPlacementHost.Panel(contentRect: .zero,
-            styleMask: [.titled, .closable, .fullSizeContentView, .nonactivatingPanel],
-            backing: .buffered, defer: true)
-        panel.isReleasedWhenClosed = false
-        defer {
-            panel.shown = false
-            panel.close()
-        }
-        host.quickLayout = .list
-        host.observePanelGeometry(panel)
-
-        func notify(_ name: Notification.Name) {
-            NotificationCenter.default.post(name: name, object: panel)
-        }
-        func savedFrame() -> NSRect {
-            NSRect(x: defaults.double(forKey: DefaultsKey.clipboardHistoryWindowX),
-                   y: defaults.double(forKey: DefaultsKey.clipboardHistoryWindowY),
-                   width: defaults.double(forKey: DefaultsKey.clipboardHistoryWindowWidth),
-                   height: defaults.double(forKey: DefaultsKey.clipboardHistoryWindowHeight))
-        }
-        func reopen() {
-            panel.shown = false
-            host.position(panel)
-            panel.shown = true
-        }
-        func finishResize(to frame: NSRect) {
-            // Stage the final frame without a move callback. Only the real
-            // live-resize observer may persist it, as on a left/bottom resize.
-            panel.shown = false
-            panel.setFrame(frame, display: false)
-            panel.shown = true
-            notify(NSWindow.didEndLiveResizeNotification)
-        }
-
-        finishResize(to: NSRect(x: 300, y: 300, width: 700, height: 500))
-        panel.setFrameOrigin(NSPoint(x: 350, y: 300))
-        notify(NSWindow.didMoveNotification)
-        reopen()
-        suite.expect(panel.frame == NSRect(x: 350, y: 300, width: 700, height: 500),
-                     "a user move is saved by the production observer and restored on reopening")
-        for (edge, frame) in [
-            ("left", NSRect(x: 300, y: 300, width: 750, height: 500)),
-            ("bottom", NSRect(x: 300, y: 250, width: 750, height: 550)),
-            ("bottom left", NSRect(x: 250, y: 200, width: 800, height: 600)),
-        ] {
-            finishResize(to: frame)
-            suite.expect(savedFrame() == frame,
-                         "finishing a \(edge) resize saves the new origin along with its size")
-            reopen()
-            suite.expect(panel.frame == frame,
-                         "closing and reopening after a \(edge) resize preserves the whole frame")
-        }
-
-        let compact = savedFrame()
-        host.adjustingPanelFrame = true
-        panel.setFrame(NSRect(x: 100, y: 150, width: 900, height: 650), display: false)
-        notify(NSWindow.didMoveNotification)
-        notify(NSWindow.didEndLiveResizeNotification)
-        host.adjustingPanelFrame = false
-        suite.expect(savedFrame() == compact,
-                     "automatic frame changes cannot overwrite either chosen position or size")
-        host.position(panel)
-        suite.expect(savedFrame() == compact && !host.adjustingPanelFrame,
-                     "automatic placement retains the saved frame and releases its guard")
-
-        host.quickPreviewPresented = true
-        host.resize(panel, to: host.preferredPanelSize(visibleFrame: screen),
-                    around: panel.frame, animated: false)
-        suite.expect(savedFrame() == compact && !host.adjustingPanelFrame,
-                     "opening the preview does not save its automatic enlargement or movement")
-        let previewFrame = NSRect(x: 80, y: 140, width: 1100, height: 700)
-        finishResize(to: previewFrame)
-        suite.expect(savedFrame() == NSRect(x: 80, y: 140, width: 820, height: 620),
-                     "a user resize with preview saves its actual origin and compact dimensions")
-        reopen()
-        suite.expect(panel.frame == previewFrame,
-                     "reopening with preview restores the final user resize without adding its size twice")
-        let chosen = savedFrame()
-        host.quickPreviewPresented = false
-        host.resize(panel, to: host.preferredPanelSize(visibleFrame: screen),
-                    around: panel.frame, animated: false)
-        suite.expect(savedFrame() == chosen,
-                     "closing the preview does not replace the chosen geometry")
-        host.quickLayout = .cards
-        host.position(panel)
-        panel.setFrameOrigin(NSPoint(x: 25, y: 50))
-        notify(NSWindow.didMoveNotification)
-        notify(NSWindow.didEndLiveResizeNotification)
-        suite.expect(savedFrame() == chosen,
-                     "card placement, movement and resize notifications leave the list geometry intact")
-        host.quickLayout = .list
-        reopen()
-        suite.expect(panel.frame == chosen, "returning from the cards restores the list's chosen frame")
-
-        panel.shown = false
-        panel.setFrame(NSRect(x: 150, y: 150, width: 900, height: 700), display: false)
-        notify(NSWindow.didMoveNotification)
-        notify(NSWindow.didEndLiveResizeNotification)
-        suite.expect(savedFrame() == chosen, "hidden panel callbacks cannot replace the chosen geometry")
-        reopen()
-        suite.expect(panel.frame == chosen, "reopening ignores movements of the hidden panel")
-
-        let otherScreen = NSRect(x: -1440, y: 0, width: 1440, height: 900)
-        PanelPlacementHost.Screen.screens.append(.init(visibleFrame: otherScreen))
-        panel.setFrameOrigin(NSPoint(x: -1100, y: 180))
-        notify(NSWindow.didMoveNotification)
-        let otherFrame = savedFrame()
-        reopen()
-        suite.expect(panel.frame == otherFrame && otherScreen.contains(panel.frame),
-                     "a saved move restores on the other display while the pointer stays on the first")
-        PanelPlacementHost.Screen.screens = screens
-        reopen()
-        let fallback = panel.frame
-        suite.expect(screen.contains(fallback) && abs(fallback.midX - screen.midX) < 1
-                     && savedFrame() == otherFrame,
-                     "disconnecting the saved display falls back without replacing the user's position")
-        for invalid in [Double.infinity, -Double.infinity, Double.nan] {
-            defaults.set(invalid, forKey: DefaultsKey.clipboardHistoryWindowX)
-            reopen()
-            suite.expect(panel.frame == fallback, "a non-finite saved origin uses the default placement")
-        }
-        defaults.set(200.0, forKey: DefaultsKey.clipboardHistoryWindowX)
-        defaults.removeObject(forKey: DefaultsKey.clipboardHistoryWindowY)
-        reopen()
-        suite.expect(panel.frame == fallback, "a partially saved origin uses the default placement")
-    }
-
     static func run(_ suite: TestSuite) {
         ClipboardSensitiveTextPreferenceTests.run(suite)
         ClipboardPreviewContract.run(suite)
@@ -889,7 +752,7 @@ enum ClipboardFeatureTests {
                 == NSSize(width: 508, height: 288),
                "neither minimum dimension can push the window outside the visible display")
 
-        // MARK: Clipboard history window placement
+        // MARK: Compact clipboard panel placement
 
         _ = NSApplication.shared
         let placement = PanelPlacementHost()
@@ -899,110 +762,45 @@ enum ClipboardFeatureTests {
                                      styleMask: [.titled, .closable, .fullSizeContentView, .nonactivatingPanel],
                                      backing: .buffered, defer: true)
         let placementScreen = PanelPlacementHost.Screen.pointerVisibleFrame
+        let compactPanelSize = ClipboardHistoryWindowSizing.compactPanelSize
+
         placement.position(placementPanel)
-        suite.expect(!placementPanel.styleMask.contains(.resizable)
-                     && placementPanel.frame == NSRect(x: placementScreen.minX + 16, y: placementScreen.minY + 8,
-                                                       width: placementScreen.width - 32, height: 318),
-               "the cards make a shelf along the bottom of the screen that does not resize")
-        placement.quickLayout = .list
-        placement.position(placementPanel)
-        suite.expect(placementPanel.styleMask.contains(.resizable)
-                     && placementPanel.frame.size == NSSize(width: 560, height: 420)
-                     && abs(placementPanel.frame.midX - placementScreen.midX) < 1,
-               "the list opens as a resizable window at its original size, centered: \(placementPanel.frame)")
-        placementPanel.setFrame(NSRect(origin: placementPanel.frame.origin, size: NSSize(width: 700, height: 500)),
-                                display: false)
+        suite.expect(placementPanel.frame.size == compactPanelSize
+                     && abs(placementPanel.frame.midX - placementScreen.midX) < 1
+                     && !placementPanel.styleMask.contains(.resizable),
+                     "the compact panel opens at its fixed size, centered, without a resize grip")
+
+        placementPanel.setFrame(NSRect(x: 10, y: 10, width: 700, height: 500), display: false)
         placement.savePanelSize(placementPanel)
-        placement.position(placementPanel)
-        suite.expect(placementPanel.frame.size == NSSize(width: 700, height: 500),
-               "the list reopens at the size the user gave it")
+        placement.savePanelPosition(placementPanel)
+        suite.expect(placementDefaults.object(forKey: DefaultsKey.clipboardHistoryWindowWidth) == nil
+                     && placementDefaults.object(forKey: DefaultsKey.clipboardHistoryWindowX) == nil,
+                     "the compact panel never persists a user size or position")
+
         placementDefaults.set(100.0, forKey: DefaultsKey.clipboardHistoryWindowX)
         placementDefaults.set(200.0, forKey: DefaultsKey.clipboardHistoryWindowY)
         placement.position(placementPanel)
-        suite.expect(placementPanel.frame == NSRect(x: 100, y: 200, width: 700, height: 500),
-               "reopening the list reads its saved coordinates and restores its frame")
-        placement.quickLayout = .cards
-        placement.position(placementPanel)
-        suite.expect(placementPanel.frame.minX == placementScreen.minX + 16
-                     && placementPanel.frame.minY == placementScreen.minY + 8,
-               "saved list coordinates do not move the card shelf")
-        placement.quickLayout = .list
-        placementDefaults.removeObject(forKey: DefaultsKey.clipboardHistoryWindowX)
-        placementDefaults.removeObject(forKey: DefaultsKey.clipboardHistoryWindowY)
-        let otherDisplay = NSRect(x: -1440, y: 0, width: 1440, height: 900)
-        let savedOrigin = NSPoint(x: -1100, y: 180)
-        let restored = ClipboardHistoryWindowPlacement.restoredFrame(
-            origin: savedOrigin, visibleFrames: [placementScreen, otherDisplay],
-            size: { ClipboardHistoryWindowSizing.contentSize(preview: false,
-                        savedWidth: 700, savedHeight: 500, visibleFrame: $0) })
-        suite.expect(restored == NSRect(origin: savedOrigin, size: NSSize(width: 700, height: 500)),
-               "a list reopens on its chosen display even when the pointer is elsewhere")
-        suite.expect(ClipboardHistoryWindowPlacement.restoredFrame(
-            origin: placementScreen.origin, visibleFrames: [placementScreen],
-            size: { _ in compactSize }) == NSRect(origin: placementScreen.origin, size: compactSize),
-               "a chosen position against the display edges is retained")
-        suite.expect(ClipboardHistoryWindowPlacement.restoredFrame(
-            origin: NSPoint(x: -20, y: 180), visibleFrames: [placementScreen],
-            size: { _ in compactSize }) == NSRect(x: 0, y: 180, width: 560, height: 420),
-               "a partly offscreen window stays on its display with its frame brought into view")
-        suite.expect(ClipboardHistoryWindowPlacement.restoredFrame(
-            origin: savedOrigin, visibleFrames: [placementScreen], size: { _ in compactSize }) == nil
-            && ClipboardHistoryWindowPlacement.restoredFrame(
-                origin: NSPoint(x: CGFloat.infinity, y: 100), visibleFrames: [placementScreen],
-                size: { _ in compactSize }) == nil,
-               "a disconnected display or invalid position uses the default placement")
-        suite.expect(ClipboardHistoryWindowPlacement.restoredFrame(
-            origin: NSPoint(x: 600, y: 180), visibleFrames: [placementScreen],
-            size: { ClipboardHistoryWindowSizing.contentSize(preview: true,
-                        savedWidth: 700, savedHeight: 500, visibleFrame: $0) })
-                == NSRect(x: 532, y: 180, width: 980, height: 580),
-               "preview expansion keeps the chosen display and brings the larger window into view")
+        suite.expect(placementPanel.frame.size == compactPanelSize
+                     && abs(placementPanel.frame.midX - placementScreen.midX) < 1,
+                     "coordinates saved by the old window never move the compact panel")
+
         placement.quickPreviewPresented = true
-        placement.position(placementPanel)
-        suite.expect(placementPanel.frame.size == NSSize(width: 980, height: 580),
-               "the preview widens the list's chosen size")
-        placement.quickPreviewPresented = false
         placement.quickLayout = .cards
         placement.position(placementPanel)
-        suite.expect(!placementPanel.styleMask.contains(.resizable),
-               "back to the cards after the list, the shelf stops resizing")
-        placement.savePanelSize(placementPanel)
-        placement.quickLayout = .list
-        placement.position(placementPanel)
-        suite.expect(placementPanel.frame.size == NSSize(width: 700, height: 500),
-               "the shelf leaves the list's chosen size alone")
-        var resizeScreen = placementScreen
-        let sizeLimit = ClipboardPanelSizeLimit(minimumContentSize: { placement.panelMinimumContentSize() },
-                                               visibleFrame: { _ in resizeScreen })
-        suite.expect(sizeLimit.windowWillResize(placementPanel, to: NSSize(width: 300, height: 200))
-                        == NSSize(width: 560, height: 300),
-               "resizing the list stops at its minimum")
-        placement.quickPreviewPresented = true
-        suite.expect(sizeLimit.windowWillResize(placementPanel, to: NSSize(width: 300, height: 200))
-                        == NSSize(width: 840, height: 380),
-               "with the preview open, resizing the list stops where the preview still fits")
-        resizeScreen = smallScreen
-        suite.expect(sizeLimit.windowWillResize(placementPanel, to: NSSize(width: 300, height: 200))
-                        == NSSize(width: 768, height: 380)
-                        && sizeLimit.windowWillResize(placementPanel, to: NSSize(width: 1000, height: 900))
-                            == NSSize(width: 768, height: 568),
-               "dragging cannot restore an offscreen minimum or enlarge the list beyond the display")
-        placement.quickLayout = .cards
-        suite.expect(sizeLimit.windowWillResize(placementPanel, to: NSSize(width: 300, height: 200))
-                        == NSSize(width: 300, height: 200),
-               "the shelf sets no minimum")
+        suite.expect(placementPanel.frame.size == compactPanelSize,
+                     "the old preview and cards settings no longer resize the compact panel")
         placement.quickPreviewPresented = false
 
-        // Each opening reads the layout again, so a choice made in Settings
-        // applies the next time the window opens.
-        placementDefaults.removeObject(forKey: DefaultsKey.clipboardHistoryLayout)
+        placementDefaults.set(ClipboardHistoryLayout.cards.rawValue,
+                              forKey: DefaultsKey.clipboardHistoryLayout)
         placement.refreshQuickLayout()
-        suite.expect(placement.quickLayout == .list, "an opening with no choice shows the list")
-        placementDefaults.set(ClipboardHistoryLayout.cards.rawValue, forKey: DefaultsKey.clipboardHistoryLayout)
-        placement.refreshQuickLayout()
-        suite.expect(placement.quickLayout == .cards, "an opening after choosing the cards shows the cards")
+        suite.expect(placement.quickLayout == .list,
+                     "the compact panel always reads as a list")
+        suite.expect(placement.panelMinimumContentSize() == nil,
+                     "the compact panel has no resize minimum")
+
+        placementPanel.close()
         placementDefaults.removePersistentDomain(forName: PanelPlacementHost.UserDefaults.name)
-        panelGeometryPersistence(suite)
 
         // MARK: Clipboard history arrow keys
 

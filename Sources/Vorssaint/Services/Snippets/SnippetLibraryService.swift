@@ -119,6 +119,14 @@ final class SnippetLibraryService: ObservableObject {
         TextSnippetService.shared.setLibraryVisible(false)
     }
 
+    /// Fills the compact clipboard panel's snippet half without showing the
+    /// standalone library.
+    func prepareForHub() {
+        reloadSnippets()
+        query = ""
+        selectedID = rows.first?.id
+    }
+
     // MARK: - Selection
 
     func select(_ id: UUID) {
