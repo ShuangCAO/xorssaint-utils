@@ -9,8 +9,10 @@ import SwiftUI
 struct GeneralToolSettings: View {
     let anchor: SettingsSectionAnchor
     @ObservedObject private var l10n = L10n.shared
+    @AppStorage(DefaultsKey.calendarWeekStartsMonday) private var calendarWeekStartsMonday = true
 
     private var text: GeneralSettingsStrings { FeatureStrings.generalSettings(l10n.language) }
+    private var calendarText: CalendarPanelStrings { FeatureStrings.calendarPanel(l10n.language) }
 
     var body: some View {
         ScrollView {
@@ -23,6 +25,12 @@ struct GeneralToolSettings: View {
                             .foregroundStyle(.secondary)
                             .fixedSize(horizontal: false, vertical: true)
                         PanelLayoutEditor()
+                        Divider()
+                        SettingsRow(symbol: "calendar", title: calendarText.weekStartTitle,
+                                    caption: calendarText.weekStartCaption) {
+                            Toggle(calendarText.weekStartTitle, isOn: $calendarWeekStartsMonday)
+                                .labelsHidden()
+                        }
                         Divider()
                         MenuBarClockSettings()
                         Divider()

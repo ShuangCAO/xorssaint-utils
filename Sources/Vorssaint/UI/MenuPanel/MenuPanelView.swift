@@ -79,6 +79,7 @@ struct MenuPanelView: View {
     @AppStorage(DefaultsKey.monitorShowPower) private var showPower = true
     @AppStorage(DefaultsKey.panelShowFanControl) private var showFanControl = true
     @AppStorage(DefaultsKey.panelShowKeepAwake) private var showKeepAwake = true
+    @AppStorage(DefaultsKey.panelShowCalendar) private var showCalendar = true
     @AppStorage(DefaultsKey.panelShowBrightness) private var showBrightness = true
     @AppStorage(DefaultsKey.brightnessControlEnabled) private var brightnessEnabled = false
     @AppStorage(DefaultsKey.panelShowUtilities) private var showUtilities = true
@@ -292,6 +293,7 @@ struct MenuPanelView: View {
 
     private var estimatedNavigableContentHeight: CGFloat {
         switch activeSection {
+        case .calendar: return 330
         case .keepAwake: return 250
         case .brightness: return 140
         case .mixer: return 250
@@ -324,6 +326,7 @@ struct MenuPanelView: View {
     @ViewBuilder
     private func section(for id: PanelSectionID, collapsible: Bool = true) -> some View {
         switch id {
+        case .calendar: CalendarSection(collapsible: collapsible)
         case .keepAwake: KeepAwakeCard(collapsible: collapsible)
         case .brightness: if showBrightness { BrightnessSection(collapsible: collapsible) }
         case .mixer: if showMixer { mixerOrPrioritySection(collapsible: collapsible) }
@@ -363,7 +366,7 @@ struct MenuPanelView: View {
     /// The rule lives in PanelLayout; reading the @AppStorage values here is
     /// what keeps the tabs refreshing when Settings flips one of them.
     private func isSectionVisible(_ id: PanelSectionID) -> Bool {
-        _ = (showKeepAwake, showBrightness, brightnessEnabled, showMixer, showSystem, showNetwork,
+        _ = (showKeepAwake, showCalendar, showBrightness, brightnessEnabled, showMixer, showSystem, showNetwork,
              showDisk, showPower, showFanControl, showUtilities, showControls, showToggles, showWallpaper)
         return PanelLayout.isVisibleInPanel(id)
     }

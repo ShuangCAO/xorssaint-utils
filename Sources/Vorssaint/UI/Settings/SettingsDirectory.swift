@@ -201,6 +201,7 @@ enum SettingsDirectory {
         var items = SettingsSearchSupport.combinedItems(pageItems: pageItems,
                                                         featureItems: featureItems)
         let general = FeatureStrings.generalSettings(language)
+        let calendar = FeatureStrings.calendarPanel(language)
         items.append(SettingsSearchItem(
             id: .setting(.panelConfiguration),
             destination: FeatureSettingsDestination(
@@ -208,7 +209,8 @@ enum SettingsDirectory {
             title: s.menuBarSection, icon: "menubar.rectangle",
             keywords: [s.showMenuBarIcon, general.menuBarIconTitle,
                        general.iconMissingTitle, "SF Symbols",
-                       general.clockTitle, general.clockFormatTitle]))
+                       general.clockTitle, general.clockFormatTitle, general.clockSizeTitle,
+                       calendar.title, calendar.weekStartTitle]))
         items.append(SettingsSearchSupport.scrollingScreenshotItem(language: language))
         let alerts = FeatureStrings.monitorAlerts(language)
         items.append(SettingsSearchItem(

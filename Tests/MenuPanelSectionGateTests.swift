@@ -13,6 +13,9 @@ enum MenuPanelSectionGateContract {
                      "installed smooth scrolling has a menu bar control")
         suite.expect(PanelSectionID.controls.featureGate.contains(.smoothScroll),
                      "smooth scrolling alone keeps the Controls tab available")
+        suite.expect(PanelSectionID.calendar.featureGate.isEmpty
+                     && PanelSectionID.calendar.isAvailable,
+                     "the calendar has no hub feature and stays available")
         suite.expect(ControlCategory.category(for: .smoothScroll) == .inputDevices,
                      "smooth scrolling appears in Mouse & keyboard")
         let savedOrder = ControlPanelItem.allCases.filter { $0 != .smoothScroll }.map(\.rawValue)

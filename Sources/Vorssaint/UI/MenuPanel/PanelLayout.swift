@@ -10,14 +10,15 @@ protocol PanelOrderItem: RawRepresentable, CaseIterable, Hashable where RawValue
 /// stable identifiers persisted in the saved order and the collapsed set, so
 /// renaming a case would orphan a user's stored layout — keep them stable.
 enum PanelSectionID: String, CaseIterable, Identifiable, Hashable {
-    case keepAwake, brightness, mixer, system, network, disk, power, fanControl, utilities, controls,
-         toggles, wallpaper
+    case calendar, keepAwake, brightness, mixer, system, network, disk, power, fanControl, utilities,
+         controls, toggles, wallpaper
 
     var id: String { rawValue }
 
     /// Localized display name, reused from the existing section titles.
     func title(_ s: Strings) -> String {
         switch self {
+        case .calendar: return FeatureStrings.calendarPanel(L10n.shared.language).title
         case .keepAwake: return s.keepAwakeTitle
         case .brightness: return FeatureStrings.brightness(L10n.shared.language).pageTitle
         case .mixer: return s.mixerSection
@@ -35,6 +36,7 @@ enum PanelSectionID: String, CaseIterable, Identifiable, Hashable {
 
     var symbolName: String {
         switch self {
+        case .calendar: return "calendar"
         case .keepAwake: return "moon.zzz.fill"
         case .brightness: return "display.2"
         case .mixer: return "speaker.wave.2"
@@ -55,6 +57,7 @@ enum PanelSectionID: String, CaseIterable, Identifiable, Hashable {
     /// get a dedicated `panelShow*` key so every section is hideable.
     var visibilityKey: String {
         switch self {
+        case .calendar: return DefaultsKey.panelShowCalendar
         case .keepAwake: return DefaultsKey.panelShowKeepAwake
         case .brightness: return DefaultsKey.panelShowBrightness
         case .mixer: return DefaultsKey.monitorShowMixer
@@ -79,6 +82,9 @@ enum PanelSectionID: String, CaseIterable, Identifiable, Hashable {
     /// feature's return).
     var featureGate: [AppFeature] {
         switch self {
+        // The calendar is a panel of its own, with no hub feature to install:
+        // it stays available and the layout editor's switch hides it.
+        case .calendar: return []
         case .keepAwake: return [.keepAwake]
         case .brightness: return [.brightness]
         case .mixer: return [.mixer, .audioPriority]
@@ -101,7 +107,10 @@ enum PanelSectionID: String, CaseIterable, Identifiable, Hashable {
         }
     }
 
-    var isAvailable: Bool { featureGate.contains(where: \.isAvailable) }
+    var isAvailable: Bool {
+        // An empty gate means the section stands on its own.
+        featureGate.isEmpty || featureGate.contains(where: \.isAvailable)
+    }
 }
 
 /// Persisted panel layout: the order the sections appear in and which ones are
@@ -122,7 +131,11 @@ enum PanelLayout {
         var result: [PanelSectionID] = []
         for id in saved where seen.insert(id).inserted { result.append(id) }
         for id in PanelSectionID.allCases where seen.insert(id).inserted {
-            if id == .disk, let networkIndex = result.firstIndex(of: .network) {
+            if id == .calendar {
+                // The calendar leads the panel, including for orders saved
+                // before it existed.
+                result.insert(id, at: 0)
+            } else if id == .disk, let networkIndex = result.firstIndex(of: .network) {
                 result.insert(id, at: networkIndex + 1)
             } else if id == .controls, let utilitiesIndex = result.firstIndex(of: .utilities) {
                 result.insert(id, at: utilitiesIndex + 1)

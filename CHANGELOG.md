@@ -8,6 +8,7 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 - The menu bar can show a date and time clock instead of the icon. Choose its format and 12–16 pt size in General settings; the icon still returns for updates, a muted microphone and Keep Awake.
+- A month calendar leads the menu panel. Page through months, jump to today, and choose whether weeks start on Monday or Sunday in General settings.
 
 ## [3.4.4] - 2026-11-11
 
