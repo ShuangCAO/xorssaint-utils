@@ -114,7 +114,7 @@ struct ClipyMenuView: View {
     @ViewBuilder
     private func rowView(_ row: ClipyMenuRow) -> some View {
         switch row {
-        case .header(let title):
+        case .header(let title, _):
             Text(title.uppercased())
                 .font(.system(size: 9, weight: .semibold))
                 .foregroundStyle(.secondary)

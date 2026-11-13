@@ -5,14 +5,14 @@ import AppKit
 import SwiftUI
 
 enum ClipyMenuRow: Identifiable {
-    case header(String)
+    case header(String, Int)
     case entry(ClipyEntry, Int)
     case folder(ClipyMenuFolder, Int)
     case snippet(ClipySnippet, Int)
 
     var id: String {
         switch self {
-        case .header(let title): return "h-\(title)"
+        case .header(_, let index): return "h-\(index)"
         case .entry(let entry, _): return "e-\(entry.id)"
         case .folder(let folder, _): return "f-\(folder.startNumber)"
         case .snippet(let snippet, _): return "s-\(snippet.id)"
@@ -54,7 +54,7 @@ final class ClipyMenuModel: ObservableObject {
                 inlineLimit: defaults.integer(forKey: DefaultsKey.clipyInlineLimit),
                 folderLimit: defaults.integer(forKey: DefaultsKey.clipyFolderLimit))
             if !entries.isEmpty {
-                rows.append(.header(strings.historySection))
+                rows.append(.header(strings.historySection, rows.count))
                 for entry in split.inline {
                     rows.append(.entry(entry, number))
                     number += 1
@@ -71,10 +71,10 @@ final class ClipyMenuModel: ObservableObject {
                 allSnippets.filter { $0.folder == folder }
             } ?? allSnippets
             if !snippets.isEmpty {
-                rows.append(.header(strings.snippetsSection))
+                rows.append(.header(strings.snippetsSection, rows.count))
                 for folder in Self.snippetFolders(snippets) {
                     if !folder.name.isEmpty {
-                        rows.append(.header(folder.name))
+                        rows.append(.header(folder.name, rows.count))
                     }
                     for snippet in folder.snippets {
                         rows.append(.snippet(snippet, number))
