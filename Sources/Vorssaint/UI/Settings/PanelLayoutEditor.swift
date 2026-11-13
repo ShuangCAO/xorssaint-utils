@@ -234,6 +234,7 @@ private struct MenuBarPanelMiniature: View {
     let onSelect: (PanelSectionID) -> Void
     @ObservedObject private var l10n = L10n.shared
     @Environment(\.colorScheme) private var colorScheme
+    @AppStorage(DefaultsKey.panelShowHeaderIcon) private var showHeaderIcon = true
 
     static let width: CGFloat = 232
     private static let padding: CGFloat = 8
@@ -278,9 +279,14 @@ private struct MenuBarPanelMiniature: View {
 
     private var panel: some View {
         VStack(spacing: 8) {
-            BrandMark(width: 32, tint: colorScheme == .light ? Color(white: 0.03) : .white)
-                .frame(height: 18)
-                .accessibilityHidden(true)
+            // The miniature mirrors the live panel, including its optional
+            // brand row, so the preview never promises a header the panel
+            // is configured to hide.
+            if showHeaderIcon {
+                BrandMark(width: 32, tint: colorScheme == .light ? Color(white: 0.03) : .white)
+                    .frame(height: 18)
+                    .accessibilityHidden(true)
+            }
             tabStrip
             openTab
             footer
