@@ -104,8 +104,6 @@ struct ClipySnippetEditor: View {
                     TextField(text.snippetFolder, text: $folderNameDraft)
                         .textFieldStyle(.roundedBorder)
                         .onSubmit { renameSelectedFolder() }
-                    Button(text.renameFolder) { renameSelectedFolder() }
-                        .help(text.renameFolder)
                 }
                 .padding(12)
                 Divider()

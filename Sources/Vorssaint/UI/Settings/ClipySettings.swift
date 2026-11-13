@@ -37,6 +37,7 @@ struct ClipySettings: View {
     @State private var editingSnippets = false
     @State private var folders: [String] = []
     @State private var folderShortcuts: [String: String] = [:]
+    @State private var shortcutRevision = 0
 
     private var text: ClipyStrings { FeatureStrings.clipy(l10n.language) }
 
@@ -120,15 +121,17 @@ struct ClipySettings: View {
             if !folders.isEmpty {
                 Section {
                     ForEach(folders, id: \.self) { folder in
+                        let raw = folderShortcuts[folder] ?? ""
+                        let hasShortcut = GlobalShortcut(storageValue: raw) != nil
                         HStack {
                             Text(folder)
                             Spacer()
                             ShortcutRecorderButton(
-                                shortcut: GlobalShortcut(
-                                    storageValue: folderShortcuts[folder] ?? "") ?? .clipyFallback,
+                                shortcut: GlobalShortcut(storageValue: raw) ?? .clipyFallback,
                                 isEnabled: true,
                                 waitingTitle: l10n.s.shortcutPressKeys,
-                                emptyTitle: (folderShortcuts[folder] ?? "").isEmpty ? "—" : nil,
+                                emptyTitle: hasShortcut ? nil : l10n.s.shortcutNone,
+                                clearAction: hasShortcut ? { clearFolderShortcut(folder) } : nil,
                                 invalidAction: {},
                                 captureAction: { shortcut in
                                     folderShortcuts[folder] = shortcut.storageValue
@@ -137,6 +140,17 @@ struct ClipySettings: View {
                                 }
                             )
                             .frame(width: 150, height: 24)
+                            Button {
+                                clearFolderShortcut(folder)
+                            } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .symbolRenderingMode(.hierarchical)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .buttonStyle(.plain)
+                            .disabled(!hasShortcut)
+                            .help(l10n.s.shortcutClear)
+                            .accessibilityLabel(l10n.s.shortcutClear)
                         }
                     }
                 } header: {
@@ -163,7 +177,9 @@ struct ClipySettings: View {
     }
 
     private func shortcutRow(_ title: String, key: String) -> some View {
+        let _ = shortcutRevision
         let raw = UserDefaults.standard.string(forKey: key) ?? ""
+        let hasShortcut = GlobalShortcut(storageValue: raw) != nil
         return HStack {
             Text(title)
             Spacer()
@@ -171,15 +187,40 @@ struct ClipySettings: View {
                 shortcut: GlobalShortcut(storageValue: raw) ?? .clipyFallback,
                 isEnabled: true,
                 waitingTitle: l10n.s.shortcutPressKeys,
-                emptyTitle: raw.isEmpty ? "—" : nil,
+                emptyTitle: hasShortcut ? nil : l10n.s.shortcutNone,
+                clearAction: hasShortcut ? { clearShortcut(key) } : nil,
                 invalidAction: {},
                 captureAction: { shortcut in
                     UserDefaults.standard.set(shortcut.storageValue, forKey: key)
+                    shortcutRevision += 1
                     service.syncWithPreferences()
                 }
             )
             .frame(width: 150, height: 24)
+            Button {
+                clearShortcut(key)
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .symbolRenderingMode(.hierarchical)
+                    .foregroundStyle(.secondary)
+            }
+            .buttonStyle(.plain)
+            .disabled(!hasShortcut)
+            .help(l10n.s.shortcutClear)
+            .accessibilityLabel(l10n.s.shortcutClear)
         }
+    }
+
+    private func clearShortcut(_ key: String) {
+        UserDefaults.standard.set("", forKey: key)
+        shortcutRevision += 1
+        service.syncWithPreferences()
+    }
+
+    private func clearFolderShortcut(_ folder: String) {
+        folderShortcuts.removeValue(forKey: folder)
+        ClipySnippetFolderShortcuts.save(folderShortcuts)
+        service.syncWithPreferences()
     }
 
     private func reloadFolders() {
