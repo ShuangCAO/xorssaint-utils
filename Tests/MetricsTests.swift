@@ -23,6 +23,7 @@ struct MetricsTests {
                 SystemMonitorPlanTests.run(suite)
                 SystemSectionBreakdownTests.run(suite)
             }),
+            ("menu-bar-clock", { MenuBarClockTests.run(suite) }),
             ("clipboard", {
                 ClipboardFeatureTests.run(suite)
                 PastePlainTests.run(suite)

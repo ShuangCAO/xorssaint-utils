@@ -237,8 +237,8 @@ private struct MenuBarPanelMiniature: View {
     static let width: CGFloat = 232
     private static let padding: CGFloat = 8
     private static let arrowHeight: CGFloat = 7
-    /// The glyph's center measured from the right edge, so the popover's
-    /// arrow points at it.
+    /// The item's center measured from the right edge, so the popover's
+    /// arrow points at it whether the idle slot holds the clock or the glyph.
     private static let glyphCenterFromTrailing: CGFloat = 12 + 10
 
     var body: some View {
@@ -261,8 +261,7 @@ private struct MenuBarPanelMiniature: View {
                     .font(.system(size: 10))
                     .foregroundStyle(.white.opacity(0.5))
             }
-            MenuBarGlyph()
-                .frame(width: 20, height: 15)
+            MenuBarIdlePreview()
                 .padding(.horizontal, 3)
                 .padding(.vertical, 2)
                 // The item stays highlighted while its panel is open.

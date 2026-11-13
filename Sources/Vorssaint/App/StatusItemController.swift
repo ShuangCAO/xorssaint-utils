@@ -24,6 +24,12 @@ final class StatusItemController {
     private var metricStatusItemFocus: [String: MenuBarMetric] = [:]
     private var cancellables = Set<AnyCancellable>()
     private var titleTimer: Timer?
+    /// Drives the clock's own cadence: once a second when the pattern shows
+    /// seconds, once a minute otherwise. Separate from titleTimer, which only
+    /// exists while a countdown needs redrawing.
+    private var clockTimer: Timer?
+    private var clockTimerKey = ""
+    private var wakeObserver: NSObjectProtocol?
     private var defaultsObserver: NSObjectProtocol?
     /// Last combination applied by updateIconAppearance, so refresh ticks
     /// don't re-render an unchanged icon every 2 seconds.
@@ -214,6 +220,15 @@ final class StatusItemController {
 
         bindClipboardPreviewIfAvailable()
 
+        // A minute clock built before sleep can wake a minute late. Refresh
+        // as soon as the Mac is back and rebuild the timer from that moment.
+        wakeObserver = NSWorkspace.shared.notificationCenter.addObserver(
+            forName: NSWorkspace.didWakeNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            self?.refresh()
+            self?.syncClockTimer()
+        }
+
         defaultsObserver = NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification,
                                                                   object: nil,
                                                                   queue: .main) { [weak self] _ in
@@ -266,6 +281,10 @@ final class StatusItemController {
         // so a future "recreate the status item" path can't leak a firing timer or
         // a block observer that outlives this instance.
         titleTimer?.invalidate()
+        clockTimer?.invalidate()
+        if let wakeObserver {
+            NSWorkspace.shared.notificationCenter.removeObserver(wakeObserver)
+        }
         if let defaultsObserver { NotificationCenter.default.removeObserver(defaultsObserver) }
         for item in metricStatusItems.values {
             NSStatusBar.system.removeStatusItem(item)
@@ -303,6 +322,34 @@ final class StatusItemController {
         timer.tolerance = 5
         RunLoop.main.add(timer, forMode: .common)
         titleTimer = timer
+    }
+
+    /// Keeps the clock ticking at the cadence its pattern needs. A pattern
+    /// with seconds ticks every second; any other pattern ticks on the
+    /// minute. Rebuilding only happens when the option, the pattern or the
+    /// time zone changes, so routine refreshes leave the timer alone.
+    private func syncClockTimer() {
+        let defaults = UserDefaults.standard
+        guard defaults.bool(forKey: DefaultsKey.menuBarClockEnabled) else {
+            clockTimer?.invalidate()
+            clockTimer = nil
+            clockTimerKey = ""
+            return
+        }
+        let format = MenuBarClockSupport.sanitizedFormat(
+            defaults.string(forKey: DefaultsKey.menuBarClockFormat))
+        let interval = MenuBarClockSupport.refreshInterval(for: format)
+        let key = "\(format)|\(interval)|\(TimeZone.current.identifier)"
+        guard clockTimer == nil || clockTimerKey != key else { return }
+        clockTimer?.invalidate()
+        let firstFire = MenuBarClockSupport.nextFireDate(after: Date(), interval: interval)
+        let timer = Timer(fire: firstFire, interval: interval, repeats: true) { [weak self] _ in
+            self?.refresh()
+        }
+        timer.tolerance = interval < 60 ? 0.1 : 0.5
+        RunLoop.main.add(timer, forMode: .common)
+        clockTimer = timer
+        clockTimerKey = key
     }
 
     private var currentMicBadgeActive: Bool {
@@ -363,15 +410,20 @@ final class StatusItemController {
         let micBadgeActive = renderedMicBadgeActive
         let optionEnabled = defaults.bool(forKey: DefaultsKey.menuBarHideIconWithMetrics)
         let separateMetrics = defaults.bool(forKey: DefaultsKey.menuBarSeparateMetrics)
+        let clockEnabled = defaults.bool(forKey: DefaultsKey.menuBarClockEnabled)
         let signal = updateAvailable || micBadgeActive
+        let signalNeedsGlyph = signal || keepAwakeSignal
         let islandHides = MenuBarSpacingSupport.islandHidesStatusIcon(
             in: defaults, hiddenInFullscreen: islandHiddenInFullscreen) && !signal
-        let hidden = islandHides || MenuBarSpacingSupport.shouldHideStatusIcon(
-            optionEnabled: optionEnabled,
-            separateMetrics: separateMetrics,
-            metricsEnabled: MenuBarMetric.anyEnabled(in: defaults),
-            renderedTitleLength: button.attributedTitle.length,
-            mustShowForSignal: signal || keepAwakeSignal)
+        let hidden = islandHides
+            || MenuBarSpacingSupport.clockHidesGlyph(clockEnabled: clockEnabled,
+                                                     hasSignal: signalNeedsGlyph)
+            || MenuBarSpacingSupport.shouldHideStatusIcon(
+                optionEnabled: optionEnabled,
+                separateMetrics: separateMetrics,
+                metricsEnabled: MenuBarMetric.anyEnabled(in: defaults),
+                renderedTitleLength: button.attributedTitle.length,
+                mustShowForSignal: signal || keepAwakeSignal)
         // In the separate-items mode the metrics are their own clickable
         // items, so hiding means the whole main item steps aside instead of
         // just its image (which is all that item has). With Dynamic Island
@@ -392,7 +444,7 @@ final class StatusItemController {
         let stateKey = [String(hidden), String(mainItemHidden), String(updateAvailable),
                         String(keepAwakeActive), KeepAwakeIconTint.current.rawValue,
                         KeepAwakeActiveIcon.current.rawValue, BlackHoleGlyph.chosenSymbolName,
-                        String(micBadgeActive)].joined(separator: "|")
+                        String(micBadgeActive), String(clockEnabled)].joined(separator: "|")
         guard stateKey != lastIconStateKey else { return }
         lastIconStateKey = stateKey
 
@@ -459,16 +511,25 @@ final class StatusItemController {
         let snapshot = SystemMonitor.shared.snapshot
         let metrics = MenuBarMetric.enabled(in: defaults)
         let separateMetrics = defaults.bool(forKey: DefaultsKey.menuBarSeparateMetrics)
+        let clockEnabled = defaults.bool(forKey: DefaultsKey.menuBarClockEnabled)
+        let clockText = clockEnabled
+            ? MenuBarClockSupport.text(for: Date(),
+                                       format: defaults.string(forKey: DefaultsKey.menuBarClockFormat) ?? "")
+            : ""
 
         syncTitleTimer(keepAwakeActive: manager.isActive,
                        showsCountdown: defaults.bool(forKey: DefaultsKey.showCountdown),
                        endDate: manager.endDate)
 
-        // Compose the title from the keep-awake countdown (when shown) followed by
-        // the pinned live metrics. Built attributed so the memory pressure dot can
-        // carry its green/yellow/red color; all other runs stay adaptive.
+        // Compose the title from the clock, the keep-awake countdown (when
+        // shown) and the pinned live metrics. Built attributed so the memory
+        // pressure dot can carry its green/yellow/red color; all other runs
+        // stay adaptive.
         let title = NSMutableAttributedString()
         var includesCountdown = false
+        if !clockText.isEmpty {
+            title.append(NSAttributedString(string: clockText))
+        }
         if manager.isActive, defaults.bool(forKey: DefaultsKey.showCountdown) {
             let countdown: String
             if let end = manager.endDate {
@@ -479,6 +540,7 @@ final class StatusItemController {
             } else {
                 countdown = "∞"
             }
+            if title.length > 0 { title.append(NSAttributedString(string: "  ")) }
             title.append(NSAttributedString(string: countdown))
             includesCountdown = true
         }
@@ -491,8 +553,8 @@ final class StatusItemController {
         if !separateMetrics, !metrics.isEmpty {
             let metricsTitle = MenuBarRenderer.attributed(for: snapshot,
                                                           metrics: metrics,
-                                                          allowStacked: !includesCountdown,
-                                                          linePrefix: " ")
+                                                          allowStacked: !includesCountdown && clockText.isEmpty,
+                                                          linePrefix: clockText.isEmpty ? " " : "")
             if metricsTitle.length > 0 {
                 if title.length > 0 { title.append(NSAttributedString(string: "  ")) }
                 title.append(metricsTitle)
@@ -527,8 +589,11 @@ final class StatusItemController {
                 updateAvailable = false
             }
             let signal = updateAvailable || renderedMicBadgeActive
-            let glyphHidden = (MenuBarSpacingSupport.islandHidesStatusIcon(
-                in: defaults, hiddenInFullscreen: islandHiddenInFullscreen) && !signal)
+            let signalNeedsGlyph = signal || keepAwakeSignal
+            let glyphHidden = MenuBarSpacingSupport.clockHidesGlyph(
+                clockEnabled: clockEnabled, hasSignal: signalNeedsGlyph)
+                || (MenuBarSpacingSupport.islandHidesStatusIcon(
+                    in: defaults, hiddenInFullscreen: islandHiddenInFullscreen) && !signal)
                 || MenuBarSpacingSupport.shouldHideStatusIcon(
                     optionEnabled: defaults.bool(forKey: DefaultsKey.menuBarHideIconWithMetrics),
                     separateMetrics: separateMetrics,
@@ -579,10 +644,18 @@ final class StatusItemController {
             button.toolTip = toolTip
         }
 
+        // Text-only items still need a spoken name: the clock digits alone
+        // would reach VoiceOver without saying which app they belong to.
+        let accessibilityLabel = clockText.isEmpty ? AppInfo.name : "\(AppInfo.name) \(clockText)"
+        if button.accessibilityLabel() != accessibilityLabel {
+            button.setAccessibilityLabel(accessibilityLabel)
+        }
+
         // The icon decision depends on the title just written (the glyph may
         // hide only while metrics actually render), so it re-runs here — the
         // one place where title and icon can never get out of step.
         updateIconAppearance()
+        syncClockTimer()
     }
 
     private func refreshMetricStatusItems(metrics: [MenuBarMetric],

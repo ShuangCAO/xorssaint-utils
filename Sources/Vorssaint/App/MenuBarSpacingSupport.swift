@@ -229,6 +229,13 @@ enum MenuBarSpacingSupport {
             && !mustShowForSignal
     }
 
+    /// Whether the clock takes the idle glyph's place. The clock is text, so
+    /// the icon only comes back for a signal that has to be seen: an update,
+    /// a muted microphone, or a Keep Awake mark that differs from idle.
+    static func clockHidesGlyph(clockEnabled: Bool, hasSignal: Bool) -> Bool {
+        clockEnabled && !hasSignal
+    }
+
     /// Whether a running Keep Awake session needs the glyph that metrics
     /// hide: the tinted or swapped glyph is the session's only mark there.
     /// Untinted, the app's own mark looks the same idle and active.

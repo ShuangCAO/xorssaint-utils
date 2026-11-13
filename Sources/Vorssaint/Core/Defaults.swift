@@ -434,6 +434,8 @@ enum DefaultsKey {
     static let menuBarUsageBarHighThreshold = "menuBarUsageBarHighThreshold" // percent
     static let menuBarHideIconWithMetrics = "menuBarHideIconWithMetrics" // glyph hides while metrics render in the main item
     static let menuBarIconSymbol = "menuBarIconSymbol" // system symbol name drawn instead of the glyph; empty keeps the glyph
+    static let menuBarClockEnabled = "menuBarClockEnabled" // date/time text replaces the idle glyph
+    static let menuBarClockFormat = "menuBarClockFormat" // Unicode date pattern; empty uses the default
     static let menuBarMetricOrder = "menuBarMetricOrder" // comma-separated MenuBarMetric raw values
     static let menuBarCombineTemperatures = "menuBarCombineTemperatures" // usage/charge + temperature in one block when possible
     static let menuBarSeparateMetrics = "menuBarSeparateMetrics" // one status item per active metric
@@ -1713,6 +1715,8 @@ enum Defaults {
         DefaultsKey.menuBarUsageBarHighThreshold: 90,
         DefaultsKey.menuBarHideIconWithMetrics: false,
         DefaultsKey.menuBarIconSymbol: "",
+        DefaultsKey.menuBarClockEnabled: true,
+        DefaultsKey.menuBarClockFormat: MenuBarClockSupport.defaultFormat,
         DefaultsKey.windowLayoutHiddenActions: "",
         DefaultsKey.windowLayoutWindowGap: 0,
         DefaultsKey.windowLayoutScreenGap: 0,
@@ -2556,6 +2560,12 @@ enum Defaults {
     /// bar drawing, since a backup can carry a name from a newer macOS.
     static func sanitizedMenuBarIconSymbol(_ rawValue: String?) -> String {
         rawValue?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+    }
+
+    /// The clock's date pattern: blank falls back to the default, and a
+    /// pattern long enough to swamp the menu bar is cut at a fixed limit.
+    static func sanitizedMenuBarClockFormat(_ rawValue: String?) -> String {
+        MenuBarClockSupport.sanitizedFormat(rawValue)
     }
 
     /// What the menu bar icon field saves as it is typed: a name this Mac has

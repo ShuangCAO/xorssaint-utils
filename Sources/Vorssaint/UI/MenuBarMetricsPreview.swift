@@ -40,6 +40,8 @@ struct MenuBarMetricsPreview: View {
     @AppStorage(DefaultsKey.menuBarMetricSpacing) private var metricSpacing = "standard"
     @AppStorage(DefaultsKey.menuBarHideIconWithMetrics) private var hideIconWithMetrics = false
     @AppStorage(DefaultsKey.menuBarSeparateMetrics) private var separateMetrics = false
+    @AppStorage(DefaultsKey.menuBarClockEnabled) private var clockEnabled = true
+    @AppStorage(DefaultsKey.menuBarClockFormat) private var clockFormat = MenuBarClockSupport.defaultFormat
     @ObservedObject private var l10n = L10n.shared
 
     var body: some View {
@@ -58,6 +60,7 @@ struct MenuBarMetricsPreview: View {
         let _ = temperatureUnit
         let _ = networkSpeedUnit
         let _ = metricSpacing
+        let _ = clockFormat
         let metrics = activeMetrics
         let lines = separateMetrics ? [] : MenuBarRenderer.lines(for: monitor.snapshot, metrics: metrics)
         // Separate items are their own status items, which macOS seats to
@@ -67,10 +70,11 @@ struct MenuBarMetricsPreview: View {
                 .map { MenuBarRenderer.lines(for: monitor.snapshot, metrics: $0.metrics) }
                 .filter { !$0.isEmpty }
             : []
-        // The steady state of the hide option: a pending update, a running
-        // Keep Awake or a muted microphone brings the real icon back, and the
-        // preview does not pretend to know about any of them.
-        let iconHidden = hideIconWithMetrics && (!lines.isEmpty || !items.isEmpty)
+        // The steady state of the hide option: with the clock on, the glyph
+        // never shows at idle. A pending update, a running Keep Awake or a
+        // muted microphone brings the real icon back, and the preview does
+        // not pretend to know about any of them.
+        let iconHidden = clockEnabled || (hideIconWithMetrics && (!lines.isEmpty || !items.isEmpty))
 
         HStack(spacing: 12) {
             Spacer()
@@ -83,9 +87,18 @@ struct MenuBarMetricsPreview: View {
             ForEach(Array(items.enumerated()), id: \.offset) { _, item in
                 linesView(item)
             }
-            if !iconHidden || !lines.isEmpty {
+            if clockEnabled || !iconHidden || !lines.isEmpty {
                 HStack(spacing: 5) {
-                    if !iconHidden {
+                    if clockEnabled {
+                        TimelineView(.periodic(from: .now, by: 1)) { context in
+                            Text(MenuBarClockSupport.text(for: context.date, format: clockFormat))
+                                .font(.system(size: MenuBarRenderer.statusFontSize(stacked: false),
+                                              weight: .medium, design: .monospaced))
+                                .foregroundStyle(.white)
+                                .lineLimit(1)
+                                .fixedSize()
+                        }
+                    } else if !iconHidden {
                         glyph
                             .frame(width: BlackHoleGlyph.pointSize.width,
                                    height: BlackHoleGlyph.pointSize.height)

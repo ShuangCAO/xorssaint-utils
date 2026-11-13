@@ -24,6 +24,8 @@ struct GeneralToolSettings: View {
                             .fixedSize(horizontal: false, vertical: true)
                         PanelLayoutEditor()
                         Divider()
+                        MenuBarClockSettings()
+                        Divider()
                         MenuBarIconSymbolRow()
                         Divider()
                         SettingsRow(symbol: nil, title: text.iconMissingTitle,

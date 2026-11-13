@@ -200,13 +200,15 @@ enum SettingsDirectory {
         }
         var items = SettingsSearchSupport.combinedItems(pageItems: pageItems,
                                                         featureItems: featureItems)
+        let general = FeatureStrings.generalSettings(language)
         items.append(SettingsSearchItem(
             id: .setting(.panelConfiguration),
             destination: FeatureSettingsDestination(
                 .general, sectionAnchor: .panelConfiguration),
             title: s.menuBarSection, icon: "menubar.rectangle",
-            keywords: [s.showMenuBarIcon, FeatureStrings.generalSettings(language).menuBarIconTitle,
-                       FeatureStrings.generalSettings(language).iconMissingTitle, "SF Symbols"]))
+            keywords: [s.showMenuBarIcon, general.menuBarIconTitle,
+                       general.iconMissingTitle, "SF Symbols",
+                       general.clockTitle, general.clockFormatTitle]))
         items.append(SettingsSearchSupport.scrollingScreenshotItem(language: language))
         let alerts = FeatureStrings.monitorAlerts(language)
         items.append(SettingsSearchItem(
