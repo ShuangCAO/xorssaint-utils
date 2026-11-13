@@ -120,6 +120,7 @@ struct CalendarSection: View {
         let isSelected = selectedDate.map {
             calendar.isDate(day.date, inSameDayAs: $0)
         } ?? false
+        let marker = holidayMarker(for: day, isSelected: isSelected)
         return Button {
             selectedDate = day.date
             hasExplicitSelection = true
@@ -130,13 +131,14 @@ struct CalendarSection: View {
                                   weight: isSelected ? .semibold
                                         : day.isCurrentMonth ? .medium : .regular))
                     .foregroundStyle(dayColor(day, isSelected: isSelected))
-                if let marker = holidayMarker(for: day, isSelected: isSelected) {
-                    Text(marker.text)
-                        .font(.system(size: 7.5, weight: .bold))
-                        .foregroundStyle(marker.color)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.7)
-                }
+                // Every cell reserves the marker line, so a holiday never
+                // pushes its date number above the rest of the row.
+                Text(marker?.text ?? " ")
+                    .font(.system(size: 7.5, weight: .bold))
+                    .foregroundStyle(marker?.color ?? .clear)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+                    .frame(height: 9)
             }
             .frame(maxWidth: .infinity)
             .frame(height: 30)
@@ -165,7 +167,7 @@ struct CalendarSection: View {
         case .offDay(let name):
             return (name, isSelected ? .white.opacity(0.9) : Color.red.opacity(0.9))
         case .workday:
-            return ("班", isSelected ? .white.opacity(0.9) : Color.orange)
+            return ("班", isSelected ? .white.opacity(0.9) : .secondary)
         }
     }
 
