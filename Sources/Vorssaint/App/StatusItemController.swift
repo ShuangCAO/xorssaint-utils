@@ -605,6 +605,15 @@ final class StatusItemController {
             let stacked = full.string.contains("\n")
             let font = MenuBarRenderer.statusFont(stacked: stacked)
             full.addAttribute(.font, value: font, range: NSRange(location: 0, length: full.length))
+            // The clock uses the system menu bar's own type; the countdown and
+            // metrics keep the compact type they were designed with.
+            let clockStart = glyphHidden ? 0 : 1
+            let clockLength = (clockText as NSString).length
+            let hasClock = clockLength > 0 && clockStart + clockLength <= full.length
+            if hasClock {
+                full.addAttribute(.font, value: MenuBarRenderer.clockFont(),
+                                  range: NSRange(location: clockStart, length: clockLength))
+            }
             if stacked {
                 let paragraph = NSMutableParagraphStyle()
                 paragraph.alignment = .left
@@ -619,7 +628,7 @@ final class StatusItemController {
                                   range: NSRange(location: 0, length: full.length))
             }
             if !full.isEqual(to: button.attributedTitle) {
-                button.font = font
+                button.font = hasClock ? MenuBarRenderer.clockFont() : font
                 button.attributedTitle = full
             }
             if button.imagePosition != .imageLeading {

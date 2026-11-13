@@ -92,8 +92,9 @@ struct MenuBarMetricsPreview: View {
                     if clockEnabled {
                         TimelineView(.periodic(from: .now, by: 1)) { context in
                             Text(MenuBarClockSupport.text(for: context.date, format: clockFormat))
-                                .font(.system(size: MenuBarRenderer.statusFontSize(stacked: false),
-                                              weight: .medium, design: .monospaced))
+                                .font(.system(size: MenuBarRenderer.clockFontSize,
+                                              weight: .regular))
+                                .monospacedDigit()
                                 .foregroundStyle(.white)
                                 .lineLimit(1)
                                 .fixedSize()

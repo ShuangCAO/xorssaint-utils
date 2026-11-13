@@ -56,7 +56,8 @@ struct MenuBarClockSettings: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 Text(MenuBarClockSupport.text(for: context.date, format: format))
-                    .font(.system(size: 11.6, weight: .medium, design: .monospaced))
+                    .font(.system(size: MenuBarRenderer.clockFontSize, weight: .regular))
+                    .monospacedDigit()
                     .foregroundStyle(.white)
                     .lineLimit(1)
                     .padding(.horizontal, 8)
@@ -81,7 +82,8 @@ struct MenuBarIdlePreview: View {
             if enabled {
                 TimelineView(.periodic(from: .now, by: 1)) { context in
                     Text(MenuBarClockSupport.text(for: context.date, format: format))
-                        .font(.system(size: 10.5, weight: .medium, design: .monospaced))
+                        .font(.system(size: MenuBarRenderer.clockFontSize - 1, weight: .regular))
+                        .monospacedDigit()
                         .foregroundStyle(.white)
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
