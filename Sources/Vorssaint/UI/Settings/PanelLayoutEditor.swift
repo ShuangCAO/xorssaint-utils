@@ -235,6 +235,7 @@ private struct MenuBarPanelMiniature: View {
     @ObservedObject private var l10n = L10n.shared
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage(DefaultsKey.panelShowHeaderIcon) private var showHeaderIcon = true
+    @AppStorage(DefaultsKey.panelMiniSectionBar) private var miniSectionBar = false
 
     static let width: CGFloat = 232
     private static let padding: CGFloat = 8
@@ -307,32 +308,34 @@ private struct MenuBarPanelMiniature: View {
     }
 
     private var tabStrip: some View {
-        HStack(spacing: 1) {
+        let mini = miniSectionBar
+        return HStack(spacing: 1) {
             ForEach(sections) { id in
                 let isActive = active == id
                 Button {
                     onSelect(id)
                 } label: {
                     Image(systemName: id.symbolName)
-                        .font(.system(size: 9, weight: .semibold))
+                        .font(.system(size: mini ? 8 : 9, weight: .semibold))
                         .frame(maxWidth: .infinity)
-                        .frame(height: 20)
-                        .contentShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
+                        .frame(height: mini ? 15 : 20)
+                        .contentShape(RoundedRectangle(cornerRadius: mini ? 4 : 5,
+                                                        style: .continuous))
                 }
                 .buttonStyle(.plain)
                 .foregroundStyle(isActive ? Color.accentColor : Color.secondary.opacity(0.86))
                 .background(isActive ? activeFill : Color.clear,
-                            in: RoundedRectangle(cornerRadius: 5, style: .continuous))
+                            in: RoundedRectangle(cornerRadius: mini ? 4 : 5, style: .continuous))
                 .help(id.title(l10n.s))
                 .accessibilityLabel(id.title(l10n.s))
                 .accessibilityAddTraits(isActive ? .isSelected : [])
             }
         }
-        .padding(3)
+        .padding(mini ? 2 : 3)
         .background(PanelSurface.cardFill(for: colorScheme),
-                    in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    in: RoundedRectangle(cornerRadius: mini ? 7 : 8, style: .continuous))
         .overlay {
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
+            RoundedRectangle(cornerRadius: mini ? 7 : 8, style: .continuous)
                 .strokeBorder(PanelSurface.border(for: colorScheme), lineWidth: 0.7)
         }
     }

@@ -110,5 +110,25 @@ enum CalendarSupportTests {
         suite.expect(HolidayStore.dayKey(for: date(2026, 1, 5, calendar: monday),
                                          calendar: monday) == "2026-01-05",
                      "the holiday key is a zero-padded local calendar day")
+
+        let zh = Locale(identifier: "zh_Hans")
+        suite.expect(LunarDateSupport.text(for: date(2026, 2, 17, calendar: monday),
+                                           locale: zh, timeZone: utc) == "正月初一",
+                     "Chinese New Year is the first day of the first lunar month")
+        suite.expect(LunarDateSupport.text(for: date(2026, 11, 13, calendar: monday),
+                                           locale: zh, timeZone: utc) == "十月初五",
+                     "a November date reports its lunar month and day")
+        suite.expect(LunarDateSupport.text(for: date(2025, 7, 25, calendar: monday),
+                                           locale: zh, timeZone: utc) == "闰六月初一",
+                     "a leap month is marked in Simplified Chinese")
+        suite.expect(LunarDateSupport.text(for: date(2025, 7, 25, calendar: monday),
+                                           locale: Locale(identifier: "zh_Hant_TW"),
+                                           timeZone: utc) == "閏六月初一",
+                     "a leap month uses the traditional character in Traditional Chinese")
+        suite.expect(LunarDateSupport.dayName(10) == "初十"
+                     && LunarDateSupport.dayName(20) == "二十"
+                     && LunarDateSupport.dayName(21) == "廿一"
+                     && LunarDateSupport.dayName(30) == "三十",
+                     "lunar day names cover the tens and the twenties")
     }
 }

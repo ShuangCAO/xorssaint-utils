@@ -342,7 +342,7 @@ struct MenuPanelView: View {
     @ViewBuilder
     private func section(for id: PanelSectionID, collapsible: Bool = true) -> some View {
         switch id {
-        case .calendar: CalendarSection(collapsible: collapsible)
+        case .calendar: CalendarSection()
         case .keepAwake: KeepAwakeCard(collapsible: collapsible)
         case .brightness: if showBrightness { BrightnessSection(collapsible: collapsible) }
         case .mixer: if showMixer { mixerOrPrioritySection(collapsible: collapsible) }

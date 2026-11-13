@@ -8,7 +8,6 @@ import SwiftUI
 /// on open unless the user paged away from it, and it can select a day
 /// without leaving the panel.
 struct CalendarSection: View {
-    var collapsible = true
     @ObservedObject private var l10n = L10n.shared
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage(DefaultsKey.calendarWeekStartsMonday) private var weekStartsMonday = true
@@ -18,8 +17,7 @@ struct CalendarSection: View {
     @State private var selectedDate: Date?
     @State private var hasExplicitSelection = false
 
-    init(collapsible: Bool = true) {
-        self.collapsible = collapsible
+    init() {
         let calendar = CalendarGrid.calendar(
             locale: Locale(identifier: L10n.shared.language.rawValue),
             weekStartsMonday: UserDefaults.standard.bool(forKey: DefaultsKey.calendarWeekStartsMonday))
@@ -36,14 +34,12 @@ struct CalendarSection: View {
     }
 
     var body: some View {
-        PanelSection(.calendar, title: strings.title, collapsible: collapsible) {
-            VStack(alignment: .leading, spacing: 8) {
-                header
-                weekdayRow
-                grid
-            }
-            .panelCard()
+        VStack(alignment: .leading, spacing: 8) {
+            header
+            weekdayRow
+            grid
         }
+        .panelCard()
         .onAppear(perform: refreshForAppearance)
         .onChange(of: weekStartsMonday) { _, _ in
             // Only the first column moves; keep the month the user is on.
@@ -146,8 +142,46 @@ struct CalendarSection: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .help(tooltip(for: day))
         .accessibilityLabel(Text(day.date, format: .dateTime.year().month().day()))
         .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+
+    /// Gregorian date, then the lunar date and any holiday or adjusted
+    /// workday. The lunar names and the holiday data are Chinese, so they
+    /// only join the tooltip while the app is showing Chinese.
+    private func tooltip(for day: CalendarDay) -> String {
+        let locale = Locale(identifier: l10n.language.rawValue)
+        var lines = [day.date.formatted(.dateTime.year().month().day().weekday(.wide)
+            .locale(locale))]
+        guard isChineseLanguage else { return lines[0] }
+
+        let lunar = LunarDateSupport.text(for: day.date, locale: locale,
+                                          timeZone: calendar.timeZone)
+        if !lunar.isEmpty {
+            lines.append("\(lunarPrefix)\(lunar)")
+        }
+        if let holiday = HolidayStore.shared?.info(
+            forDayKey: HolidayStore.dayKey(for: day.date, calendar: calendar)) {
+            switch holiday {
+            case .offDay(let name):
+                lines.append("\(name) · 休")
+            case .workday(let name):
+                lines.append("\(name) · 班")
+            }
+        }
+        return lines.joined(separator: "\n")
+    }
+
+    private var isChineseLanguage: Bool {
+        switch l10n.language {
+        case .zhHans, .zhTW, .zhHK: return true
+        default: return false
+        }
+    }
+
+    private var lunarPrefix: String {
+        l10n.language == .zhHans ? "农历" : "農曆"
     }
 
     private func dayColor(_ day: CalendarDay, isSelected: Bool) -> Color {

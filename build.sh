@@ -480,6 +480,7 @@ if (( TEST )); then
         Sources/Vorssaint/App/MenuBarSpacingSupport.swift
         Sources/Vorssaint/Core/MenuBarClockSupport.swift
         Sources/Vorssaint/Core/CalendarSupport.swift
+        Sources/Vorssaint/Core/LunarDateSupport.swift
         Sources/Vorssaint/Core/HolidayStore.swift
         Sources/Vorssaint/App/MenuBarAllowanceSupport.swift
         Sources/Vorssaint/App/ReopenRequestSupport.swift
