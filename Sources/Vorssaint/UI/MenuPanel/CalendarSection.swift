@@ -120,54 +120,54 @@ struct CalendarSection: View {
         let isSelected = selectedDate.map {
             calendar.isDate(day.date, inSameDayAs: $0)
         } ?? false
-        let marker = holidayMarker(for: day, isSelected: isSelected)
         return Button {
             selectedDate = day.date
             hasExplicitSelection = true
         } label: {
-            VStack(spacing: 0) {
-                Text("\(day.dayNumber)")
-                    .font(.system(size: day.isCurrentMonth ? 12.5 : 11,
-                                  weight: isSelected ? .semibold
-                                        : day.isCurrentMonth ? .medium : .regular))
-                    .foregroundStyle(dayColor(day, isSelected: isSelected))
-                // Every cell reserves the marker line, so a holiday never
-                // pushes its date number above the rest of the row.
-                Text(marker?.text ?? " ")
-                    .font(.system(size: 7.5, weight: .bold))
-                    .foregroundStyle(marker?.color ?? .clear)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
-                    .frame(height: 9)
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 30)
-            .background {
-                if isSelected {
-                    RoundedRectangle(cornerRadius: 6, style: .continuous)
-                        .fill(Color.accentColor)
-                } else if day.isToday {
-                    RoundedRectangle(cornerRadius: 6, style: .continuous)
-                        .strokeBorder(Color.accentColor, lineWidth: 1.4)
+            Text("\(day.dayNumber)")
+                .font(.system(size: day.isCurrentMonth ? 12.5 : 11,
+                              weight: isSelected ? .semibold
+                                    : day.isCurrentMonth ? .medium : .regular))
+                .foregroundStyle(dayColor(day, isSelected: isSelected))
+                .frame(maxWidth: .infinity)
+                .frame(height: 30)
+                .background {
+                    if isSelected {
+                        RoundedRectangle(cornerRadius: 6, style: .continuous)
+                            .fill(Color.accentColor)
+                    } else if day.isToday {
+                        RoundedRectangle(cornerRadius: 6, style: .continuous)
+                            .strokeBorder(Color.accentColor, lineWidth: 1.4)
+                    }
                 }
-            }
-            .contentShape(Rectangle())
+                // A dot marks a holiday or an adjusted workday without
+                // changing the cell's layout, so every date stays aligned.
+                .overlay(alignment: .bottom) {
+                    if let dot = holidayDot(for: day, isSelected: isSelected) {
+                        Circle()
+                            .fill(dot)
+                            .frame(width: 4, height: 4)
+                            .padding(.bottom, 2)
+                    }
+                }
+                .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text(accessibilityLabel(for: day)))
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
-    /// The holiday name sits under the date; an adjusted workday only needs
-    /// the standard 班 marker, since its name is the holiday it belongs to.
-    private func holidayMarker(for day: CalendarDay,
-                               isSelected: Bool) -> (text: String, color: Color)? {
+    /// Red for a statutory holiday, gray for an adjusted workday. Adjacent
+    /// months keep the same color at lower contrast.
+    private func holidayDot(for day: CalendarDay, isSelected: Bool) -> Color? {
         guard let holiday = day.holiday else { return nil }
+        if isSelected { return .white.opacity(0.9) }
+        let opacity = day.isCurrentMonth ? 1.0 : 0.4
         switch holiday {
-        case .offDay(let name):
-            return (name, isSelected ? .white.opacity(0.9) : Color.red.opacity(0.9))
+        case .offDay:
+            return Color.red.opacity(0.9 * opacity)
         case .workday:
-            return ("班", isSelected ? .white.opacity(0.9) : .secondary)
+            return Color.secondary.opacity(0.8 * opacity)
         }
     }
 
