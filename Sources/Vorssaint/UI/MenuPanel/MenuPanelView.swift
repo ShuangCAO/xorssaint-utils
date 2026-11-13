@@ -80,6 +80,7 @@ struct MenuPanelView: View {
     @AppStorage(DefaultsKey.panelShowFanControl) private var showFanControl = true
     @AppStorage(DefaultsKey.panelShowKeepAwake) private var showKeepAwake = true
     @AppStorage(DefaultsKey.panelShowCalendar) private var showCalendar = true
+    @AppStorage(DefaultsKey.panelShowHeaderIcon) private var showHeaderIcon = true
     @AppStorage(DefaultsKey.panelShowBrightness) private var showBrightness = true
     @AppStorage(DefaultsKey.brightnessControlEnabled) private var brightnessEnabled = false
     @AppStorage(DefaultsKey.panelShowUtilities) private var showUtilities = true
@@ -288,7 +289,10 @@ struct MenuPanelView: View {
         let bannerHeight = updates.state.showsMenuPanelBanner
             ? (max(updateBannerHeight, 48) + 12)
             : 0
-        return 180 + bannerHeight
+        // The 180 pt chrome budget includes the 36 pt brand row. Hiding the
+        // row reclaims that space instead of leaving it blank at the bottom.
+        let headerHeight: CGFloat = (showHeaderIcon || AppInfo.isBeta) ? 36 : 0
+        return 144 + headerHeight + bannerHeight
     }
 
     private var estimatedNavigableContentHeight: CGFloat {
@@ -510,42 +514,49 @@ struct MenuPanelView: View {
 private struct MenuPanelHeader: View {
     @Environment(\.colorScheme) private var colorScheme
     @ObservedObject private var l10n = L10n.shared
+    @AppStorage(DefaultsKey.panelShowHeaderIcon) private var showsIcon = true
 
     var body: some View {
-        ZStack {
-            BrandMark(width: 48, tint: markTint)
-                .frame(height: 28)
-                .accessibilityHidden(true)
+        // The beta badge and its feedback button keep the row alive even
+        // when the brand mark is hidden.
+        if showsIcon || AppInfo.isBeta {
+            ZStack {
+                if showsIcon {
+                    BrandMark(width: 48, tint: markTint)
+                        .frame(height: 28)
+                        .accessibilityHidden(true)
+                }
 
-            if AppInfo.isBeta {
-                HStack {
-                    Text(l10n.s.betaBadgeLabel.uppercased())
-                        .font(.system(size: 9, weight: .bold))
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Color.orange.opacity(0.18))
-                        .foregroundStyle(.orange)
-                        .clipShape(Capsule())
+                if AppInfo.isBeta {
+                    HStack {
+                        Text(l10n.s.betaBadgeLabel.uppercased())
+                            .font(.system(size: 9, weight: .bold))
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Color.orange.opacity(0.18))
+                            .foregroundStyle(.orange)
+                            .clipShape(Capsule())
 
-                    Spacer()
+                        Spacer()
 
-                    Button {
-                        appDelegate()?.openFeedbackWindow()
-                    } label: {
-                        Image(systemName: "bubble.left.and.text.bubble.right")
-                            .font(.system(size: 11, weight: .medium))
-                            .foregroundStyle(.secondary)
-                            .padding(4)
-                            .contentShape(Rectangle())
+                        Button {
+                            appDelegate()?.openFeedbackWindow()
+                        } label: {
+                            Image(systemName: "bubble.left.and.text.bubble.right")
+                                .font(.system(size: 11, weight: .medium))
+                                .foregroundStyle(.secondary)
+                                .padding(4)
+                                .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        .help(FeatureStrings.feedback(l10n.language).openButton)
                     }
-                    .buttonStyle(.plain)
-                    .help(FeatureStrings.feedback(l10n.language).openButton)
                 }
             }
+            .frame(height: 28)
+            .padding(.vertical, 4)
+            .frame(maxWidth: .infinity)
         }
-        .frame(height: 28)
-        .padding(.vertical, 4)
-        .frame(maxWidth: .infinity)
     }
 
     private var markTint: Color {

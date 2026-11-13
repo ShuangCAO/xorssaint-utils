@@ -387,6 +387,7 @@ enum DefaultsKey {
     static let panelControlInputExpanded = "panelControlInputExpanded"
     static let panelControlFilesExpanded = "panelControlFilesExpanded"
     // Show/hide whole panel sections that have no monitorShow* key of their own.
+    static let panelShowHeaderIcon = "panelShowHeaderIcon"
     static let panelShowCalendar = "panelShowCalendar"
     static let panelShowKeepAwake = "panelShowKeepAwake"
     static let panelShowBrightness = "panelShowBrightness"
@@ -1679,6 +1680,7 @@ enum Defaults {
         DefaultsKey.panelControlInputExpanded: false,
         DefaultsKey.panelControlFilesExpanded: false,
         DefaultsKey.panelShowCalendar: true,
+        DefaultsKey.panelShowHeaderIcon: true,
         DefaultsKey.panelShowKeepAwake: true,
         DefaultsKey.panelShowBrightness: true,
         DefaultsKey.panelShowUtilities: true,
