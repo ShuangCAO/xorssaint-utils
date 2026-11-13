@@ -66,6 +66,9 @@ struct ClipyStrings {
     let addFolder: String
     let selectFolder: String
     let renameFolder: String
+    let credits: String
+    let attribution: String
+    let clipyLicense: String
 }
 
 extension FeatureStrings {
@@ -92,7 +95,7 @@ extension FeatureStrings {
 
 extension ClipyStrings {
     static let enUS = ClipyStrings(
-        title: "Clipy",
+        title: "CCClip",
         hubDescription: "A separate clipboard menu with its own history, snippets and shortcuts.",
         pageDescription: "Clipboard menu behavior, capture types, display and shortcuts.",
         general: "General",
@@ -153,11 +156,14 @@ extension ClipyStrings {
         edit: "Edit",
         addFolder: "Add Folder",
         selectFolder: "Select a folder",
-        renameFolder: "Rename Folder"
+        renameFolder: "Rename Folder",
+        credits: "Credits",
+        attribution: "The clipboard menu is inspired by Clipy, © the Clipy Project, licensed under the MIT License.",
+        clipyLicense: "Clipy on GitHub (MIT License)"
     )
 
     static let ptBR = ClipyStrings(
-        title: "Clipy",
+        title: "CCClip",
         hubDescription: "A separate clipboard menu with its own history, snippets and shortcuts.",
         pageDescription: "Clipboard menu behavior, capture types, display and shortcuts.",
         general: "General",
@@ -218,11 +224,14 @@ extension ClipyStrings {
         edit: "Edit",
         addFolder: "Add Folder",
         selectFolder: "Select a folder",
-        renameFolder: "Rename Folder"
+        renameFolder: "Rename Folder",
+        credits: "Credits",
+        attribution: "The clipboard menu is inspired by Clipy, © the Clipy Project, licensed under the MIT License.",
+        clipyLicense: "Clipy on GitHub (MIT License)"
     )
 
     static let tr = ClipyStrings(
-        title: "Clipy",
+        title: "CCClip",
         hubDescription: "A separate clipboard menu with its own history, snippets and shortcuts.",
         pageDescription: "Clipboard menu behavior, capture types, display and shortcuts.",
         general: "General",
@@ -283,11 +292,14 @@ extension ClipyStrings {
         edit: "Edit",
         addFolder: "Add Folder",
         selectFolder: "Select a folder",
-        renameFolder: "Rename Folder"
+        renameFolder: "Rename Folder",
+        credits: "Credits",
+        attribution: "The clipboard menu is inspired by Clipy, © the Clipy Project, licensed under the MIT License.",
+        clipyLicense: "Clipy on GitHub (MIT License)"
     )
 
     static let ru = ClipyStrings(
-        title: "Clipy",
+        title: "CCClip",
         hubDescription: "A separate clipboard menu with its own history, snippets and shortcuts.",
         pageDescription: "Clipboard menu behavior, capture types, display and shortcuts.",
         general: "General",
@@ -348,11 +360,14 @@ extension ClipyStrings {
         edit: "Edit",
         addFolder: "Add Folder",
         selectFolder: "Select a folder",
-        renameFolder: "Rename Folder"
+        renameFolder: "Rename Folder",
+        credits: "Credits",
+        attribution: "The clipboard menu is inspired by Clipy, © the Clipy Project, licensed under the MIT License.",
+        clipyLicense: "Clipy on GitHub (MIT License)"
     )
 
     static let es = ClipyStrings(
-        title: "Clipy",
+        title: "CCClip",
         hubDescription: "A separate clipboard menu with its own history, snippets and shortcuts.",
         pageDescription: "Clipboard menu behavior, capture types, display and shortcuts.",
         general: "General",
@@ -413,11 +428,14 @@ extension ClipyStrings {
         edit: "Edit",
         addFolder: "Add Folder",
         selectFolder: "Select a folder",
-        renameFolder: "Rename Folder"
+        renameFolder: "Rename Folder",
+        credits: "Credits",
+        attribution: "The clipboard menu is inspired by Clipy, © the Clipy Project, licensed under the MIT License.",
+        clipyLicense: "Clipy on GitHub (MIT License)"
     )
 
     static let sk = ClipyStrings(
-        title: "Clipy",
+        title: "CCClip",
         hubDescription: "A separate clipboard menu with its own history, snippets and shortcuts.",
         pageDescription: "Clipboard menu behavior, capture types, display and shortcuts.",
         general: "General",
@@ -478,11 +496,14 @@ extension ClipyStrings {
         edit: "Edit",
         addFolder: "Add Folder",
         selectFolder: "Select a folder",
-        renameFolder: "Rename Folder"
+        renameFolder: "Rename Folder",
+        credits: "Credits",
+        attribution: "The clipboard menu is inspired by Clipy, © the Clipy Project, licensed under the MIT License.",
+        clipyLicense: "Clipy on GitHub (MIT License)"
     )
 
     static let de = ClipyStrings(
-        title: "Clipy",
+        title: "CCClip",
         hubDescription: "A separate clipboard menu with its own history, snippets and shortcuts.",
         pageDescription: "Clipboard menu behavior, capture types, display and shortcuts.",
         general: "General",
@@ -543,11 +564,14 @@ extension ClipyStrings {
         edit: "Edit",
         addFolder: "Add Folder",
         selectFolder: "Select a folder",
-        renameFolder: "Rename Folder"
+        renameFolder: "Rename Folder",
+        credits: "Credits",
+        attribution: "The clipboard menu is inspired by Clipy, © the Clipy Project, licensed under the MIT License.",
+        clipyLicense: "Clipy on GitHub (MIT License)"
     )
 
     static let fr = ClipyStrings(
-        title: "Clipy",
+        title: "CCClip",
         hubDescription: "A separate clipboard menu with its own history, snippets and shortcuts.",
         pageDescription: "Clipboard menu behavior, capture types, display and shortcuts.",
         general: "General",
@@ -608,11 +632,14 @@ extension ClipyStrings {
         edit: "Edit",
         addFolder: "Add Folder",
         selectFolder: "Select a folder",
-        renameFolder: "Rename Folder"
+        renameFolder: "Rename Folder",
+        credits: "Credits",
+        attribution: "The clipboard menu is inspired by Clipy, © the Clipy Project, licensed under the MIT License.",
+        clipyLicense: "Clipy on GitHub (MIT License)"
     )
 
     static let it = ClipyStrings(
-        title: "Clipy",
+        title: "CCClip",
         hubDescription: "A separate clipboard menu with its own history, snippets and shortcuts.",
         pageDescription: "Clipboard menu behavior, capture types, display and shortcuts.",
         general: "General",
@@ -673,11 +700,14 @@ extension ClipyStrings {
         edit: "Edit",
         addFolder: "Add Folder",
         selectFolder: "Select a folder",
-        renameFolder: "Rename Folder"
+        renameFolder: "Rename Folder",
+        credits: "Credits",
+        attribution: "The clipboard menu is inspired by Clipy, © the Clipy Project, licensed under the MIT License.",
+        clipyLicense: "Clipy on GitHub (MIT License)"
     )
 
     static let ja = ClipyStrings(
-        title: "Clipy",
+        title: "CCClip",
         hubDescription: "A separate clipboard menu with its own history, snippets and shortcuts.",
         pageDescription: "Clipboard menu behavior, capture types, display and shortcuts.",
         general: "General",
@@ -738,11 +768,14 @@ extension ClipyStrings {
         edit: "Edit",
         addFolder: "Add Folder",
         selectFolder: "Select a folder",
-        renameFolder: "Rename Folder"
+        renameFolder: "Rename Folder",
+        credits: "Credits",
+        attribution: "The clipboard menu is inspired by Clipy, © the Clipy Project, licensed under the MIT License.",
+        clipyLicense: "Clipy on GitHub (MIT License)"
     )
 
     static let ko = ClipyStrings(
-        title: "Clipy",
+        title: "CCClip",
         hubDescription: "A separate clipboard menu with its own history, snippets and shortcuts.",
         pageDescription: "Clipboard menu behavior, capture types, display and shortcuts.",
         general: "General",
@@ -803,11 +836,14 @@ extension ClipyStrings {
         edit: "Edit",
         addFolder: "Add Folder",
         selectFolder: "Select a folder",
-        renameFolder: "Rename Folder"
+        renameFolder: "Rename Folder",
+        credits: "Credits",
+        attribution: "The clipboard menu is inspired by Clipy, © the Clipy Project, licensed under the MIT License.",
+        clipyLicense: "Clipy on GitHub (MIT License)"
     )
 
     static let uk = ClipyStrings(
-        title: "Clipy",
+        title: "CCClip",
         hubDescription: "A separate clipboard menu with its own history, snippets and shortcuts.",
         pageDescription: "Clipboard menu behavior, capture types, display and shortcuts.",
         general: "General",
@@ -868,11 +904,14 @@ extension ClipyStrings {
         edit: "Edit",
         addFolder: "Add Folder",
         selectFolder: "Select a folder",
-        renameFolder: "Rename Folder"
+        renameFolder: "Rename Folder",
+        credits: "Credits",
+        attribution: "The clipboard menu is inspired by Clipy, © the Clipy Project, licensed under the MIT License.",
+        clipyLicense: "Clipy on GitHub (MIT License)"
     )
 
     static let zhHans = ClipyStrings(
-        title: "Clipy",
+        title: "CCClip",
         hubDescription: "独立的剪贴板菜单，带自己的历史、片段和快捷键。",
         pageDescription: "剪贴板菜单的行为、捕获类型、显示和快捷键。",
         general: "通用",
@@ -933,11 +972,14 @@ extension ClipyStrings {
         edit: "编辑",
         addFolder: "添加文件夹",
         selectFolder: "选择一个文件夹",
-        renameFolder: "重命名文件夹"
+        renameFolder: "重命名文件夹",
+        credits: "版权说明",
+        attribution: "剪贴板菜单交互参考 Clipy，版权归 Clipy Project 所有，按 MIT 许可发布。",
+        clipyLicense: "Clipy GitHub（MIT 许可）"
     )
 
     static let zhTW = ClipyStrings(
-        title: "Clipy",
+        title: "CCClip",
         hubDescription: "獨立的剪貼簿選單，帶自己的歷史、片段和快速鍵。",
         pageDescription: "剪貼簿選單的行為、擷取類型、顯示和快速鍵。",
         general: "一般",
@@ -998,11 +1040,14 @@ extension ClipyStrings {
         edit: "編輯",
         addFolder: "新增資料夾",
         selectFolder: "選擇一個資料夾",
-        renameFolder: "重新命名資料夾"
+        renameFolder: "重新命名資料夾",
+        credits: "版權說明",
+        attribution: "剪貼簿選單互動參考 Clipy，版權歸 Clipy Project 所有，依 MIT 授權發布。",
+        clipyLicense: "Clipy GitHub（MIT 授權）"
     )
 
     static let zhHK = ClipyStrings(
-        title: "Clipy",
+        title: "CCClip",
         hubDescription: "獨立的剪貼簿選單，帶自己的歷史、片段和快速鍵。",
         pageDescription: "剪貼簿選單的行為、擷取類型、顯示和快速鍵。",
         general: "一般",
@@ -1063,7 +1108,10 @@ extension ClipyStrings {
         edit: "編輯",
         addFolder: "新增資料夾",
         selectFolder: "選擇一個資料夾",
-        renameFolder: "重新命名資料夾"
+        renameFolder: "重新命名資料夾",
+        credits: "版權說明",
+        attribution: "剪貼簿選單互動參考 Clipy，版權歸 Clipy Project 所有，依 MIT 授權發布。",
+        clipyLicense: "Clipy GitHub（MIT 授權）"
     )
 
 }

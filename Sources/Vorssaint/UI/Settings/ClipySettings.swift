@@ -159,6 +159,18 @@ struct ClipySettings: View {
             }
 
             Section {
+                if let url = URL(string: "https://github.com/Clipy/Clipy") {
+                    Link(text.clipyLicense, destination: url)
+                }
+                Text(text.attribution)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            } header: {
+                Text(text.credits)
+            }
+
+            Section {
                 Button(text.clearHistory, role: .destructive) {
                     service.confirmClearHistory()
                 }
