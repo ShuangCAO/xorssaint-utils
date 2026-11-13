@@ -372,6 +372,7 @@ if (( TEST )); then
         Sources/Vorssaint/Core/AppearanceStrings.swift
         Sources/Vorssaint/Core/GeneralSettingsStrings.swift
         Sources/Vorssaint/Core/CalendarStrings.swift
+        Sources/Vorssaint/Core/ClipyStrings.swift
         Sources/Vorssaint/Core/SettingsPageStrings.swift
         Sources/Vorssaint/Core/BatteryTimeStrings.swift
         Sources/Vorssaint/Core/CPUCoreStrings.swift
@@ -407,6 +408,9 @@ if (( TEST )); then
         Sources/Vorssaint/Services/Recorder/RecorderComposition.swift
         Sources/Vorssaint/Services/Recorder/RecordingSharingSupport.swift
         Sources/Vorssaint/Services/PrivateFileStore.swift
+        Sources/Vorssaint/Core/ClipySupport.swift
+        Sources/Vorssaint/Services/Clipy/ClipyStore.swift
+        Sources/Vorssaint/Services/Clipy/ClipyCapture.swift
         Sources/Vorssaint/Services/Recorder/RecorderTakeStore.swift
         Sources/Vorssaint/Services/Recorder/RecorderPresetImageStore.swift
         Sources/Vorssaint/Services/Recorder/RecorderMotion.swift

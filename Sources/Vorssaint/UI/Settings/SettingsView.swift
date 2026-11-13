@@ -610,6 +610,7 @@ struct SettingsView: View {
         case .appUpdates: AppUpdatesSettings()
         case .media: MediaSettings()
         case .clipboard: ClipboardSettings()
+        case .clipy: ClipySettings()
         case .quickTools: QuickToolsSettings()
         case .screenshot: ScreenCaptureSettings()
         case .windowLayout: WindowLayoutSettings()

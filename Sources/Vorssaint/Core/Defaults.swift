@@ -620,6 +620,42 @@ enum DefaultsKey {
     static let windowPreviewExcludedApps = "windowPreviewExcludedApps" // pause Dock Preview thumbnail capture while these apps are in front (once shared with the app switcher)
     static let switcherPreviewExcludedApps = "switcherPreviewExcludedApps" // pause app switcher thumbnail capture while these apps are in front
     static let diskEjectExcludedVolumes = "diskEjectExcludedVolumes" // volume names/UUIDs excluded from Eject all disks
+    // Clipy: an independent clipboard menu with its own capture and storage.
+    static let clipyEnabled = "clipyEnabled"
+    static let clipyAutoPaste = "clipyAutoPaste"
+    static let clipyHistoryLimit = "clipyHistoryLimit"
+    static let clipySortByLastUsed = "clipySortByLastUsed"
+    static let clipyAllowDuplicates = "clipyAllowDuplicates"
+    static let clipyOverwriteDuplicates = "clipyOverwriteDuplicates"
+    static let clipyInlineLimit = "clipyInlineLimit"
+    static let clipyFolderLimit = "clipyFolderLimit"
+    static let clipyTitleLength = "clipyTitleLength"
+    static let clipyMarksNumbers = "clipyMarksNumbers"
+    static let clipyStartsAtZero = "clipyStartsAtZero"
+    static let clipyNumericShortcuts = "clipyNumericShortcuts"
+    static let clipyHighlightFirst = "clipyHighlightFirst"
+    static let clipyShowImages = "clipyShowImages"
+    static let clipyThumbnailWidth = "clipyThumbnailWidth"
+    static let clipyThumbnailHeight = "clipyThumbnailHeight"
+    static let clipyShowColorPreview = "clipyShowColorPreview"
+    static let clipyParseColorsWithoutHash = "clipyParseColorsWithoutHash"
+    static let clipyParseCSSNamedColors = "clipyParseCSSNamedColors"
+    static let clipyCapturePlainText = "clipyCapturePlainText"
+    static let clipyCaptureRTF = "clipyCaptureRTF"
+    static let clipyCaptureRTFD = "clipyCaptureRTFD"
+    static let clipyCapturePDF = "clipyCapturePDF"
+    static let clipyCaptureFiles = "clipyCaptureFiles"
+    static let clipyCaptureURL = "clipyCaptureURL"
+    static let clipyCaptureImages = "clipyCaptureImages"
+    static let clipyCaptureHTML = "clipyCaptureHTML"
+    static let clipyMainShortcut = "clipyMainShortcut"
+    static let clipyHistoryShortcut = "clipyHistoryShortcut"
+    static let clipySnippetsShortcut = "clipySnippetsShortcut"
+    static let clipyEditSnippetsShortcut = "clipyEditSnippetsShortcut"
+    static let clipyClearHistoryShortcut = "clipyClearHistoryShortcut"
+    static let clipySnippets = "clipySnippets"
+    static let clipySnippetFolderShortcuts = "clipySnippetFolderShortcuts"
+
     // Quick tools: paste as plain text, color picker, screen OCR, mic mute.
     static let pastePlainEnabled = "pastePlainEnabled"
     static let pastePlainShortcut = "pastePlainShortcut"
@@ -1859,6 +1895,40 @@ enum Defaults {
         DefaultsKey.clipboardHistoryWindowHeight: 0.0,
         DefaultsKey.clipboardHistoryMenuBarPreview: false,
         DefaultsKey.clipboardHistoryMenuBarPreviewLength: Defaults.defaultClipboardMenuBarPreviewLength,
+        DefaultsKey.clipyEnabled: true,
+        DefaultsKey.clipyAutoPaste: true,
+        DefaultsKey.clipyHistoryLimit: 100,
+        DefaultsKey.clipySortByLastUsed: false,
+        DefaultsKey.clipyAllowDuplicates: false,
+        DefaultsKey.clipyOverwriteDuplicates: true,
+        DefaultsKey.clipyInlineLimit: 10,
+        DefaultsKey.clipyFolderLimit: 10,
+        DefaultsKey.clipyTitleLength: 60,
+        DefaultsKey.clipyMarksNumbers: true,
+        DefaultsKey.clipyStartsAtZero: false,
+        DefaultsKey.clipyNumericShortcuts: true,
+        DefaultsKey.clipyHighlightFirst: true,
+        DefaultsKey.clipyShowImages: true,
+        DefaultsKey.clipyThumbnailWidth: 40,
+        DefaultsKey.clipyThumbnailHeight: 30,
+        DefaultsKey.clipyShowColorPreview: true,
+        DefaultsKey.clipyParseColorsWithoutHash: true,
+        DefaultsKey.clipyParseCSSNamedColors: true,
+        DefaultsKey.clipyCapturePlainText: true,
+        DefaultsKey.clipyCaptureRTF: false,
+        DefaultsKey.clipyCaptureRTFD: false,
+        DefaultsKey.clipyCapturePDF: false,
+        DefaultsKey.clipyCaptureFiles: false,
+        DefaultsKey.clipyCaptureURL: false,
+        DefaultsKey.clipyCaptureImages: false,
+        DefaultsKey.clipyCaptureHTML: false,
+        DefaultsKey.clipyMainShortcut: "shift+command:9",
+        DefaultsKey.clipyHistoryShortcut: "control+command:9",
+        DefaultsKey.clipySnippetsShortcut: "shift+command:11",
+        DefaultsKey.clipyEditSnippetsShortcut: "option+command:11",
+        DefaultsKey.clipyClearHistoryShortcut: "",
+        DefaultsKey.clipySnippets: Data(),
+        DefaultsKey.clipySnippetFolderShortcuts: Data(),
         DefaultsKey.clipboardAutoClearOnDelay: false,
         DefaultsKey.clipboardAutoClearDelay: Defaults.defaultClipboardAutoClearDelay,
         DefaultsKey.clipboardAutoClearOnSleep: false,

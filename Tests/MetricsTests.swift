@@ -25,6 +25,7 @@ struct MetricsTests {
             }),
             ("menu-bar-clock", { MenuBarClockTests.run(suite) }),
             ("calendar", { CalendarSupportTests.run(suite) }),
+            ("clipy", { ClipyTests.run(suite) }),
             ("clipboard", {
                 ClipboardFeatureTests.run(suite)
                 PastePlainTests.run(suite)

@@ -12,6 +12,7 @@ All notable changes to this project are documented here. The format follows
 - The app icon above the panel's tabs can be hidden from General settings to reclaim its vertical space.
 - A mini mode shrinks the panel's top section switcher to smaller icons and tighter spacing.
 - Holidays and adjusted workdays are marked with colored dots on the calendar panel's dates.
+- Clipy is an optional, independent clipboard menu with its own history and snippets. It opens from its shortcuts, captures plain text by default, and has its own settings page.
 
 ## [3.4.4] - 2026-11-11
 

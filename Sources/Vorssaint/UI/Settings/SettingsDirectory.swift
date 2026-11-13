@@ -511,6 +511,15 @@ enum SettingsDirectory {
                                                                 .listTitle]),
                                         (.pastePlain, [s.pastePlainName]),
                                        ]),
+                SettingsDirectoryItem(page: .clipy,
+                                       title: FeatureStrings.clipy(language).title,
+                                       icon: "list.bullet.rectangle",
+                                       featureKeywords: [
+                                        (.clipy, [FeatureStrings.clipy(language).title,
+                                                  FeatureStrings.clipy(language).historyLimit,
+                                                  FeatureStrings.clipy(language).types,
+                                                  FeatureStrings.clipy(language).shortcuts])
+                                       ]),
                 SettingsDirectoryItem(page: .cutPaste,
                                        title: FeatureStrings.finderRename(language).pageTitle,
                                        icon: "filemenu.and.selection",

@@ -20,7 +20,7 @@ enum AppFeature: String, CaseIterable {
          mouseClickDebounce, keyboardDebounce, textSnippets, superKey, quitWindowProtection
     // Clipboard and files
     case clipboardHistory, pastePlain, finderCutPaste, finderRename, shelf, urlCleaner,
-         diskImageInstaller
+         diskImageInstaller, clipy
     // Sound
     case mixer, soundOutputSwitcher, audioPriority, micMute, musicBlock
     // Energy and display
@@ -107,7 +107,7 @@ extension AppFeature {
              .keyboardDebounce, .textSnippets, .superKey, .quitWindowProtection, .mouseClickDebounce:
             return .mouseKeyboard
         case .clipboardHistory, .pastePlain, .finderCutPaste, .finderRename, .shelf, .urlCleaner,
-             .diskImageInstaller:
+             .diskImageInstaller, .clipy:
             return .clipboardFiles
         case .mixer, .soundOutputSwitcher, .audioPriority, .micMute, .musicBlock:
             return .sound
@@ -156,6 +156,7 @@ extension AppFeature {
         case .mouseClickDebounce: return "cursorarrow.click"
         case .quitWindowProtection: return "shield.lefthalf.filled"
         case .clipboardHistory: return "doc.on.clipboard"
+        case .clipy: return "list.bullet.rectangle"
         case .pastePlain: return "doc.plaintext"
         case .finderCutPaste: return "scissors"
         case .finderRename: return "pencil"
@@ -277,6 +278,7 @@ extension AppFeature {
         case .notch: return [DefaultsKey.notchEnabled]
         case .radialMenu: return [DefaultsKey.radialMenuEnabled]
         case .clipboardHistory: return [DefaultsKey.clipboardHistoryEnabled]
+        case .clipy: return [DefaultsKey.clipyEnabled]
         case .pastePlain: return [DefaultsKey.pastePlainEnabled]
         case .finderCutPaste: return [DefaultsKey.finderCutPasteEnabled,
                                       DefaultsKey.finderPasteImageAsFile]
@@ -360,7 +362,7 @@ extension AppFeature {
              .autoQuit, .quitWindowProtection, .cleaningMode, .pastePlain, .radialMenu,
              // The bar reads other apps' menus and windows and types at the
              // caret, all of it through Accessibility.
-             .commandBar:
+             .commandBar, .clipy:
             return [.accessibility]
         case .finderCutPaste: return [.accessibility, .automationFinder]
         case .finderRename: return [.accessibility]
@@ -404,7 +406,7 @@ extension AppFeature {
         switch self {
         case .keepAwake, .brightness, .radialMenu, .quickToggles, .cleaner,
              .uninstaller, .homebrew, .appUpdates, .mixer, .cameraPreview,
-             .micMute, .musicBlock, .notchWatch:
+             .micMute, .musicBlock, .notchWatch, .clipy:
             return []
         default:
             return permissions.filter { $0 == .accessibility || $0 == .screenRecording }
@@ -491,7 +493,8 @@ extension AppFeature {
              .connectedDevices:
             return true
         case .focusFollowsMouse, .scrollHorizontal, .scrollZoom, .linearScroll, .scrollSpeed, .diskImageInstaller, .audioPriority,
-             .wallpaper, .killProcess, .portManager, .fanControl, .notchMascot, .spacesOrder, .quitApps:
+             .wallpaper, .killProcess, .portManager, .fanControl, .notchMascot, .spacesOrder, .quitApps,
+             .clipy:
             return false
         }
     }

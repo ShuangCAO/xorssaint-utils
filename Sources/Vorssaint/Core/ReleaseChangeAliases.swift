@@ -92,6 +92,7 @@ enum ReleaseChangeAliases {
             "quit and close protection", "command q and command w"]
         case .clipboardHistory: return ["clipboard history", .exact("Clipboard"), .island("clipboard"),
             "clear unpinned", "clipboard previews", "clipboard items"]
+        case .clipy: return ["clipy", "clipboard menu", "clipboard menu history"]
         case .pastePlain: return ["paste as plain text", "paste plain text"]
         case .finderCutPaste: return ["cut & paste", "cut and paste", "cut files", "finder cut", "cut operations"]
         case .finderRename: return ["finder shortcuts", "rename shortcut", "renames selected files"]
