@@ -99,7 +99,8 @@ struct CalendarSection: View {
     }
 
     private var grid: some View {
-        let weeks = CalendarGrid.weeks(month: displayedMonth, calendar: calendar, today: today)
+        let weeks = CalendarGrid.weeks(month: displayedMonth, calendar: calendar, today: today,
+                                       holidayStore: isChineseLanguage ? HolidayStore.shared : nil)
         return LazyVGrid(
             columns: Array(repeating: GridItem(.flexible(), spacing: 2), count: 7),
             spacing: 2
@@ -123,54 +124,62 @@ struct CalendarSection: View {
             selectedDate = day.date
             hasExplicitSelection = true
         } label: {
-            Text("\(day.dayNumber)")
-                .font(.system(size: day.isCurrentMonth ? 12.5 : 11,
-                              weight: isSelected ? .semibold
-                                    : day.isCurrentMonth ? .medium : .regular))
-                .foregroundStyle(dayColor(day, isSelected: isSelected))
-                .frame(maxWidth: .infinity)
-                .frame(height: 28)
-                .background {
-                    if isSelected {
-                        RoundedRectangle(cornerRadius: 6, style: .continuous)
-                            .fill(Color.accentColor)
-                    } else if day.isToday {
-                        RoundedRectangle(cornerRadius: 6, style: .continuous)
-                            .strokeBorder(Color.accentColor, lineWidth: 1.4)
-                    }
+            VStack(spacing: 0) {
+                Text("\(day.dayNumber)")
+                    .font(.system(size: day.isCurrentMonth ? 12.5 : 11,
+                                  weight: isSelected ? .semibold
+                                        : day.isCurrentMonth ? .medium : .regular))
+                    .foregroundStyle(dayColor(day, isSelected: isSelected))
+                if let marker = holidayMarker(for: day, isSelected: isSelected) {
+                    Text(marker.text)
+                        .font(.system(size: 7.5, weight: .bold))
+                        .foregroundStyle(marker.color)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
                 }
-                .contentShape(Rectangle())
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 30)
+            .background {
+                if isSelected {
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .fill(Color.accentColor)
+                } else if day.isToday {
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .strokeBorder(Color.accentColor, lineWidth: 1.4)
+                }
+            }
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .help(tooltip(for: day))
-        .accessibilityLabel(Text(day.date, format: .dateTime.year().month().day()))
+        .accessibilityLabel(Text(accessibilityLabel(for: day)))
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
-    /// Gregorian date, then the lunar date and any holiday or adjusted
-    /// workday. The lunar names and the holiday data are Chinese, so they
-    /// only join the tooltip while the app is showing Chinese.
-    private func tooltip(for day: CalendarDay) -> String {
-        let locale = Locale(identifier: l10n.language.rawValue)
-        var lines = [day.date.formatted(.dateTime.year().month().day().weekday(.wide)
-            .locale(locale))]
-        guard isChineseLanguage else { return lines[0] }
+    /// The holiday name sits under the date; an adjusted workday only needs
+    /// the standard 班 marker, since its name is the holiday it belongs to.
+    private func holidayMarker(for day: CalendarDay,
+                               isSelected: Bool) -> (text: String, color: Color)? {
+        guard let holiday = day.holiday else { return nil }
+        switch holiday {
+        case .offDay(let name):
+            return (name, isSelected ? .white.opacity(0.9) : Color.red.opacity(0.9))
+        case .workday:
+            return ("班", isSelected ? .white.opacity(0.9) : Color.orange)
+        }
+    }
 
-        let lunar = LunarDateSupport.text(for: day.date, locale: locale,
-                                          timeZone: calendar.timeZone)
-        if !lunar.isEmpty {
-            lines.append("\(lunarPrefix)\(lunar)")
+    private func accessibilityLabel(for day: CalendarDay) -> String {
+        var label = day.date.formatted(.dateTime.year().month().day()
+            .locale(Locale(identifier: l10n.language.rawValue)))
+        guard let holiday = day.holiday else { return label }
+        switch holiday {
+        case .offDay(let name):
+            label += "，\(name)"
+        case .workday(let name):
+            label += "，\(name)，调休上班"
         }
-        if let holiday = HolidayStore.shared?.info(
-            forDayKey: HolidayStore.dayKey(for: day.date, calendar: calendar)) {
-            switch holiday {
-            case .offDay(let name):
-                lines.append("\(name) · 休")
-            case .workday(let name):
-                lines.append("\(name) · 班")
-            }
-        }
-        return lines.joined(separator: "\n")
+        return label
     }
 
     private var isChineseLanguage: Bool {
@@ -178,10 +187,6 @@ struct CalendarSection: View {
         case .zhHans, .zhTW, .zhHK: return true
         default: return false
         }
-    }
-
-    private var lunarPrefix: String {
-        l10n.language == .zhHans ? "农历" : "農曆"
     }
 
     private func dayColor(_ day: CalendarDay, isSelected: Bool) -> Color {

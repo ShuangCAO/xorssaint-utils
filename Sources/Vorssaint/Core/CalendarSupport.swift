@@ -33,6 +33,7 @@ struct CalendarDay: Hashable, Identifiable {
     let isToday: Bool
     let isCurrentMonth: Bool
     let isWeekend: Bool
+    let holiday: HolidayStore.HolidayInfo?
 
     var id: Date { date }
 }
@@ -53,7 +54,8 @@ enum CalendarGrid {
 
     static func weeks(month: CalendarMonth,
                       calendar: Calendar,
-                      today: Date) -> [[CalendarDay]] {
+                      today: Date,
+                      holidayStore: HolidayStore? = nil) -> [[CalendarDay]] {
         guard let firstOfMonth = calendar.date(from: DateComponents(year: month.year,
                                                                     month: month.month,
                                                                     day: 1))
@@ -80,7 +82,9 @@ enum CalendarGrid {
                     isToday: calendar.isDate(date, inSameDayAs: today),
                     isCurrentMonth: components.month == month.month
                         && components.year == month.year,
-                    isWeekend: calendar.isDateInWeekend(date)))
+                    isWeekend: calendar.isDateInWeekend(date),
+                    holiday: holidayStore?.info(
+                        forDayKey: HolidayStore.dayKey(for: date, calendar: calendar))))
             }
             rows.append(row)
         }

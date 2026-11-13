@@ -11,7 +11,7 @@ All notable changes to this project are documented here. The format follows
 - A month calendar leads the menu panel. Page through months, jump to today, and choose whether weeks start on Monday or Sunday in General settings.
 - The app icon above the panel's tabs can be hidden from General settings to reclaim its vertical space.
 - A mini mode shrinks the panel's top section switcher to smaller icons and tighter spacing.
-- Hover a date in the calendar panel to see its lunar date and any holiday or adjusted workday.
+- Holiday names and adjusted workdays appear directly on the calendar panel's dates.
 
 ## [3.4.4] - 2026-11-11
 
