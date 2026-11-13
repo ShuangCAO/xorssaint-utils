@@ -170,9 +170,16 @@ final class ClipyMenuController {
         if modifiers == [.command],
            UserDefaults.standard.bool(forKey: DefaultsKey.clipyNumericShortcuts),
            let index = ClipyMenuBuilder.digitIndex(for: Int64(event.keyCode)) {
-            if let folder = model.openFolder {
-                if folder.entries.indices.contains(index) {
-                    service.paste(folder.entries[index])
+            if let open = model.openFolder {
+                switch open {
+                case .history(let folder):
+                    if folder.entries.indices.contains(index) {
+                        service.paste(folder.entries[index])
+                    }
+                case .snippets(_, let snippets):
+                    if snippets.indices.contains(index) {
+                        service.pasteText(snippets[index].content)
+                    }
                 }
             } else {
                 model.activateNumber(index)

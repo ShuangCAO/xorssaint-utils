@@ -8,6 +8,7 @@ enum ClipyMenuRow: Identifiable {
     case header(String, Int)
     case entry(ClipyEntry, Int)
     case folder(ClipyMenuFolder, Int)
+    case snippetFolder(String, [ClipySnippet], Int)
     case snippet(ClipySnippet, Int)
 
     var id: String {
@@ -15,6 +16,7 @@ enum ClipyMenuRow: Identifiable {
         case .header(_, let index): return "h-\(index)"
         case .entry(let entry, _): return "e-\(entry.id)"
         case .folder(let folder, _): return "f-\(folder.startNumber)"
+        case .snippetFolder(let name, _, _): return "sf-\(name)"
         case .snippet(let snippet, _): return "s-\(snippet.id)"
         }
     }
@@ -25,12 +27,31 @@ enum ClipyMenuRow: Identifiable {
     }
 }
 
+enum ClipyOpenFolder: Equatable {
+    case history(ClipyMenuFolder)
+    case snippets(String, [ClipySnippet])
+
+    var title: String {
+        switch self {
+        case .history(let folder): return "\(folder.start)–\(folder.end)"
+        case .snippets(let name, _): return name
+        }
+    }
+
+    var count: Int {
+        switch self {
+        case .history(let folder): return folder.entries.count
+        case .snippets(_, let snippets): return snippets.count
+        }
+    }
+}
+
 final class ClipyMenuModel: ObservableObject {
     let service: ClipyService
     let mode: ClipyMenuMode
 
     @Published var selection: Int?
-    @Published var openFolder: ClipyMenuFolder?
+    @Published var openFolder: ClipyOpenFolder?
     @Published var folderSelection: Int?
 
     init(service: ClipyService, mode: ClipyMenuMode) {
@@ -47,7 +68,9 @@ final class ClipyMenuModel: ObservableObject {
     var rootRows: [ClipyMenuRow] {
         var rows: [ClipyMenuRow] = []
         var number = 1
-        if mode != .snippets {
+        let store = ClipySnippetStore.load()
+
+        if mode == .main {
             let entries = sortedEntries
             let split = ClipyMenuBuilder.folders(
                 entries: entries,
@@ -65,21 +88,23 @@ final class ClipyMenuModel: ObservableObject {
                 }
             }
         }
-        if mode != .history {
-            let allSnippets = Self.loadSnippets()
-            let snippets = service.snippetFolderFilter.map { folder in
-                allSnippets.filter { $0.folder == folder }
-            } ?? allSnippets
-            if !snippets.isEmpty {
+
+        if mode == .snippets, let filter = service.snippetFolderFilter {
+            let snippets = store.snippets.filter { $0.enabled && $0.folder == filter }
+            if !filter.isEmpty {
+                rows.append(.header(filter, rows.count))
+            }
+            for snippet in snippets {
+                rows.append(.snippet(snippet, number))
+                number += 1
+            }
+        } else if mode == .main || mode == .snippets {
+            if !store.folders.isEmpty {
                 rows.append(.header(strings.snippetsSection, rows.count))
-                for folder in Self.snippetFolders(snippets) {
-                    if !folder.name.isEmpty {
-                        rows.append(.header(folder.name, rows.count))
-                    }
-                    for snippet in folder.snippets {
-                        rows.append(.snippet(snippet, number))
-                        number += 1
-                    }
+                for folder in store.folders {
+                    let snippets = store.snippets.filter { $0.enabled && $0.folder == folder }
+                    rows.append(.snippetFolder(folder, snippets, number))
+                    number += 1
                 }
             }
         }
@@ -88,10 +113,6 @@ final class ClipyMenuModel: ObservableObject {
 
     var actionableRows: [ClipyMenuRow] {
         rootRows.filter(\.isActionable)
-    }
-
-    var folderRows: [ClipyEntry] {
-        openFolder?.entries ?? []
     }
 
     var panelWidth: CGFloat {
@@ -130,10 +151,10 @@ final class ClipyMenuModel: ObservableObject {
     }
 
     func moveFolderSelection(by delta: Int) {
-        let rows = folderRows
-        guard !rows.isEmpty else { folderSelection = nil; return }
+        let count = openFolder?.count ?? 0
+        guard count > 0 else { folderSelection = nil; return }
         let current = folderSelection ?? 0
-        folderSelection = min(max(current + delta, 0), rows.count - 1)
+        folderSelection = min(max(current + delta, 0), count - 1)
     }
 
     func activateSelection() {
@@ -148,23 +169,38 @@ final class ClipyMenuModel: ObservableObject {
         case .entry(let entry, _):
             service.paste(entry)
         case .folder(let folder, _):
-            openFolder = folder
+            openFolder = .history(folder)
             folderSelection = folder.entries.isEmpty ? nil : 0
+        case .snippetFolder(let name, let snippets, _):
+            openFolder = .snippets(name, snippets)
+            folderSelection = snippets.isEmpty ? nil : 0
         case .snippet(let snippet, _):
             service.pasteText(snippet.content)
         }
     }
 
     func activateFolderSelection() {
-        guard let folderSelection, folderRows.indices.contains(folderSelection) else { return }
-        service.paste(folderRows[folderSelection])
+        guard let folderSelection, let openFolder,
+              openFolder.count > folderSelection else { return }
+        switch openFolder {
+        case .history(let folder):
+            service.paste(folder.entries[folderSelection])
+        case .snippets(_, let snippets):
+            service.pasteText(snippets[folderSelection].content)
+        }
     }
 
     func openSelectedFolder() {
         guard let selection, actionableRows.indices.contains(selection) else { return }
-        if case .folder(let folder, _) = actionableRows[selection] {
-            openFolder = folder
+        switch actionableRows[selection] {
+        case .folder(let folder, _):
+            openFolder = .history(folder)
             folderSelection = folder.entries.isEmpty ? nil : 0
+        case .snippetFolder(let name, let snippets, _):
+            openFolder = .snippets(name, snippets)
+            folderSelection = snippets.isEmpty ? nil : 0
+        default:
+            break
         }
     }
 
@@ -184,32 +220,5 @@ final class ClipyMenuModel: ObservableObject {
         return service.entries.sorted {
             order == .created ? $0.createdAt > $1.createdAt : $0.lastUsedAt > $1.lastUsedAt
         }
-    }
-
-    private struct SnippetFolder {
-        let name: String
-        let snippets: [ClipySnippet]
-    }
-
-    private static func snippetFolders(_ snippets: [ClipySnippet]) -> [SnippetFolder] {
-        let visible = snippets.filter(\.enabled)
-        var groups: [String: [ClipySnippet]] = [:]
-        for snippet in visible {
-            groups[snippet.folder, default: []].append(snippet)
-        }
-        var folders = groups.filter { !$0.key.isEmpty }
-            .sorted { $0.key.localizedStandardCompare($1.key) == .orderedAscending }
-            .map { SnippetFolder(name: $0.key, snippets: $0.value) }
-        if let loose = groups[""], !loose.isEmpty {
-            folders.append(SnippetFolder(name: "", snippets: loose))
-        }
-        return folders
-    }
-
-    static func loadSnippets() -> [ClipySnippet] {
-        guard let data = UserDefaults.standard.data(forKey: DefaultsKey.clipySnippets) else {
-            return []
-        }
-        return (try? JSONDecoder().decode([ClipySnippet].self, from: data)) ?? []
     }
 }

@@ -8,36 +8,7 @@ import SwiftUI
 
 enum ClipyMenuMode {
     case main
-    case history
     case snippets
-}
-
-enum ClipyShortcutRole: CaseIterable {
-    case main
-    case history
-    case snippets
-    case editSnippets
-    case clearHistory
-
-    var defaultsKey: String {
-        switch self {
-        case .main: return DefaultsKey.clipyMainShortcut
-        case .history: return DefaultsKey.clipyHistoryShortcut
-        case .snippets: return DefaultsKey.clipySnippetsShortcut
-        case .editSnippets: return DefaultsKey.clipyEditSnippetsShortcut
-        case .clearHistory: return DefaultsKey.clipyClearHistoryShortcut
-        }
-    }
-
-    var hotKeyID: UInt32 {
-        switch self {
-        case .main: return 400
-        case .history: return 401
-        case .snippets: return 402
-        case .editSnippets: return 403
-        case .clearHistory: return 404
-        }
-    }
 }
 
 enum ClipyRowIcon {
@@ -58,7 +29,7 @@ final class ClipyService: ObservableObject {
     private var timer: Timer?
     private var lastChangeCount = NSPasteboard.general.changeCount
     private var ignoreChangeCount: Int?
-    private var hotkeys: [ClipyShortcutRole: QuickToolHotkey] = [:]
+    private let mainHotkey = QuickToolHotkey(id: 400)
     private var folderHotkeys: [String: QuickToolHotkey] = [:]
     private(set) var snippetFolderFilter: String?
     private var menuController: ClipyMenuController?
@@ -321,50 +292,30 @@ final class ClipyService: ObservableObject {
     // MARK: - Shortcuts
 
     private func syncHotkeys() {
-        var failed = false
-        for role in ClipyShortcutRole.allCases {
-            let raw = UserDefaults.standard.string(forKey: role.defaultsKey) ?? ""
-            guard let shortcut = GlobalShortcut(storageValue: raw) else {
-                hotkeys[role]?.sync(enabled: false,
-                                    shortcut: GlobalShortcut.clipyFallback,
-                                    storageKey: role.defaultsKey)
-                continue
-            }
-            let hotkey = hotkeys[role] ?? QuickToolHotkey(id: role.hotKeyID)
-            hotkey.onPress = { [weak self] in
-                Task { @MainActor in
-                    switch role {
-                    case .main: self?.showMenu(.main)
-                    case .history: self?.showMenu(.history)
-                    case .snippets: self?.showMenu(.snippets)
-                    case .editSnippets: self?.editSnippets()
-                    case .clearHistory: self?.clearHistory()
-                    }
-                }
-            }
-            hotkeys[role] = hotkey
-            if !hotkey.sync(enabled: true, shortcut: shortcut, storageKey: role.defaultsKey) {
-                failed = true
-            }
+        let raw = UserDefaults.standard.string(forKey: DefaultsKey.clipyMainShortcut) ?? ""
+        guard let shortcut = GlobalShortcut(storageValue: raw) else {
+            mainHotkey.sync(enabled: false,
+                            shortcut: GlobalShortcut.clipyFallback,
+                            storageKey: DefaultsKey.clipyMainShortcut)
+            shortcutRegistrationFailed = false
+            return
         }
-        shortcutRegistrationFailed = failed
+        mainHotkey.onPress = { [weak self] in self?.showMenu(.main) }
+        shortcutRegistrationFailed = !mainHotkey.sync(enabled: true,
+                                                      shortcut: shortcut,
+                                                      storageKey: DefaultsKey.clipyMainShortcut)
     }
 
     private func unregisterHotkeys() {
-        for hotkey in hotkeys.values {
-            hotkey.sync(enabled: false,
+        mainHotkey.sync(enabled: false,
                         shortcut: GlobalShortcut.clipyFallback,
-                        storageKey: "")
-        }
-        hotkeys.removeAll()
+                        storageKey: DefaultsKey.clipyMainShortcut)
         shortcutRegistrationFailed = false
     }
 
     private func syncFolderHotkeys() {
-        let snippets = (try? JSONDecoder().decode(
-            [ClipySnippet].self,
-            from: UserDefaults.standard.data(forKey: DefaultsKey.clipySnippets) ?? Data())) ?? []
-        let activeFolders = Set(snippets.map(\.folder).filter { !$0.isEmpty })
+        let store = ClipySnippetStore.load()
+        let activeFolders = Set(store.folders)
         let shortcuts = ClipySnippetFolderShortcuts.load()
             .filter { activeFolders.contains($0.key) }
 

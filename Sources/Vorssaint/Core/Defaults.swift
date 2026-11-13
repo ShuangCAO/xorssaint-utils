@@ -649,12 +649,9 @@ enum DefaultsKey {
     static let clipyCaptureImages = "clipyCaptureImages"
     static let clipyCaptureHTML = "clipyCaptureHTML"
     static let clipyMainShortcut = "clipyMainShortcut"
-    static let clipyHistoryShortcut = "clipyHistoryShortcut"
-    static let clipySnippetsShortcut = "clipySnippetsShortcut"
-    static let clipyEditSnippetsShortcut = "clipyEditSnippetsShortcut"
-    static let clipyClearHistoryShortcut = "clipyClearHistoryShortcut"
-    static let clipySnippets = "clipySnippets"
     static let clipySnippetFolderShortcuts = "clipySnippetFolderShortcuts"
+    static let clipySnippetFolders = "clipySnippetFolders"
+    static let clipySnippets = "clipySnippets"
 
     // Quick tools: paste as plain text, color picker, screen OCR, mic mute.
     static let pastePlainEnabled = "pastePlainEnabled"
@@ -1923,12 +1920,9 @@ enum Defaults {
         DefaultsKey.clipyCaptureImages: false,
         DefaultsKey.clipyCaptureHTML: false,
         DefaultsKey.clipyMainShortcut: "shift+command:9",
-        DefaultsKey.clipyHistoryShortcut: "control+command:9",
-        DefaultsKey.clipySnippetsShortcut: "shift+command:11",
-        DefaultsKey.clipyEditSnippetsShortcut: "option+command:11",
-        DefaultsKey.clipyClearHistoryShortcut: "",
-        DefaultsKey.clipySnippets: Data(),
+        DefaultsKey.clipySnippetFolders: Data(),
         DefaultsKey.clipySnippetFolderShortcuts: Data(),
+        DefaultsKey.clipySnippets: Data(),
         DefaultsKey.clipboardAutoClearOnDelay: false,
         DefaultsKey.clipboardAutoClearDelay: Defaults.defaultClipboardAutoClearDelay,
         DefaultsKey.clipboardAutoClearOnSleep: false,

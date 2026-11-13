@@ -63,6 +63,8 @@ struct ClipyStrings {
     let cancel: String
     let delete: String
     let edit: String
+    let addFolder: String
+    let selectFolder: String
 }
 
 extension FeatureStrings {
@@ -147,7 +149,9 @@ extension ClipyStrings {
         save: "Save",
         cancel: "Cancel",
         delete: "Delete",
-        edit: "Edit"
+        edit: "Edit",
+        addFolder: "Add Folder",
+        selectFolder: "Select a folder"
     )
 
     static let ptBR = ClipyStrings(
@@ -209,7 +213,9 @@ extension ClipyStrings {
         save: "Save",
         cancel: "Cancel",
         delete: "Delete",
-        edit: "Edit"
+        edit: "Edit",
+        addFolder: "Add Folder",
+        selectFolder: "Select a folder"
     )
 
     static let tr = ClipyStrings(
@@ -271,7 +277,9 @@ extension ClipyStrings {
         save: "Save",
         cancel: "Cancel",
         delete: "Delete",
-        edit: "Edit"
+        edit: "Edit",
+        addFolder: "Add Folder",
+        selectFolder: "Select a folder"
     )
 
     static let ru = ClipyStrings(
@@ -333,7 +341,9 @@ extension ClipyStrings {
         save: "Save",
         cancel: "Cancel",
         delete: "Delete",
-        edit: "Edit"
+        edit: "Edit",
+        addFolder: "Add Folder",
+        selectFolder: "Select a folder"
     )
 
     static let es = ClipyStrings(
@@ -395,7 +405,9 @@ extension ClipyStrings {
         save: "Save",
         cancel: "Cancel",
         delete: "Delete",
-        edit: "Edit"
+        edit: "Edit",
+        addFolder: "Add Folder",
+        selectFolder: "Select a folder"
     )
 
     static let sk = ClipyStrings(
@@ -457,7 +469,9 @@ extension ClipyStrings {
         save: "Save",
         cancel: "Cancel",
         delete: "Delete",
-        edit: "Edit"
+        edit: "Edit",
+        addFolder: "Add Folder",
+        selectFolder: "Select a folder"
     )
 
     static let de = ClipyStrings(
@@ -519,7 +533,9 @@ extension ClipyStrings {
         save: "Save",
         cancel: "Cancel",
         delete: "Delete",
-        edit: "Edit"
+        edit: "Edit",
+        addFolder: "Add Folder",
+        selectFolder: "Select a folder"
     )
 
     static let fr = ClipyStrings(
@@ -581,7 +597,9 @@ extension ClipyStrings {
         save: "Save",
         cancel: "Cancel",
         delete: "Delete",
-        edit: "Edit"
+        edit: "Edit",
+        addFolder: "Add Folder",
+        selectFolder: "Select a folder"
     )
 
     static let it = ClipyStrings(
@@ -643,7 +661,9 @@ extension ClipyStrings {
         save: "Save",
         cancel: "Cancel",
         delete: "Delete",
-        edit: "Edit"
+        edit: "Edit",
+        addFolder: "Add Folder",
+        selectFolder: "Select a folder"
     )
 
     static let ja = ClipyStrings(
@@ -705,7 +725,9 @@ extension ClipyStrings {
         save: "Save",
         cancel: "Cancel",
         delete: "Delete",
-        edit: "Edit"
+        edit: "Edit",
+        addFolder: "Add Folder",
+        selectFolder: "Select a folder"
     )
 
     static let ko = ClipyStrings(
@@ -767,7 +789,9 @@ extension ClipyStrings {
         save: "Save",
         cancel: "Cancel",
         delete: "Delete",
-        edit: "Edit"
+        edit: "Edit",
+        addFolder: "Add Folder",
+        selectFolder: "Select a folder"
     )
 
     static let uk = ClipyStrings(
@@ -829,7 +853,9 @@ extension ClipyStrings {
         save: "Save",
         cancel: "Cancel",
         delete: "Delete",
-        edit: "Edit"
+        edit: "Edit",
+        addFolder: "Add Folder",
+        selectFolder: "Select a folder"
     )
 
     static let zhHans = ClipyStrings(
@@ -891,7 +917,9 @@ extension ClipyStrings {
         save: "保存",
         cancel: "取消",
         delete: "删除",
-        edit: "编辑"
+        edit: "编辑",
+        addFolder: "添加文件夹",
+        selectFolder: "选择一个文件夹"
     )
 
     static let zhTW = ClipyStrings(
@@ -953,7 +981,9 @@ extension ClipyStrings {
         save: "儲存",
         cancel: "取消",
         delete: "刪除",
-        edit: "編輯"
+        edit: "編輯",
+        addFolder: "新增資料夾",
+        selectFolder: "選擇一個資料夾"
     )
 
     static let zhHK = ClipyStrings(
@@ -1015,7 +1045,9 @@ extension ClipyStrings {
         save: "儲存",
         cancel: "取消",
         delete: "刪除",
-        edit: "編輯"
+        edit: "編輯",
+        addFolder: "新增資料夾",
+        selectFolder: "選擇一個資料夾"
     )
 
 }

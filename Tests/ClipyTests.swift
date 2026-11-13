@@ -103,5 +103,24 @@ enum ClipyTests {
         store.delete(entry)
         suite.expect(store.load().isEmpty,
                      "deleting an entry removes its index row and blobs")
+
+        let domain = "com.vorssaint.tests.clipy-snippets"
+        let snippetDefaults = UserDefaults(suiteName: domain)!
+        snippetDefaults.removePersistentDomain(forName: domain)
+        defer { snippetDefaults.removePersistentDomain(forName: domain) }
+        let rootSnippet = ClipySnippet(name: "root", content: "x", folder: "")
+        snippetDefaults.set(try? JSONEncoder().encode([rootSnippet]),
+                            forKey: DefaultsKey.clipySnippets)
+        let migrated = ClipySnippetStore.load(from: snippetDefaults)
+        suite.expect(migrated.folders == [ClipySnippetStore.defaultFolder]
+                     && migrated.snippets.first?.folder == ClipySnippetStore.defaultFolder,
+                     "a snippet outside a folder moves into the default folder")
+        ClipySnippetStore.save(folders: ["Work", "Empty"],
+                               snippets: migrated.snippets,
+                               to: snippetDefaults)
+        let reloaded = ClipySnippetStore.load(from: snippetDefaults)
+        suite.expect(reloaded.folders.contains("Work")
+                     && reloaded.folders.contains("Empty"),
+                     "an empty folder survives the round trip")
     }
 }

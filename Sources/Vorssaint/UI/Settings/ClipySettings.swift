@@ -101,10 +101,6 @@ struct ClipySettings: View {
 
             Section {
                 shortcutRow(text.shortcutMain, key: DefaultsKey.clipyMainShortcut)
-                shortcutRow(text.shortcutHistory, key: DefaultsKey.clipyHistoryShortcut)
-                shortcutRow(text.shortcutSnippets, key: DefaultsKey.clipySnippetsShortcut)
-                shortcutRow(text.shortcutEditSnippets, key: DefaultsKey.clipyEditSnippetsShortcut)
-                shortcutRow(text.shortcutClear, key: DefaultsKey.clipyClearHistoryShortcut)
                 if service.shortcutRegistrationFailed {
                     Text(l10n.s.shortcutUnavailable)
                         .font(.caption)
@@ -191,9 +187,8 @@ struct ClipySettings: View {
     }
 
     private func reloadFolders() {
-        let snippets = ClipyMenuModel.loadSnippets()
-        folders = Set(snippets.map(\.folder).filter { !$0.isEmpty })
-            .sorted { $0.localizedStandardCompare($1) == .orderedAscending }
+        let store = ClipySnippetStore.load()
+        folders = store.folders
         folderShortcuts = ClipySnippetFolderShortcuts.load()
         let active = Set(folders)
         let cleaned = folderShortcuts.filter { active.contains($0.key) }

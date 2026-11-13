@@ -84,9 +84,9 @@ struct ClipyMenuView: View {
         }
     }
 
-    private func folderColumn(_ folder: ClipyMenuFolder) -> some View {
+    private func folderColumn(_ folder: ClipyOpenFolder) -> some View {
         VStack(spacing: 0) {
-            Text("\(folder.start)–\(folder.end)")
+            Text(folder.title)
                 .font(.system(size: 9, weight: .semibold))
                 .foregroundStyle(.secondary)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -94,16 +94,35 @@ struct ClipyMenuView: View {
                 .frame(height: 24)
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 1) {
-                    ForEach(Array(folder.entries.enumerated()), id: \.element.id) { index, entry in
-                        menuItem(number: model.numberLabel(for: folder.startNumber + index),
-                                 title: ClipyTitle.shortened(entry.preview, limit: titleLength),
-                                 icon: icon(for: entry),
-                                 selected: model.folderSelection == index,
-                                 help: entry.preview)
-                        .onHover { inside in
-                            if inside { model.folderSelection = index }
+                    switch folder {
+                    case .history(let historyFolder):
+                        ForEach(Array(historyFolder.entries.enumerated()),
+                                id: \.element.id) { index, entry in
+                            menuItem(number: model.numberLabel(for: index + 1),
+                                     title: ClipyTitle.shortened(entry.preview, limit: titleLength),
+                                     icon: icon(for: entry),
+                                     selected: model.folderSelection == index,
+                                     help: entry.preview)
+                            .onHover { inside in
+                                if inside { model.folderSelection = index }
+                            }
+                            .onTapGesture { service.paste(entry) }
                         }
-                        .onTapGesture { service.paste(entry) }
+                    case .snippets(_, let snippets):
+                        ForEach(Array(snippets.enumerated()),
+                                id: \.element.id) { index, snippet in
+                            menuItem(number: model.numberLabel(for: index + 1),
+                                     title: ClipyTitle.shortened(
+                                        snippet.name.isEmpty ? snippet.content : snippet.name,
+                                        limit: titleLength),
+                                     icon: .symbol("text.append"),
+                                     selected: model.folderSelection == index,
+                                     help: snippet.content)
+                            .onHover { inside in
+                                if inside { model.folderSelection = index }
+                            }
+                            .onTapGesture { service.pasteText(snippet.content) }
+                        }
                     }
                 }
                 .padding(4)
@@ -143,6 +162,32 @@ struct ClipyMenuView: View {
                     .font(.system(size: 12))
                     .lineLimit(1)
                 Spacer(minLength: 6)
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 8.5, weight: .semibold))
+                    .foregroundStyle(.tertiary)
+            }
+            .padding(.horizontal, 6)
+            .frame(height: 26)
+            .background(selectionFill(model.isSelected(row)))
+            .contentShape(Rectangle())
+            .onHover { inside in
+                if inside { model.select(row) }
+            }
+            .onTapGesture { model.select(row); model.activate(row) }
+        case .snippetFolder(let name, let snippets, let number):
+            HStack(spacing: 7) {
+                numberBadge(model.numberLabel(for: number))
+                Image(systemName: "folder")
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 16)
+                Text(name)
+                    .font(.system(size: 12))
+                    .lineLimit(1)
+                Spacer(minLength: 6)
+                Text("\(snippets.count)")
+                    .font(.system(size: 9, design: .monospaced))
+                    .foregroundStyle(.tertiary)
                 Image(systemName: "chevron.right")
                     .font(.system(size: 8.5, weight: .semibold))
                     .foregroundStyle(.tertiary)

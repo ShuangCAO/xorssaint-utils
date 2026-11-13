@@ -153,6 +153,60 @@ enum ClipySnippetFolderShortcuts {
     }
 }
 
+/// Snippet folders and their members. Folders exist even while empty, so the
+/// editor can create the folder first and add snippets inside it afterwards.
+enum ClipySnippetStore {
+    static let defaultFolder = "Snippets"
+
+    static func load(from defaults: UserDefaults = .standard)
+        -> (folders: [String], snippets: [ClipySnippet]) {
+        let storedFolders = decode([String].self,
+                                   key: DefaultsKey.clipySnippetFolders,
+                                   from: defaults) ?? []
+        var snippets = decode([ClipySnippet].self,
+                              key: DefaultsKey.clipySnippets,
+                              from: defaults) ?? []
+        var folders = Set(storedFolders.map(clean).filter { !$0.isEmpty })
+        var changed = false
+        for index in snippets.indices {
+            let folder = clean(snippets[index].folder)
+            let resolved = folder.isEmpty ? defaultFolder : folder
+            if snippets[index].folder != resolved {
+                snippets[index].folder = resolved
+                changed = true
+            }
+            if folders.insert(resolved).inserted { changed = true }
+        }
+        let sorted = folders.sorted { $0.localizedStandardCompare($1) == .orderedAscending }
+        if changed { save(folders: sorted, snippets: snippets, to: defaults) }
+        return (sorted, snippets)
+    }
+
+    static func save(folders: [String],
+                     snippets: [ClipySnippet],
+                     to defaults: UserDefaults = .standard) {
+        let cleaned = Array(Set(folders.map(clean).filter { !$0.isEmpty }))
+            .sorted { $0.localizedStandardCompare($1) == .orderedAscending }
+        if let data = try? JSONEncoder().encode(cleaned) {
+            defaults.set(data, forKey: DefaultsKey.clipySnippetFolders)
+        }
+        if let data = try? JSONEncoder().encode(snippets) {
+            defaults.set(data, forKey: DefaultsKey.clipySnippets)
+        }
+    }
+
+    private static func decode<T: Decodable>(_ type: T.Type,
+                                             key: String,
+                                             from defaults: UserDefaults) -> T? {
+        guard let data = defaults.data(forKey: key) else { return nil }
+        return try? JSONDecoder().decode(type, from: data)
+    }
+
+    private static func clean(_ name: String) -> String {
+        name.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+}
+
 enum ClipyTitle {
     /// A one-line menu title, collapsed to a single line and cut at the
     /// configured length.

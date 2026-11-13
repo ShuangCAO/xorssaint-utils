@@ -3,47 +3,43 @@
 
 import SwiftUI
 
-/// Edits the snippets the Clipy menu shows below history. Folders are plain
-/// names carried by each snippet, the same shape the menu groups by.
+/// Edits snippet folders first, then the snippets inside the selected folder.
+/// The root level has folders only; a snippet always belongs to one.
 struct ClipySnippetEditor: View {
     @ObservedObject private var l10n = L10n.shared
     @Environment(\.dismiss) private var dismiss
+    @State private var folders: [String]
     @State private var snippets: [ClipySnippet]
-    @State private var selection: UUID?
+    @State private var selectedFolder: String?
+    @State private var selectedSnippet: UUID?
+    @State private var folderNameDraft = ""
 
     init() {
-        _snippets = State(initialValue: ClipyMenuModel.loadSnippets())
-        _selection = State(initialValue: ClipyMenuModel.loadSnippets().first?.id)
+        let store = ClipySnippetStore.load()
+        _folders = State(initialValue: store.folders)
+        _snippets = State(initialValue: store.snippets)
+        let first = store.folders.first
+        _selectedFolder = State(initialValue: first)
+        _selectedSnippet = State(initialValue: store.snippets.first { $0.folder == first }?.id)
     }
 
     private var text: ClipyStrings { FeatureStrings.clipy(l10n.language) }
 
-    private var selectedIndex: Int? {
-        guard let selection else { return nil }
-        return snippets.firstIndex { $0.id == selection }
+    private var selectedSnippetIndex: Int? {
+        guard let selectedSnippet else { return nil }
+        return snippets.firstIndex { $0.id == selectedSnippet }
     }
 
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
-                snippetList
+                folderList
                     .frame(width: 220)
                 Divider()
-                editor
+                detail
             }
             Divider()
             HStack(spacing: 10) {
-                Button {
-                    addSnippet()
-                } label: {
-                    Label(text.addSnippet, systemImage: "plus")
-                }
-                Button {
-                    removeSelection()
-                } label: {
-                    Label(text.delete, systemImage: "minus")
-                }
-                .disabled(selection == nil)
                 Spacer()
                 Button(text.cancel) { dismiss() }
                     .keyboardShortcut(.cancelAction)
@@ -52,43 +48,124 @@ struct ClipySnippetEditor: View {
             }
             .padding(12)
         }
-        .frame(width: 680, height: 440)
-        .onAppear {
-            if selection == nil { selection = snippets.first?.id }
+        .frame(width: 720, height: 480)
+        .onAppear { folderNameDraft = selectedFolder ?? "" }
+        .onChange(of: selectedFolder) { _, folder in
+            folderNameDraft = folder ?? ""
+            selectedSnippet = snippets.first { $0.folder == folder }?.id
         }
     }
 
-    private var snippetList: some View {
+    private var folderList: some View {
         VStack(spacing: 0) {
-            List(selection: $selection) {
-                ForEach(snippets) { snippet in
-                    VStack(alignment: .leading, spacing: 1) {
-                        Text(snippet.name.isEmpty ? text.snippetName : snippet.name)
+            List(selection: $selectedFolder) {
+                ForEach(folders, id: \.self) { folder in
+                    HStack {
+                        Text(folder)
                             .lineLimit(1)
-                        if !snippet.folder.isEmpty {
-                            Text(snippet.folder)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
+                        Spacer()
+                        Text("\(snippetCount(in: folder))")
+                            .font(.system(size: 9, design: .monospaced))
+                            .foregroundStyle(.secondary)
                     }
-                    .tag(snippet.id)
+                    .tag(folder)
                 }
             }
             .listStyle(.inset)
+            Divider()
+            HStack(spacing: 6) {
+                Button {
+                    addFolder()
+                } label: {
+                    Image(systemName: "plus")
+                }
+                .help(text.addFolder)
+                .accessibilityLabel(text.addFolder)
+                Button {
+                    deleteFolder()
+                } label: {
+                    Image(systemName: "minus")
+                }
+                .help(text.delete)
+                .accessibilityLabel(text.delete)
+                .disabled(selectedFolder == nil)
+                Spacer()
+            }
+            .buttonStyle(.borderless)
+            .padding(6)
         }
     }
 
     @ViewBuilder
-    private var editor: some View {
-        if let index = selectedIndex {
+    private var detail: some View {
+        if let folder = selectedFolder {
+            VStack(spacing: 0) {
+                HStack(spacing: 8) {
+                    TextField(text.snippetFolder, text: $folderNameDraft)
+                        .textFieldStyle(.roundedBorder)
+                        .onSubmit { renameSelectedFolder() }
+                    Button(text.edit) { renameSelectedFolder() }
+                }
+                .padding(12)
+                Divider()
+                HStack(spacing: 0) {
+                    snippetList(folder: folder)
+                        .frame(width: 210)
+                    Divider()
+                    snippetForm(folder: folder)
+                }
+            }
+        } else {
+            Text(text.selectFolder)
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+    }
+
+    private func snippetList(folder: String) -> some View {
+        VStack(spacing: 0) {
+            List(selection: $selectedSnippet) {
+                ForEach(snippets.filter { $0.folder == folder }) { snippet in
+                    Text(snippet.name.isEmpty ? text.snippetName : snippet.name)
+                        .lineLimit(1)
+                        .tag(snippet.id)
+                }
+            }
+            .listStyle(.inset)
+            Divider()
+            HStack(spacing: 6) {
+                Button {
+                    addSnippet(to: folder)
+                } label: {
+                    Image(systemName: "plus")
+                }
+                .help(text.addSnippet)
+                .accessibilityLabel(text.addSnippet)
+                Button {
+                    deleteSelectedSnippet()
+                } label: {
+                    Image(systemName: "minus")
+                }
+                .help(text.delete)
+                .accessibilityLabel(text.delete)
+                .disabled(selectedSnippet == nil)
+                Spacer()
+            }
+            .buttonStyle(.borderless)
+            .padding(6)
+        }
+    }
+
+    @ViewBuilder
+    private func snippetForm(folder: String) -> some View {
+        if let index = selectedSnippetIndex {
             Form {
                 TextField(text.snippetName, text: $snippets[index].name)
-                TextField(text.snippetFolder, text: $snippets[index].folder)
                 Toggle(text.snippetEnabled, isOn: $snippets[index].enabled)
                 Section(text.snippetContent) {
                     TextEditor(text: $snippets[index].content)
                         .font(.system(size: 12, design: .monospaced))
-                        .frame(minHeight: 200)
+                        .frame(minHeight: 220)
                 }
             }
             .formStyle(.grouped)
@@ -99,23 +176,71 @@ struct ClipySnippetEditor: View {
         }
     }
 
-    private func addSnippet() {
-        let snippet = ClipySnippet(name: "", content: "")
-        snippets.append(snippet)
-        selection = snippet.id
+    private func snippetCount(in folder: String) -> Int {
+        snippets.filter { $0.folder == folder }.count
     }
 
-    private func removeSelection() {
-        guard let index = selectedIndex else { return }
-        let removed = snippets.remove(at: index)
-        if selection == removed.id {
-            selection = snippets.first?.id
+    private func addFolder() {
+        var name = text.snippetFolder
+        var suffix = 2
+        while folders.contains(name) {
+            name = "\(text.snippetFolder) \(suffix)"
+            suffix += 1
         }
+        folders.append(name)
+        folders.sort { $0.localizedStandardCompare($1) == .orderedAscending }
+        selectedFolder = name
+        selectedSnippet = nil
+        folderNameDraft = name
+    }
+
+    private func deleteFolder() {
+        guard let folder = selectedFolder else { return }
+        folders.removeAll { $0 == folder }
+        snippets.removeAll { $0.folder == folder }
+        var shortcuts = ClipySnippetFolderShortcuts.load()
+        if shortcuts.removeValue(forKey: folder) != nil {
+            ClipySnippetFolderShortcuts.save(shortcuts)
+        }
+        selectedFolder = folders.first
+        selectedSnippet = nil
+    }
+
+    private func renameSelectedFolder() {
+        guard let old = selectedFolder else { return }
+        let name = folderNameDraft.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty, name != old, !folders.contains(name) else {
+            folderNameDraft = old
+            return
+        }
+        folders = folders.map { $0 == old ? name : $0 }
+            .sorted { $0.localizedStandardCompare($1) == .orderedAscending }
+        for index in snippets.indices where snippets[index].folder == old {
+            snippets[index].folder = name
+        }
+        var shortcuts = ClipySnippetFolderShortcuts.load()
+        if let value = shortcuts.removeValue(forKey: old) {
+            shortcuts[name] = value
+            ClipySnippetFolderShortcuts.save(shortcuts)
+        }
+        selectedFolder = name
+        folderNameDraft = name
+    }
+
+    private func addSnippet(to folder: String) {
+        let snippet = ClipySnippet(name: "", content: "", folder: folder)
+        snippets.append(snippet)
+        selectedSnippet = snippet.id
+    }
+
+    private func deleteSelectedSnippet() {
+        guard let index = selectedSnippetIndex else { return }
+        snippets.remove(at: index)
+        selectedSnippet = nil
     }
 
     private func save() {
-        let data = try? JSONEncoder().encode(snippets)
-        UserDefaults.standard.set(data, forKey: DefaultsKey.clipySnippets)
+        ClipySnippetStore.save(folders: folders, snippets: snippets)
         ClipyService.shared.syncWithPreferences()
         dismiss()
     }
