@@ -48,6 +48,49 @@ ln -s /Applications "$STAGING/Applications"
 mkdir "$STAGING/.background"
 cp build/dmg-background.png "$STAGING/.background/background.png"
 
+# Gatekeeper rejects the locally signed build, so keep the first-launch steps
+# beside the app instead of relying on a chat message that gets lost.
+cat > "$STAGING/安装说明.txt" <<'EOF'
+Xorssaint 安装说明
+==================
+
+这是非官方 Xorssaint fork，与上游 Vorssaint 项目没有隶属关系。
+
+安装
+----
+1. 将 Xorssaint.app 拖到 Applications 文件夹。
+2. 打开 Applications 里的 Xorssaint。
+3. 如果 macOS 拦截：
+   打开“系统设置 → 隐私与安全性”，在底部点击“仍要打开”，然后再次启动。
+   如果提示“已损坏”，确认文件来源可信后，在终端执行：
+   xattr -dr com.apple.quarantine /Applications/Xorssaint.app
+4. 首次启动后按提示授予辅助功能、屏幕录制、麦克风等权限。
+
+系统要求
+--------
+- Apple Silicon Mac
+- macOS 14 Sonoma 或更新版本
+
+说明
+----
+- 本版本未经过 Apple 公证，使用本地签名。
+- 自动更新、截图/录屏分享链接和反馈上传已禁用。
+- 从旧 Vorssaint 升级时，会复制旧设置和 CCClip 历史；
+  系统权限与 Bundle ID 绑定，需要重新授权。
+- Fan Control 的 XPC 校验仍绑定上游 Apple Team ID，release 版可能不可用。
+
+English
+-------
+1. Drag Xorssaint.app to Applications.
+2. If macOS blocks it, open System Settings → Privacy & Security and choose Open Anyway.
+3. If macOS says the app is damaged, verify the source and run:
+   xattr -dr com.apple.quarantine /Applications/Xorssaint.app
+4. Grant Accessibility, Screen Recording and Microphone permissions when prompted.
+
+Requires Apple Silicon and macOS 14 or newer. This build is not notarized.
+Automatic updates, sharing links and feedback uploads are disabled.
+EOF
+
 echo "▸ Creating writable image…"
 WORK="$(mktemp -d)"
 RW="$WORK/rw.dmg"
