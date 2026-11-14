@@ -2953,13 +2953,15 @@ enum SwitcherModelFeatureTests {
             encoding: .utf8)) ?? ""
         // macOS 15 publishes the full-size safe area but leaves the view at its
         // content size in the frame's corner, so the popover grows and shows a
-        // band of system material along its top and right edges.
+        // band of system material along its top and right edges. macOS 27
+        // regressed the same corner-pinning on every resize while shown.
         let fullSizeGateCode = stripCommentLines((panelThemeSource
             .components(separatedBy: "static var popoverHostsFullSizeContent: Bool {").last ?? "")
             .components(separatedBy: "\n    }").first ?? "")
-        suite.expect(fullSizeGateCode.contains("if #available(macOS 26.0, *) { return true }")
+        suite.expect(fullSizeGateCode.contains("if #available(macOS 27.0, *) { return false }")
+                   && fullSizeGateCode.contains("return true")
                    && fullSizeGateCode.contains("return false"),
-               "full-size popover content is limited to macOS 26, where AppKit fills the balloon with it")
+               "full-size popover content is limited to macOS 26; macOS 15 and 27+ pin the hosted view in the balloon's corner")
         let panelGlassCode = stripCommentLines((panelThemeSource
             .components(separatedBy: "private struct PanelGlassSurface: View {").last ?? "")
             .components(separatedBy: "\n}").first ?? "")

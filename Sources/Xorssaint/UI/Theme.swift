@@ -64,8 +64,16 @@ enum PanelSurface {
     /// full-size safe area but leaves the view at its content size in the frame's
     /// lower-left corner: the popover grows by that safe area, the panel sits off
     /// center, and a band of system material shows along the top and right edges.
+    /// macOS 27 regressed the same way, and worse: any resize while the popover
+    /// is open (the content measures its real height right after showing) pins
+    /// the hosted view at the old content size in that corner, and AppKit reverts
+    /// attempts to correct the frame. The inset layout is the only one it keeps
+    /// honest there, so the balloon stays native material on macOS 15 and 27+.
     static var popoverHostsFullSizeContent: Bool {
-        if #available(macOS 26.0, *) { return true }
+        if #available(macOS 26.0, *) {
+            if #available(macOS 27.0, *) { return false }
+            return true
+        }
         return false
     }
 
