@@ -224,8 +224,8 @@ func appDelegate() -> AppDelegate? {
 }
 
 /// The fork mark (Resources/Brand/logo.png, trimmed at build time), tintable
-/// for light or dark surfaces. The paw is square; keep the old wide-mark slot
-/// so existing headers and onboarding layouts keep their height.
+/// for light or dark surfaces. The moon mark is compact; keep the old wide-mark
+/// slot so existing headers and onboarding layouts keep their height.
 struct BrandMark: View {
     var width: CGFloat
     var tint: Color = .white

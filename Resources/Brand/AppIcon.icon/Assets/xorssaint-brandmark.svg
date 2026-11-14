@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Xorssaint fork paw mark. Not affiliated with the upstream Vorssaint project. -->
+<!-- Xorssaint fork crescent moon mark. Not affiliated with the upstream Vorssaint project. -->
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
-  <g transform="translate(512 512) scale(1.0) rotate(18)" fill="#000000">
-    <path d="M 0 -70 C -30 -110 -100 -125 -160 -90 C -225 -50 -235 65 -160 145 C -95 210 95 210 160 145 C 235 65 225 -50 160 -90 C 100 -125 30 -110 0 -70 Z"/>
-    <ellipse cx="-235" cy="-105" rx="55" ry="76" transform="rotate(12 -235 -105)"/>
-    <ellipse cx="-115" cy="-215" rx="60" ry="82" transform="rotate(5 -115 -215)"/>
-    <ellipse cx="15" cy="-220" rx="60" ry="82" transform="rotate(-5 15 -220)"/>
-    <ellipse cx="155" cy="-175" rx="55" ry="76" transform="rotate(-12 155 -175)"/>
+  <defs>
+    <mask id="moonMask" maskUnits="userSpaceOnUse" x="-320" y="-320" width="640" height="640">
+      <rect x="-320" y="-320" width="640" height="640" fill="#000000"/>
+      <circle cx="0" cy="0" r="300" fill="#ffffff"/>
+      <circle cx="110" cy="-80" r="255" fill="#000000"/>
+    </mask>
+  </defs>
+  <g transform="translate(512 512) scale(1.0) rotate(15)">
+    <rect x="-320" y="-320" width="640" height="640" fill="#000000" mask="url(#moonMask)"/>
   </g>
 </svg>

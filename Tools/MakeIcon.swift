@@ -4,7 +4,7 @@
 // Generates all icon assets:
 // - the app iconset and .icns from the exported Default rendition of the
 //   adaptive source (Resources/Brand/AppIcon-Default.png)
-// - the menu bar template glyph and BrandMark from the paw mark master
+// - the menu bar template glyph and BrandMark from the moon mark master
 //   (Resources/Brand/logo.png)
 // AppIcon-Default.png is the finished warm-sand master used by the build.
 // Resources/Brand/AppIcon.icon still carries the earlier light adaptive
@@ -116,11 +116,11 @@ func renderAppIcon(px: Int) -> Data? {
 
 // MARK: - Menu bar glyph (template)
 
-// The paw is square, so its height also fixes its width. Size it close to the
-// menu bar's other compact symbols instead of leaving it small beside them.
+// The crescent is taller than wide, so size it from the height and let the
+// width follow, close to the menu bar's other compact symbols.
 let menuBarGlyphHeight: CGFloat = 16
-// The pad is visually heavier than the toes; a small drop keeps the mark on
-// the same optical floor as its neighbours.
+// The crescent's mass sits low; a small drop keeps the mark on the same
+// optical floor as its neighbours.
 let menuBarGlyphDrop: CGFloat = 0.5
 // Taller than the mark needs: the same canvas holds the compact Keep Awake
 // symbols. Keep in sync with BlackHoleGlyph.pointSize in
