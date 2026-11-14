@@ -8,7 +8,7 @@
       <circle cx="110" cy="-80" r="255" fill="#000000"/>
     </mask>
   </defs>
-  <g transform="translate(320 162) scale(0.44) rotate(15)">
+  <g transform="translate(320 162) scale(0.44) rotate(105)">
     <rect x="-320" y="-320" width="640" height="640" fill="#ffffff" mask="url(#moonMask)"/>
   </g>
 </svg>
