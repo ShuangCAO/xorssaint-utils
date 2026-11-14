@@ -2439,10 +2439,10 @@ enum FeatureCatalogTests {
         suite.expect(historyRouter.destination == refinedDestination,
                "same-page section requests refine the destination restored by history")
         historyRouter.goBack()
-        historyRouter.page = .support
+        historyRouter.page = .releaseNotes
         let branchedHistoryRequestID = historyRouter.requestID
         historyRouter.goForward()
-        suite.expect(historyRouter.page == .support
+        suite.expect(historyRouter.page == .releaseNotes
                 && historyRouter.requestID == branchedHistoryRequestID,
                "a new sidebar visit after Back discards forward history")
         historyRouter.goBack()

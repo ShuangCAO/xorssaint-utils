@@ -619,115 +619,7 @@ struct SettingsView: View {
         case .advanced: AdvancedSettings()
         case .about: AboutSettings()
         case .releaseNotes: ReleaseNotesSettings()
-        case .support: SupportSettings()
         }
-    }
-}
-
-// MARK: - Updates
-
-struct UpdatesView: View {
-    @ObservedObject private var l10n = L10n.shared
-    @ObservedObject private var updates = UpdateService.shared
-    @AppStorage(DefaultsKey.autoCheckUpdates) private var autoCheck = true
-    @AppStorage(DefaultsKey.includeBetaUpdates) private var includeBetas = AppInfo.isBeta
-    @AppStorage(DefaultsKey.showReleaseNotesBeforeUpdate) private var showReleaseNotesFirst = true
-    @AppStorage(DefaultsKey.releaseNotesOnUpdate) private var showWhatsNewAfter = true
-
-    var body: some View {
-        Section(l10n.s.updatesSection) {
-            Toggle(l10n.s.autoCheckToggle, isOn: $autoCheck)
-                .onChange(of: autoCheck) { _, value in
-                    UpdateService.shared.autoCheckEnabled = value
-                }
-
-            VStack(alignment: .leading, spacing: 4) {
-                Toggle(l10n.s.includeBetaUpdatesToggle, isOn: $includeBetas)
-                    .onChange(of: includeBetas) { _, value in
-                        UpdateService.shared.includeBetaUpdates = value
-                    }
-                SettingsCaptionText(l10n.s.includeBetaUpdatesCaption)
-            }
-
-            VStack(alignment: .leading, spacing: 4) {
-                let whatsNew = FeatureStrings.whatsNew(l10n.language)
-                Toggle(whatsNew.showPreviewToggle, isOn: $showReleaseNotesFirst)
-                if showWhatsNewAfter {
-                    SettingsCaptionText(whatsNew.showPreviewCaption)
-                }
-            }
-
-            Toggle(l10n.s.releaseNotesOnUpdateToggle, isOn: $showWhatsNewAfter)
-
-            statusRow
-
-            HStack {
-                Button(l10n.s.checkNowButton) {
-                    updates.check(manual: true)
-                }
-                .disabled(isBusy)
-
-                if case .available = updates.state {
-                    Button(l10n.s.updateInstallButton) {
-                        appDelegate()?.showUpdatePreview()
-                    }
-                    .buttonStyle(.borderedProminent)
-                }
-            }
-
-            if let lastChecked = updates.lastChecked {
-                Text("\(l10n.s.updateLastChecked) \(Self.format(lastChecked))")
-                    .font(.caption)
-                    .foregroundStyle(.tertiary)
-            }
-        }
-    }
-
-    @ViewBuilder
-    private var statusRow: some View {
-        switch updates.state {
-        case .idle:
-            EmptyView()
-        case .checking:
-            label(l10n.s.updateChecking, system: "arrow.triangle.2.circlepath", tint: .secondary)
-        case .upToDate:
-            label(l10n.s.updateUpToDate, system: "checkmark.circle.fill", tint: .green)
-        case let .available(version):
-            label("\(l10n.s.updateAvailablePrefix) \(version)", system: "arrow.down.circle.fill", tint: .accentColor)
-        case let .downloading(progress):
-            if let progress {
-                label("\(l10n.s.updateDownloading) \(Int(progress * 100))%",
-                      system: "arrow.down.circle", tint: .secondary)
-            } else {
-                label(l10n.s.updateDownloading, system: "arrow.down.circle", tint: .secondary)
-            }
-        case .installing:
-            label(l10n.s.updateInstalling, system: "gearshape.2.fill", tint: .secondary)
-        case let .failed(reason):
-            label("\(l10n.s.updateFailedPrefix) \(reason)", system: "exclamationmark.triangle.fill", tint: .orange)
-        }
-    }
-
-    private func label(_ text: String, system: String, tint: Color) -> some View {
-        HStack(spacing: 6) {
-            Image(systemName: system).foregroundStyle(tint)
-            Text(text).font(.callout)
-            Spacer()
-        }
-    }
-
-    private var isBusy: Bool {
-        switch updates.state {
-        case .checking, .downloading, .installing: return true
-        default: return false
-        }
-    }
-
-    private static func format(_ date: Date) -> String {
-        let f = DateFormatter()
-        f.dateStyle = .short
-        f.timeStyle = .short
-        return f.string(from: date)
     }
 }
 
@@ -741,15 +633,12 @@ struct AboutSettings: View {
             Section {
                 aboutContent
             }
-
-            UpdatesView()
         }
         .formStyle(.grouped)
     }
 
     private var aboutContent: some View {
         VStack(spacing: 14) {
-            BrandBadge(size: 76)
             VStack(spacing: 3) {
                 Text(AppInfo.name)
                     .font(.title2.bold())
@@ -779,15 +668,6 @@ struct AboutSettings: View {
                 .font(.system(size: 12))
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
-            HStack(spacing: 12) {
-                Button(l10n.s.reviewIntro) {
-                    appDelegate()?.showOnboarding()
-                }
-                Button(l10n.s.reviewHighlights) {
-                    appDelegate()?.showUpdateHighlights(isReview: true)
-                }
-                Link(l10n.s.viewOnGitHub, destination: AppInfo.repositoryURL)
-            }
             Text(AppInfo.copyright)
                 .font(.caption2)
                 .foregroundStyle(.tertiary)
@@ -928,96 +808,6 @@ struct ReleaseNotesSettings: View {
         case "changed": return "slider.horizontal.3"
         case "fixed": return "checkmark.circle.fill"
         default: return "circle.fill"
-        }
-    }
-}
-
-// MARK: - Support
-
-struct SupportSettings: View {
-    @ObservedObject private var l10n = L10n.shared
-    @Environment(\.openURL) private var openURL
-    @Environment(\.colorScheme) private var colorScheme
-
-    private var donateThanksText: String {
-        let thanks = l10n.s.donateThanks
-        return colorScheme == .dark
-            ? thanks.replacingOccurrences(of: "🖤", with: "🤍")
-            : thanks
-    }
-
-    var body: some View {
-        ScrollView {
-            VStack(spacing: 18) {
-                ZStack {
-                    Circle()
-                        .fill(Theme.spaceGradient)
-                        .frame(width: 78, height: 78)
-                    Image(systemName: "heart.fill")
-                        .font(.system(size: 29, weight: .semibold))
-                        .foregroundStyle(.white)
-                }
-
-                VStack(spacing: 7) {
-                    Text(l10n.s.donateHeading)
-                        .font(.title2.bold())
-                        .multilineTextAlignment(.center)
-                    Text(l10n.s.donateMessage)
-                        .font(.system(size: 13.5))
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .frame(maxWidth: 460)
-                }
-
-                Button {
-                    openURL(AppInfo.coffeeURL)
-                } label: {
-                    Label(l10n.s.donateButton, systemImage: "cup.and.saucer.fill")
-                }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
-
-                HStack(alignment: .top, spacing: 14) {
-                    Image(systemName: "star.fill")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(.yellow)
-                        .frame(width: 38, height: 38)
-                        .background(Circle().fill(Color.yellow.opacity(0.14)))
-
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text(l10n.s.supportIntroStarMessage)
-                            .font(.system(size: 13.5, weight: .medium))
-                            .fixedSize(horizontal: false, vertical: true)
-
-                        Button {
-                            openURL(AppInfo.repositoryURL)
-                        } label: {
-                            Label(l10n.s.supportIntroStarButton, systemImage: "star.fill")
-                        }
-                        .buttonStyle(.bordered)
-                        .controlSize(.large)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .padding(16)
-                .frame(maxWidth: 510)
-                .background(
-                    RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .fill(Color(nsColor: .controlBackgroundColor))
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .strokeBorder(Color(nsColor: .separatorColor).opacity(0.45))
-                )
-
-                Text(donateThanksText)
-                    .font(.caption)
-                    .foregroundStyle(.tertiary)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.horizontal, 28)
-            .padding(.vertical, 26)
         }
     }
 }
