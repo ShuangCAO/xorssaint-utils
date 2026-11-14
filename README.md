@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="Resources/Brand/AppIcon-Default.png" width="120" alt="Vorssaint Utils 个人 fork 图标">
+  <img src="Resources/Brand/AppIcon-Default.png" width="120" alt="Xorssaint Utils 个人 fork 图标">
 </p>
 
-<h1 align="center">Vorssaint Utils · 个人 Fork（非官方）</h1>
+<h1 align="center">Xorssaint Utils · 个人 Fork（非官方）</h1>
 
 <p align="center">
   菜单栏里的 macOS 工具集合。<br>
@@ -53,7 +53,7 @@ CCClip 是一个独立于上游剪贴板历史的新功能，灵感来自 [Clipy
 
 ### 面板与图标
 
-- 可隐藏面板顶部的 Vorssaint 图标，预览同步生效。
+- 可隐藏面板顶部的 Xorssaint 图标，预览同步生效。
 - 顶部 section 切换器支持 mini 模式，预览同步生效。
 - 应用图标改为暖沙色版本，作为这个非官方分支的视觉标识。
 
@@ -64,7 +64,7 @@ CCClip 是一个独立于上游剪贴板历史的新功能，灵感来自 [Clipy
 
 ## 上游功能
 
-Vorssaint 把音量混音、系统监控、窗口管理、Dock 预览、截图与录屏、剪贴板历史、文件架、卸载器、Homebrew 管理等工具收进一个菜单栏图标，并按需安装。完整功能列表、截图和隐私说明请看[上游 README](https://github.com/vorssaint/vorssaint-utils#readme)。
+Xorssaint 把音量混音、系统监控、窗口管理、Dock 预览、截图与录屏、剪贴板历史、文件架、卸载器、Homebrew 管理等工具收进一个菜单栏图标，并按需安装。完整功能列表、截图和隐私说明请看[上游 README](https://github.com/vorssaint/vorssaint-utils#readme)。
 
 本 README 只维护与上游不同的部分，避免两份功能列表长期不同步。
 
@@ -81,26 +81,26 @@ Vorssaint 把音量混音、系统监控、窗口管理、Dock 预览、截图�
 ### 从源码构建
 
 ```sh
-git clone https://github.com/ShuangCAO/vorssaint-utils.git
-cd vorssaint-utils
+git clone https://github.com/ShuangCAO/xorssaint-utils.git
+cd xorssaint-utils
 
 # Developer 变体：独立 bundle id，可以和官方版共存
 ./build.sh --dev
 ./build.sh --dev --install
 
-# Release 变体：使用 com.vorssaint.utils，和官方版冲突
+# Release 变体：使用 com.xorssaint.utils，和官方版冲突
 ./build.sh
 ./build.sh --install
 ```
 
-第一次使用建议先构建 Developer 变体。它使用 `com.vorssaint.utils.dev`，权限和设置与官方版、Release 变体互相独立。
+第一次使用建议先构建 Developer 变体。它使用 `com.xorssaint.utils.dev`，权限和设置与官方版、Release 变体互相独立。
 
 ### 测试与安装包
 
 ```sh
 ./build.sh --test          # 运行测试
 ./build.sh                 # Release 构建
-./Tools/make-dmg.sh        # 生成 dist/Vorssaint-<version>.dmg
+./Tools/make-dmg.sh        # 生成 dist/Xorssaint-<version>.dmg
 ```
 
 如果 Releases 中有 DMG，那是本 fork 自行构建的未公证版本；首次打开可能需要在 **系统设置 → 隐私与安全性** 中允许。
@@ -109,8 +109,8 @@ cd vorssaint-utils
 
 把 App 移到废纸篓，并按需删除对应的 Application Support 目录：
 
-- Release：`~/Library/Application Support/com.vorssaint.utils`
-- Developer：`~/Library/Application Support/com.vorssaint.utils.dev`
+- Release：`~/Library/Application Support/com.xorssaint.utils`
+- Developer：`~/Library/Application Support/com.xorssaint.utils.dev`
 
 ## 权限与数据
 
@@ -122,9 +122,13 @@ CCClip 的数据保存在：
 ~/Library/Application Support/<bundle id>/Clipy
 ```
 
-其中 Release 的 bundle id 是 `com.vorssaint.utils`，Developer 是 `com.vorssaint.utils.dev`。目录和文件权限为仅当前用户可读写。
+其中 Release 的 bundle id 是 `com.xorssaint.utils`，Developer 是 `com.xorssaint.utils.dev`。目录和文件权限为仅当前用户可读写。
 
 本 fork 没有为新增功能加入账号、云同步或遥测。CCClip 的剪贴板内容只保存在本地；默认只捕获纯文本，可以在设置中关闭捕获或清空历史。
+
+首次从旧的 Vorssaint 版本启动时，应用会把旧 `com.vorssaint.utils[.dev]` 的设置和 Application Support 目录复制到新的 Xorssaint bundle，旧数据保留不删。辅助功能、屏幕录制等系统权限与 Bundle ID 绑定，需要重新授权。
+
+自动更新、截图/录屏分享链接和反馈上传在本 fork 中已禁用；截图和录屏本身仍然完全本地可用。
 
 ## 与上游同步
 
@@ -141,6 +145,8 @@ git rebase upstream/main
 
 - CCClip 是独立实现，不导入 Clipy 的历史或配置，也不保证与 Clipy 行为完全一致。
 - 默认只捕获纯文本；其他类型需要在 CCClip 设置中手动开启。
+- 自动更新已禁用；更新方式是从源码重新构建，或手动下载你自己发布的构建。
+- 截图/录屏分享链接和反馈上传已禁用，只保留本地截图、录屏和系统分享面板。
 - 没有 Apple Developer ID 签名和公证，公开分发前需要自行处理签名、Bundle ID 和商标问题。
 - 仅支持 Apple Silicon 和 macOS 14 及以上。
 - 上游部分功能依赖具体硬件、macOS 版本或额外权限。
@@ -163,7 +169,7 @@ git rebase upstream/main
 
 - 原始项目：[vorssaint/vorssaint-utils](https://github.com/vorssaint/vorssaint-utils)，© 2026 Vorssaint，GPL-3.0-or-later。
 - 本 fork 的修改：© 2026 ShuangCAO 及贡献者，同样以 GPL-3.0-or-later 发布。
-- Vorssaint 的名称、Logo 和视觉标识归上游所有，并受 [TRADEMARKS.md](TRADEMARKS.md) 约束。
+- 上游项目 Vorssaint 的名称、Logo 和视觉标识归上游所有，并受 [TRADEMARKS.md](TRADEMARKS.md) 约束；Xorssaint 是非官方分支名称。
 - CCClip 的交互灵感来自 [Clipy](https://github.com/Clipy/Clipy)（MIT）；相关版权说明见 **设置 → CCClip**。
 - 感谢上游所有贡献者。
 
@@ -174,10 +180,10 @@ This is an unofficial personal fork of [Vorssaint Utils](https://github.com/vors
 Build from source with Xcode Command Line Tools:
 
 ```sh
-git clone https://github.com/ShuangCAO/vorssaint-utils.git
-cd vorssaint-utils
+git clone https://github.com/ShuangCAO/xorssaint-utils.git
+cd xorssaint-utils
 ./build.sh --dev
 ./build.sh --dev --install
 ```
 
-This fork is not affiliated with the upstream project. The Vorssaint name and visual identity belong to the upstream authors. Original code is GPL-3.0-or-later; fork modifications are released under the same license.
+This fork is not affiliated with the upstream project. The upstream Vorssaint name and visual identity belong to the upstream authors; Xorssaint is an unofficial fork name. Original code is GPL-3.0-or-later; fork modifications are released under the same license.

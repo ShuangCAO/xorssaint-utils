@@ -104,7 +104,7 @@ enum ClipyTests {
         suite.expect(store.load().isEmpty,
                      "deleting an entry removes its index row and blobs")
 
-        let domain = "com.vorssaint.tests.clipy-snippets"
+        let domain = "com.xorssaint.tests.clipy-snippets"
         let snippetDefaults = UserDefaults(suiteName: domain)!
         snippetDefaults.removePersistentDomain(forName: domain)
         defer { snippetDefaults.removePersistentDomain(forName: domain) }
