@@ -694,8 +694,6 @@ extension Strings {
 
         aboutDescription: "Eine Werkzeugzentrale für deinen Mac.\nEnergie, Systemüberwachung, Scrollen und ein Fensterumschalter, direkt in der Menüleiste.",
         versionPrefix: "Version",
-        reviewIntro: "Einführung erneut ansehen",
-        reviewHighlights: "Neuerungen ansehen",
         viewOnGitHub: "Auf GitHub ansehen",
 
         obContinue: "Fortfahren",

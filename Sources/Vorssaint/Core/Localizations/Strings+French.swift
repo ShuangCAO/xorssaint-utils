@@ -694,8 +694,6 @@ extension Strings {
 
         aboutDescription: "Un centre d’utilitaires pour votre Mac.\nÉnergie, moniteur système, défilement et sélecteur de fenêtres, directement dans la barre des menus.",
         versionPrefix: "Version",
-        reviewIntro: "Revoir l’introduction",
-        reviewHighlights: "Revoir les nouveautés",
         viewOnGitHub: "Voir sur GitHub",
 
         obContinue: "Continuer",

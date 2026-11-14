@@ -673,8 +673,6 @@ extension Strings {
         secureInputSwitcherUnidentified: "Програму, що утримує його, не вдалося розпізнати. Поки воно увімкнене, macOS приховує натискання клавіш від перемикача і ⌘Tab натомість відкриває перемикач macOS.",
         aboutDescription: "Набір корисних інструментів для вашого Mac.\nЖивлення, системний монітор, прокрутка та перемикач вікон прямо на смузі меню.",
         versionPrefix: "Версія",
-        reviewIntro: "Показати вступ знову",
-        reviewHighlights: "Показати огляд новинок знову",
         viewOnGitHub: "Відкрити на GitHub",
         obContinue: "Далі",
         obBack: "Назад",

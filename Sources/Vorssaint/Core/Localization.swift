@@ -883,8 +883,6 @@ struct Strings {
     // MARK: About
     let aboutDescription: String
     let versionPrefix: String
-    let reviewIntro: String
-    let reviewHighlights: String
     let viewOnGitHub: String
 
     // MARK: Onboarding
@@ -2029,8 +2027,6 @@ extension Strings {
 
         aboutDescription: "Central de utilidades para o seu Mac.\nEnergia, monitor do sistema, rolagem e alternador de janelas, direto na barra de menus.",
         versionPrefix: "Versão",
-        reviewIntro: "Rever introdução",
-        reviewHighlights: "Rever novidades",
         viewOnGitHub: "Ver no GitHub",
 
         obContinue: "Continuar",
@@ -3159,8 +3155,6 @@ extension Strings {
 
         aboutDescription: "A utility hub for your Mac.\nEnergy, system monitor, scrolling and a window switcher, right in the menu bar.",
         versionPrefix: "Version",
-        reviewIntro: "Review introduction",
-        reviewHighlights: "Review highlights",
         viewOnGitHub: "View on GitHub",
 
         obContinue: "Continue",

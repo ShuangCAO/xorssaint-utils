@@ -695,8 +695,6 @@ extension Strings {
 
         aboutDescription: "你的 Mac 實用工具中心。\n電源、系統監控、捲動與視窗切換器，全都在選單列中。",
         versionPrefix: "版本",
-        reviewIntro: "重看介紹",
-        reviewHighlights: "重看新功能導覽",
         viewOnGitHub: "在 GitHub 上查看",
 
         obContinue: "繼續",

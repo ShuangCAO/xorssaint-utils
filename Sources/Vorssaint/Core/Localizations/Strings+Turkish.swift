@@ -694,8 +694,6 @@ extension Strings {
 
         aboutDescription: "Mac’in için bir yardımcı merkez.\nEnerji, sistem monitörü, kaydırma ve pencere değiştirici, doğrudan menü çubuğunda.",
         versionPrefix: "Sürüm",
-        reviewIntro: "Tanıtımı incele",
-        reviewHighlights: "Yenilikler turunu incele",
         viewOnGitHub: "GitHub’da görüntüle",
 
         obContinue: "Devam",

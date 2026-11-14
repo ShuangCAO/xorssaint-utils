@@ -694,8 +694,6 @@ extension Strings {
 
         aboutDescription: "Centrum nástrojov pre váš Mac.\nEnergia, monitor systému, rolovanie a prepínač okien priamo v lište s ponukami.",
         versionPrefix: "Verzia",
-        reviewIntro: "Znova zobraziť úvod",
-        reviewHighlights: "Znova zobraziť novinky",
         viewOnGitHub: "Zobraziť na GitHube",
 
         obContinue: "Pokračovať",

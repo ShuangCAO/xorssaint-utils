@@ -694,8 +694,6 @@ extension Strings {
 
         aboutDescription: "你的 Mac 实用工具中心。\n能源、系统监视器、滚动和窗口切换器，尽在菜单栏中。",
         versionPrefix: "版本",
-        reviewIntro: "重看介绍",
-        reviewHighlights: "重看新功能导览",
         viewOnGitHub: "在 GitHub 上查看",
 
         obContinue: "继续",

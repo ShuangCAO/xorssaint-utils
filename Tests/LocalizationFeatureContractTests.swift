@@ -297,8 +297,7 @@ enum LocalizationFeatureContractTests {
                                      strings.highlightsCaptionCapturePalette,
                                      strings.highlightsCaptionClipboardRedesign,
                                      strings.highlightsConfigure,
-                                     strings.highlightsTry, strings.highlightsSeeAll,
-                                     strings.reviewIntro, strings.reviewHighlights]
+                                     strings.highlightsTry, strings.highlightsSeeAll]
             suite.expect(highlightsStrings.allSatisfy { !$0.isEmpty && !$0.contains("—") },
                    "\(prefix) update highlights strings are present without em dash")
             let officialHomebrewIntroStrings = [

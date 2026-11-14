@@ -695,8 +695,6 @@ extension Strings {
 
         aboutDescription: "Набор полезных инструментов для вашего Mac.\nПитание, системный монитор, прокрутка и переключатель окон прямо в строке меню.",
         versionPrefix: "Версия",
-        reviewIntro: "Повторно показать вступление",
-        reviewHighlights: "Повторно показать обзор новинок",
         viewOnGitHub: "Открыть на GitHub",
 
         obContinue: "Далее",

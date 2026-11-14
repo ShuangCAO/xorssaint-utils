@@ -695,8 +695,6 @@ extension Strings {
 
         aboutDescription: "Mac을 위한 유틸리티 허브입니다.\n메뉴 막대에서 에너지 관리, 시스템 모니터, 스크롤 및 윈도우 전환을 제공합니다.",
         versionPrefix: "버전",
-        reviewIntro: "시작하기 다시 보기",
-        reviewHighlights: "업데이트 둘러보기 다시 보기",
         viewOnGitHub: "GitHub에서 보기",
 
         obContinue: "계속",

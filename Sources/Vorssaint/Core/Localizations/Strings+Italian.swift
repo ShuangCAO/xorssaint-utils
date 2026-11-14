@@ -694,8 +694,6 @@ extension Strings {
 
         aboutDescription: "Un centro di utilità per il tuo Mac.\nEnergia, monitoraggio del sistema, scorrimento e un commutatore di finestre, direttamente nella barra dei menu.",
         versionPrefix: "Versione",
-        reviewIntro: "Rivedi l’introduzione",
-        reviewHighlights: "Rivedi le novità",
         viewOnGitHub: "Vedi su GitHub",
 
         obContinue: "Continua",

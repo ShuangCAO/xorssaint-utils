@@ -694,8 +694,6 @@ extension Strings {
 
         aboutDescription: "あなたの Mac のためのユーティリティハブ。\n省エネルギー、システムモニタ、スクロール、ウインドウスイッチャーを、メニューバーから。",
         versionPrefix: "バージョン",
-        reviewIntro: "はじめにを見直す",
-        reviewHighlights: "新機能ツアーを見直す",
         viewOnGitHub: "GitHub で見る",
 
         obContinue: "続ける",
