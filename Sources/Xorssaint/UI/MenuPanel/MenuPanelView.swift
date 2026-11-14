@@ -113,10 +113,8 @@ struct MenuPanelView: View {
         Group {
             if let notchSize {
                 embeddedPanel(size: notchSize)
-            } else if selectedMetric != nil {
-                metricPanel
             } else {
-                navigablePanel
+                popoverPanel
             }
         }
         .onAppear {
@@ -207,6 +205,23 @@ struct MenuPanelView: View {
         .frame(width: size.width, height: size.height, alignment: .top)
     }
 
+    /// The popover panel and its surface share one root, so on systems that host
+/// full-size content the surface can reach the balloon's safe-area band. With
+/// the surface on the fixed-size child it stopped at the content rect and left
+/// system material visible along the top and right edges.
+private var popoverPanel: some View {
+        Group {
+            if selectedMetric != nil {
+                metricPanel
+            } else {
+                navigablePanel
+            }
+        }
+        .frame(maxWidth: PanelSurface.popoverHostsFullSizeContent ? .infinity : nil,
+               maxHeight: PanelSurface.popoverHostsFullSizeContent ? .infinity : nil)
+        .panelGlassSurface()
+    }
+
     private var navigablePanel: some View {
         VStack(alignment: .leading, spacing: 12) {
             UpdateBanner()
@@ -226,7 +241,6 @@ struct MenuPanelView: View {
         }
         .padding(12)
         .frame(width: 332, height: navigablePanelHeight)
-        .panelGlassSurface()
     }
 
     private var metricPanel: some View {
@@ -248,7 +262,6 @@ struct MenuPanelView: View {
         }
         .padding(12)
         .frame(width: 332, height: metricPanelHeight)
-        .panelGlassSurface()
     }
 
     /// The major sections in the user's saved order. Reading `sectionOrderRaw`

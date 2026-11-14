@@ -489,11 +489,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         // the arrow, while its controls stay inside the safe area. Older AppKit
         // versions misplace full-size content, so keep the inset layout and let
         // the popover draw its native material and corners there.
-        popover.hasFullSizeContent = PanelSurface.popoverHostsFullSizeContent
         popover.delegate = self
         let host = NSHostingController(rootView: MenuPanelView())
         host.sizingOptions = .preferredContentSize
         popover.contentViewController = host
+        // Set this after installing the hosting controller: some AppKit builds
+        // reset the full-size flag while attaching the content view.
+        popover.hasFullSizeContent = PanelSurface.popoverHostsFullSizeContent
         AppAppearanceController.shared.follow(panel: popover)
     }
 

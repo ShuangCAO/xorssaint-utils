@@ -196,13 +196,13 @@ private struct PanelGlassSurface: View {
     private var surface: some View {
 #if compiler(>=6.2)
         if #available(macOS 26.0, *), liquidGlassEnabled, !reduceTransparency {
-            Rectangle()
-                .fill(Color.clear)
-                .glassEffect(.regular, in: Rectangle())
-                .overlay(
-                    Rectangle()
-                        .fill(PanelSurface.baseFill(for: colorScheme).opacity(colorScheme == .light ? 0.35 : 0.45))
-                )
+            ZStack {
+                Rectangle()
+                    .fill(Color.clear)
+                    .glassEffect(.regular, in: Rectangle())
+                Rectangle()
+                    .fill(PanelSurface.baseFill(for: colorScheme).opacity(colorScheme == .light ? 0.35 : 0.45))
+            }
         } else {
             standardSurface
         }
@@ -213,9 +213,13 @@ private struct PanelGlassSurface: View {
 
     @ViewBuilder
     private var standardSurface: some View {
-        Rectangle()
-            .fill(.regularMaterial)
-            .overlay(Rectangle().fill(PanelSurface.baseFill(for: colorScheme)))
+        // Keep the tint in the same layout pass as the material. An overlay
+        // stayed at the safe-area size and left the material visible as a band
+        // along the popover's top and right edges.
+        ZStack {
+            Rectangle().fill(.regularMaterial)
+            Rectangle().fill(PanelSurface.baseFill(for: colorScheme))
+        }
     }
 }
 

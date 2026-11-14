@@ -2971,7 +2971,7 @@ enum SwitcherModelFeatureTests {
                    && !panelGlassCode.contains("strokeBorder"),
                "the panel leaves the corners and rim to the popover, without a second rounded outline (#2225)")
         suite.expect(panelGlassCode.contains(".glassEffect(.regular, in: Rectangle())")
-                   && panelGlassCode.contains("Rectangle()\n            .fill(.regularMaterial)"),
+                   && panelGlassCode.contains("Rectangle().fill(.regularMaterial)"),
                "both the standard and the Liquid Glass surface fill the whole balloon, no shape of their own")
         let panelViewSource = (try? String(
             contentsOfFile: "Sources/Xorssaint/UI/MenuPanel/MenuPanelView.swift",
@@ -2980,9 +2980,10 @@ enum SwitcherModelFeatureTests {
             stripCommentLines((panelViewSource.components(separatedBy: header).last ?? "")
                 .components(separatedBy: "\n    }").first ?? "")
         }
-        suite.expect(panelBodyCode("private var navigablePanel: some View {").contains(".panelGlassSurface()")
-                   && panelBodyCode("private var metricPanel: some View {").contains(".panelGlassSurface()"),
-               "both the navigable panel and the metric panel wear that surface")
+        suite.expect(panelBodyCode("private var popoverPanel: some View {").contains(".panelGlassSurface()")
+                   && !panelBodyCode("private var navigablePanel: some View {").contains(".panelGlassSurface()")
+                   && !panelBodyCode("private var metricPanel: some View {").contains(".panelGlassSurface()"),
+               "the surface is applied to the popover root so it can reach the balloon's safe area")
 
         // The popover window is the panel plus 13 pt for the arrow and 13 pt
         // below it. A window taller than the usable height opens beside the
