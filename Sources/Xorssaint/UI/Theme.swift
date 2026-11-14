@@ -223,8 +223,9 @@ func appDelegate() -> AppDelegate? {
     NSApp.delegate as? AppDelegate
 }
 
-/// The official mark (Resources/Brand/logo.png, trimmed at build time),
-/// tintable for light or dark surfaces.
+/// The fork mark (Resources/Brand/logo.png, trimmed at build time), tintable
+/// for light or dark surfaces. The paw is square; keep the old wide-mark slot
+/// so existing headers and onboarding layouts keep their height.
 struct BrandMark: View {
     var width: CGFloat
     var tint: Color = .white
@@ -243,13 +244,13 @@ struct BrandMark: View {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .foregroundStyle(tint)
-                .frame(width: width)
+                .frame(width: width, height: width * 0.56)
         } else {
             Image(systemName: "circle.fill")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .foregroundStyle(tint)
-                .frame(width: width * 0.5)
+                .frame(width: width * 0.5, height: width * 0.28)
         }
     }
 }

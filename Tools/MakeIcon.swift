@@ -4,7 +4,7 @@
 // Generates all icon assets:
 // - the app iconset and .icns from the exported Default rendition of the
 //   adaptive source (Resources/Brand/AppIcon-Default.png)
-// - the menu bar template glyph and BrandMark from the wordmark master
+// - the menu bar template glyph and BrandMark from the paw mark master
 //   (Resources/Brand/logo.png)
 // AppIcon-Default.png is the finished warm-sand master used by the build.
 // Resources/Brand/AppIcon.icon still carries the earlier light adaptive
@@ -116,14 +116,12 @@ func renderAppIcon(px: Int) -> Data? {
 
 // MARK: - Menu bar glyph (template)
 
-// The mark is ~1.97:1, so fitting it into a fixed box made the width the
-// limiting side and left the height unused, rendering it far shorter than the
-// menu bar icons around it. Size from the height and let the width follow.
-let menuBarGlyphHeight: CGFloat = 12.5
-// Centered geometrically the mark reads high, since the thin ring tails carry
-// the bounding box below the planet body. Drop it onto the same visual floor
-// as its neighbours.
-let menuBarGlyphDrop: CGFloat = 1
+// The paw is square, so its height also fixes its width. Size it close to the
+// menu bar's other compact symbols instead of leaving it small beside them.
+let menuBarGlyphHeight: CGFloat = 16
+// The pad is visually heavier than the toes; a small drop keeps the mark on
+// the same optical floor as its neighbours.
+let menuBarGlyphDrop: CGFloat = 0.5
 // Taller than the mark needs: the same canvas holds the compact Keep Awake
 // symbols. Keep in sync with BlackHoleGlyph.pointSize in
 // Sources/Xorssaint/App/StatusItemController.swift; `--selftest` enforces it.

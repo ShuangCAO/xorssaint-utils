@@ -967,9 +967,10 @@ final class StatusItemController {
 /// light and dark menu bars. Active states can use real colors for attention.
 /// A system symbol named in the menu bar settings can take the mark's place.
 enum BlackHoleGlyph {
-    /// Logical size of the glyph in the menu bar, in points. Wide because the
-    /// mark is ~1.97:1 and sized from its height. Tools/MakeIcon.swift writes
-    /// the bundled PNGs at this size; `--selftest` checks the two still agree.
+    /// Logical size of the status item image in points. The paw itself is
+    /// square; the extra width keeps the slot stable when a system symbol or
+    /// the clock replaces it. Tools/MakeIcon.swift writes the bundled PNGs at
+    /// this size; `--selftest` checks the two still agree.
     static let pointSize = NSSize(width: 26, height: 20)
 
     /// Requested ink height for the active states' system symbols. A compact
