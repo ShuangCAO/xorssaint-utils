@@ -14,6 +14,10 @@ All notable changes to this project are documented here. The format follows
 - Holidays and adjusted workdays are marked with colored dots on the calendar panel's dates.
 - CCClip is an optional, independent clipboard menu with its own history and snippets. It opens from its shortcuts, captures plain text by default, and has its own settings page.
 
+### Changed
+- Right-click any picture in Finder and choose "Edit with Xorssaint" from the Services menu to open it in the screenshot editor. Only the first of several selected pictures is edited.
+- An edited picture now saves beside its original, in the export format, with a numbered name so neither the original nor an earlier export is ever replaced. Pictures opened from the Shelf are saved the same way.
+
 ## [3.4.4] - 2026-11-11
 
 ### Summary

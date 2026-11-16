@@ -2500,12 +2500,14 @@ enum SwitcherModelFeatureTests {
         // the plist the shipped app will actually carry. The pin is a
         // per-release decision: this check fails on every version bump so the
         // decision above is made consciously, never by omission.
+        // 3.4.7 stays on the 3.4.4 invitation and the 3.4.0 tour, so neither
+        // the support prompt nor the highlights reappear for this patch.
         let releasePlist = NSDictionary(contentsOfFile: "Resources/Info.plist")
         let plistVersion = (releasePlist?["CFBundleShortVersionString"] as? String) ?? ""
-        suite.expect(plistVersion == "3.4.4",
+        suite.expect(plistVersion == "3.4.7",
                "bumping the app version requires re-deciding the support prompt pin above")
         let plistBuild = (releasePlist?["CFBundleVersion"] as? String) ?? ""
-        suite.expect(plistBuild == "106",
+        suite.expect(plistBuild == "107",
                "every app version needs its own incremented bundle build")
         suite.expect(SupportUpdateIntroInfo.releaseVersion == "3.4.4",
                "the support prompt is prepared for the 3.4.4 stable release")
