@@ -54,6 +54,12 @@ struct CalendarSection: View {
                 displayedMonth = CalendarMonth.containing(now, calendar: calendar)
             }
         }
+        // The popover host outlives close, so reopening skips onAppear and a
+        // day changed while asleep never posted NSCalendarDayChanged. The panel
+        // show notification is the one signal every open guarantees.
+        .onReceive(NotificationCenter.default.publisher(for: .menuPanelWillShow)) { _ in
+            refreshForAppearance()
+        }
     }
 
     private var header: some View {
