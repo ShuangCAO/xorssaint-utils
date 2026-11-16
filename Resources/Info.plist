@@ -82,5 +82,23 @@
 	<string>NSApplication</string>
 	<key>NSRemovableVolumesUsageDescription</key>
 	<string>Xorssaint organizes confirmed WhatsApp downloads in a destination folder you explicitly choose. The Cleaner also looks for forgotten screenshots when you save screenshots here.</string>
+	<key>NSServices</key>
+	<array>
+		<dict>
+			<key>NSMenuItem</key>
+			<dict>
+				<key>default</key>
+				<string>Edit with Xorssaint</string>
+			</dict>
+			<key>NSMessage</key>
+			<string>editImageWithXorssaint</string>
+			<key>NSRequiredContext</key>
+			<dict/>
+			<key>NSSendFileTypes</key>
+			<array>
+				<string>public.image</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

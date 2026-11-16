@@ -1375,6 +1375,8 @@ final class ScreenshotEditorModel: ObservableObject, BackdropEditing {
 final class ScreenshotEditorController: NSObject, NSWindowDelegate {
     let model: ScreenshotEditorModel
     let sourceFormat: MediaImageFormat
+    /// The file an imported image came from; nil for an actual capture.
+    let sourceURL: URL?
     private var window: NSWindow?
     private var keyMonitor: Any?
     private var scrollMonitor: Any?
@@ -1391,6 +1393,7 @@ final class ScreenshotEditorController: NSObject, NSWindowDelegate {
     init(capture: ScreenshotSelectionController.Capture) {
         model = ScreenshotEditorModel(image: capture.image, scale: capture.scale)
         sourceFormat = capture.sourceFormat
+        sourceURL = capture.sourceURL
         super.init()
     }
 
@@ -1755,6 +1758,10 @@ final class ScreenshotEditorController: NSObject, NSWindowDelegate {
         guard let export = model.exportImage(),
               let file = ScreenshotImageFile.encode(export, preferredFormat: sourceFormat)
         else { return }
+        if let sourceURL {
+            saveImportedImage(file, beside: sourceURL)
+            return
+        }
         let (url, consumedNumber) = ScreenshotService.saveDestination(
             strings: strings, fileExtension: file.format.fileExtension)
         do {
@@ -1773,13 +1780,38 @@ final class ScreenshotEditorController: NSObject, NSWindowDelegate {
         }
     }
 
+    /// An imported file saves beside its original and never replaces it or
+    /// any earlier export. It is not a screen capture, so it does not get the
+    /// capture metadata a real screenshot receives.
+    private func saveImportedImage(_ file: ScreenshotImageFile, beside sourceURL: URL) {
+        let url = ScreenshotSupport.saveDestination(
+            forSourceURL: sourceURL, fileExtension: file.format.fileExtension
+        ) { FileManager.default.fileExists(atPath: $0) }
+        do {
+            try file.data.write(to: url, options: .atomic)
+            model.markExported()
+            QuickToolHUD.show(icon: "camera.viewfinder",
+                              message: String(format: strings.savedHUDFormat,
+                                              url.deletingLastPathComponent().lastPathComponent))
+            window?.close()
+        } catch {
+            NSSound.beep()
+        }
+    }
+
     func saveAs() {
         guard let window, let export = model.exportImage(),
               let file = ScreenshotImageFile.encode(export, preferredFormat: sourceFormat) else { return }
         let panel = NSSavePanel()
         panel.allowedContentTypes = [file.format.contentType]
-        panel.nameFieldStringValue = ScreenshotSupport.fileName(
-            prefix: strings.fileNamePrefix, date: Date(), fileExtension: file.format.fileExtension)
+        if let sourceURL {
+            panel.directoryURL = sourceURL.deletingLastPathComponent()
+            panel.nameFieldStringValue = sourceURL.deletingPathExtension()
+                .appendingPathExtension(file.format.fileExtension).lastPathComponent
+        } else {
+            panel.nameFieldStringValue = ScreenshotSupport.fileName(
+                prefix: strings.fileNamePrefix, date: Date(), fileExtension: file.format.fileExtension)
+        }
         panel.beginSheetModal(for: window) { [weak self] response in
             guard let self, response == .OK, let url = panel.url else { return }
             do {

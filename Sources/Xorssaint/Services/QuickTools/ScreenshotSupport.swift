@@ -1540,6 +1540,20 @@ enum ScreenshotSupport {
         return name
     }
 
+    /// Where an edited image imported from a file is saved: beside the
+    /// original, named after it in the export format. The name goes through
+    /// `uniqueFileName`, so neither the original nor any earlier export is
+    /// ever replaced.
+    static func saveDestination(forSourceURL url: URL, fileExtension: String,
+                                exists: (String) -> Bool) -> URL {
+        let directory = url.deletingLastPathComponent()
+        let base = url.deletingPathExtension().lastPathComponent
+        let name = uniqueFileName("\(base).\(fileExtension)") { candidate in
+            exists(directory.appendingPathComponent(candidate).path)
+        }
+        return directory.appendingPathComponent(name)
+    }
+
     // MARK: - Annotation model
 
     /// Movement in view points, so clicks keep the same tolerance at every

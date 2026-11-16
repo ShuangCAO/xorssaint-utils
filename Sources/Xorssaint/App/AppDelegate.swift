@@ -116,6 +116,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         // keyboard shortcuts (Cmd+H/M/W/Q and the Edit shortcuts Cmd+C/V/X/A) have
         // no menu items to fire and do nothing in the Settings window. Install one.
         installMainMenu()
+        // Finder offers "Edit with Xorssaint" for image files through the
+        // Services menu; requests arrive here whether or not we were running.
+        NSApp.servicesProvider = self
         HorizontalWheelScrolling.install()
         PanelLayout.resetCollapsedSectionsOnce(for: "2.15.1")
 
@@ -420,6 +423,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
             }
         }
         return true
+    }
+
+    // MARK: - Finder Services
+
+    /// "Edit with Xorssaint" in Finder's Services menu. Only the first of the
+    /// selected images is edited. LaunchServices starts the app if needed and
+    /// delivers the request after launch, so no cold-start handling is required.
+    @objc func editImageWithXorssaint(_ pboard: NSPasteboard,
+                                      userData: String,
+                                      error: AutoreleasingUnsafeMutablePointer<NSString?>) {
+        if let url = ScreenshotImageImport.fileURL(from: pboard) {
+            ScreenshotService.shared.editImage(at: url)
+            return
+        }
+        // Senders that predate file-URL pasteboard items leave plain paths.
+        let legacy = NSPasteboard.PasteboardType("NSFilenamesPboardType")
+        guard let path = (pboard.propertyList(forType: legacy) as? [String])?.first else { return }
+        ScreenshotService.shared.editImage(at: URL(fileURLWithPath: path))
     }
 
     /// Whether the menu bar icon is actually visible on a screen, rather than

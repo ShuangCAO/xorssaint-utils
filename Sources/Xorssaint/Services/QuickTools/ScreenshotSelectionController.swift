@@ -23,6 +23,9 @@ final class ScreenshotSelectionController {
         /// The captured area in Cocoa global coordinates.
         let anchorRect: CGRect
         var sourceFormat: MediaImageFormat = .png
+        /// The file an imported image came from, so the editor can save back
+        /// next to it. Nil for actual captures, which use the save folder.
+        var sourceURL: URL? = nil
     }
 
     /// What the caller wants out of the same gesture. The screenshot tool

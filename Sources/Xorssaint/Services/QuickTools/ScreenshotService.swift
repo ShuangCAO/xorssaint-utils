@@ -665,6 +665,8 @@ final class ScreenshotService: ObservableObject {
     /// Opens a picture from the shelf through the same size choice as the clipboard.
     func editImage(at url: URL) {
         importImage({ ScreenshotImageImport(url: url) }, from: .file) { capture in
+            var capture = capture
+            capture.sourceURL = url
             NotchService.shared.perform {
                 ScreenshotService.shared.openEditor(with: capture)
             }
