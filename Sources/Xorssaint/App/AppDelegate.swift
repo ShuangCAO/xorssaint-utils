@@ -1698,7 +1698,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
 
         menu.addItem(.separator())
 
-        let quitItem = NSMenuItem(title: strings.menuQuit, action: #selector(quitApp), keyEquivalent: "q")
+        // No key equivalent: the shortcut stays unbound so it cannot quit the
+        // app by accident. Clicking the item still quits.
+        let quitItem = NSMenuItem(title: strings.menuQuit, action: #selector(quitApp), keyEquivalent: "")
         quitItem.target = self
         menu.addItem(quitItem)
 
@@ -1767,9 +1769,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
     /// Because the app runs as an accessory, AppKit never gives it the default main
     /// menu a regular app gets, so `NSApp.mainMenu` stays nil and the standard key
     /// equivalents (which live on menu items) never resolve. That is why nothing
-    /// happens for Cmd+H/M/W/Q or Cmd+C/V/X/A inside the Settings window. A minimal
-    /// standard menu restores them. The menu bar only appears while one of the
-    /// app's own windows is focused; otherwise the app is as invisible as before.
+    /// happens for Cmd+H/M/W or Cmd+C/V/X/A inside the Settings window. A minimal
+    /// standard menu restores them. Cmd+Q is the one exception: Quit is left
+    /// unbound so the shortcut cannot quit the app by accident, while the item
+    /// itself still quits when it is clicked. The menu bar only appears while one
+    /// of the app's own windows is focused; otherwise the app is as invisible as
+    /// before.
     /// Most items use the responder chain (nil target) so they act on the key
     /// window or the focused text field; About and Settings route to our handlers.
     func installMainMenu() {
@@ -1802,7 +1807,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
                                    action: #selector(NSApplication.unhideAllApplications(_:)), keyEquivalent: ""))
         appMenu.addItem(.separator())
         appMenu.addItem(NSMenuItem(title: strings.menuQuit,
-                                   action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
+                                   action: #selector(NSApplication.terminate(_:)), keyEquivalent: ""))
 
         // Edit menu, so text fields in Settings respond to the editing shortcuts.
         let editMenuItem = NSMenuItem()

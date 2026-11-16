@@ -191,6 +191,7 @@ struct MetricsTests {
                 QuitProtectionHUD.progressChecks(suite)
                 QuitProtectionRoutingContract.QuitProtectionService.routingChecks(suite)
             }),
+            ("app-menu", { AppMenuSupportContract.run(suite) }),
             ("scratchpad", { ScratchpadMarkTests.run { suite.expect($0, $1) } }),
             ("recording", {
                 RecorderPreparationTests.run(suite)
