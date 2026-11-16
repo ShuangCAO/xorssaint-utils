@@ -144,7 +144,11 @@ struct ClipyMenuView: View {
                      selected: model.isSelected(row),
                      help: entry.preview)
             .onHover { inside in
-                if inside { model.select(row) }
+                guard inside else { return }
+                model.select(row)
+                // Menu semantics: moving off a folder row onto a plain entry
+                // dismisses the folder column the hover opened.
+                if model.openFolder != nil { model.closeFolder() }
             }
             .onTapGesture { model.select(row); model.activate(row) }
         case .folder(let folder, let number):
@@ -167,7 +171,7 @@ struct ClipyMenuView: View {
             .background(selectionFill(model.isSelected(row)))
             .contentShape(Rectangle())
             .onHover { inside in
-                if inside { model.select(row) }
+                if inside { model.select(row); model.hoverExpand(row) }
             }
             .onTapGesture { model.select(row); model.activate(row) }
         case .snippetFolder(let name, let snippets, let number):
@@ -193,7 +197,7 @@ struct ClipyMenuView: View {
             .background(selectionFill(model.isSelected(row)))
             .contentShape(Rectangle())
             .onHover { inside in
-                if inside { model.select(row) }
+                if inside { model.select(row); model.hoverExpand(row) }
             }
             .onTapGesture { model.select(row); model.activate(row) }
         case .snippet(let snippet, let number):
@@ -204,7 +208,9 @@ struct ClipyMenuView: View {
                      selected: model.isSelected(row),
                      help: snippet.content)
             .onHover { inside in
-                if inside { model.select(row) }
+                guard inside else { return }
+                model.select(row)
+                if model.openFolder != nil { model.closeFolder() }
             }
             .onTapGesture { model.select(row); model.activate(row) }
         }

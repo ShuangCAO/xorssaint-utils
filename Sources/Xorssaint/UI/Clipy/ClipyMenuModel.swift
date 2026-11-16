@@ -179,6 +179,18 @@ final class ClipyMenuModel: ObservableObject {
         }
     }
 
+    /// Hovering a folder row opens its column like a click, without firing
+    /// any other action the row could carry. Both folder kinds expand so the
+    /// menu reads as one consistent submenu behavior.
+    func hoverExpand(_ row: ClipyMenuRow) {
+        switch row {
+        case .folder, .snippetFolder:
+            activate(row)
+        default:
+            break
+        }
+    }
+
     func activateFolderSelection() {
         guard let folderSelection, let openFolder,
               openFolder.count > folderSelection else { return }
