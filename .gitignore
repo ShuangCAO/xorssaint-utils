@@ -17,6 +17,9 @@ dist/
 AGENTS.md
 CLAUDE.md
 
+# Editor and agent tooling state
+.zcode/
+
 # macOS noise
 .DS_Store
 
