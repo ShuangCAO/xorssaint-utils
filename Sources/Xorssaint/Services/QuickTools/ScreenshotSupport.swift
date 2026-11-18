@@ -1182,7 +1182,7 @@ enum ScreenshotSupport {
     /// behind an overflow button, as toolbar items that do not fit do.
     struct ToolRailLayout: Equatable {
         var rowHeight: CGFloat = 29
-        var spacing: CGFloat = 2
+        var spacing: CGFloat = 1
         /// Tools shown as buttons. The ones after them are in the overflow menu.
         var visibleTools: Int
 
@@ -1194,7 +1194,7 @@ enum ScreenshotSupport {
             // Every tool and the gear.
             if Self.chromeHeight + CGFloat(toolCount + 1) * (rowHeight + spacing) <= height { return }
             // Compact rows still hold all of them in the shortest editor.
-            rowHeight = 23
+            rowHeight = 22
             spacing = 1
             let rows = Int(((height - Self.chromeHeight) / (rowHeight + spacing)).rounded(.down))
             if rows >= toolCount + 1 { return }
@@ -1583,8 +1583,11 @@ enum ScreenshotSupport {
     enum Tool: String, CaseIterable {
         // Case order is the default rail order and therefore the default
         // mapping for keys 1 through 9. Put the common actions first.
+        // The eyedropper is last so a later build cannot shift the keys an
+        // earlier one handed out.
         case select, arrow, pixelate, crop, text, sticker, rect, highlight,
-             freehand, line, ellipse, counter, redact, spotlight, expandCanvas, image
+             freehand, line, ellipse, counter, redact, spotlight, expandCanvas, image,
+             eyedropper
 
         /// Content-only image annotations never appear in the tool rail.
         static var editorTools: [Tool] { allCases.filter { $0 != .image } }
@@ -1599,7 +1602,8 @@ enum ScreenshotSupport {
         var dragsRect: Bool {
             switch self {
             case .rect, .ellipse, .highlight, .pixelate, .redact, .spotlight: return true
-            case .select, .arrow, .line, .freehand, .text, .sticker, .counter, .crop, .expandCanvas, .image:
+            case .select, .arrow, .line, .freehand, .text, .sticker, .counter, .crop, .expandCanvas, .image,
+                 .eyedropper:
                 return false
             }
         }
@@ -1612,9 +1616,10 @@ enum ScreenshotSupport {
         /// The tool a new editor opens with. Select, crop and expand canvas
         /// act on the capture as a whole and an image is never picked by
         /// hand, so each falls back to arrow and the editor opens ready to draw.
+        /// The eyedropper only reads a colour, so it falls back too.
         static func startingTool(remembered raw: String?) -> Tool {
             let tool = Tool(rawValue: raw ?? "") ?? .arrow
-            return [.select, .crop, .expandCanvas, .image].contains(tool) ? .arrow : tool
+            return [.select, .crop, .expandCanvas, .image, .eyedropper].contains(tool) ? .arrow : tool
         }
 
         /// Saved ids first, then any tools added by a later version in the
@@ -2088,7 +2093,7 @@ enum ScreenshotSupport {
                                   blurLevel: annotation.blurLevel,
                                   blurStyle: annotation.blurStyle,
                                   blurTextOnly: annotation.blurTextOnly)
-        case .sticker, .select, .crop, .spotlight, .expandCanvas, .image:
+        case .sticker, .select, .crop, .spotlight, .expandCanvas, .image, .eyedropper:
             return SelectionStyle(color: nil,
                                   stroke: nil,
                                   arrowStyle: nil)

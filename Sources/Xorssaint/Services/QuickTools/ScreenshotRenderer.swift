@@ -126,7 +126,7 @@ enum ScreenshotRenderer {
                     drawSpotlight(annotations, dimStrength: spotlightDimStrength,
                                   imageSize: imageSize, in: context)
                 }
-            case .select, .crop, .expandCanvas:
+            case .select, .crop, .expandCanvas, .eyedropper:
                 break
             }
         }

@@ -265,7 +265,11 @@ struct ScreenshotEditorView: View {
         .onContinuousHover { phase in
             switch phase {
             case .active(let location):
-                updateHoverCursor(at: imagePoint(from: location, zoom: zoom))
+                let point = imagePoint(from: location, zoom: zoom)
+                if model.tool == .eyedropper {
+                    model.updateEyedropper(at: point)
+                }
+                updateHoverCursor(at: point)
             case .ended:
                 NSCursor.arrow.set()
             }
@@ -275,6 +279,9 @@ struct ScreenshotEditorView: View {
         }
         .overlay(alignment: .topLeading) {
             cropLoupeOverlay(zoom: zoom, canvasSize: canvasSize)
+        }
+        .overlay(alignment: .topLeading) {
+            eyedropperOverlay(zoom: zoom, canvasSize: canvasSize)
         }
     }
 
@@ -478,6 +485,12 @@ struct ScreenshotEditorView: View {
     }
 
     private func updateHoverCursor(at point: CGPoint) {
+        // The eyedropper reads a pixel and claims nothing, so the pointer
+        // stays a crosshair over every mark.
+        if model.tool == .eyedropper {
+            NSCursor.crosshair.set()
+            return
+        }
         // The same rule a press follows: a spotlight region offers only its
         // handles and edge while its tool is active, and expanding the canvas
         // never moves a mark.
@@ -492,6 +505,125 @@ struct ScreenshotEditorView: View {
         } else {
             NSCursor.arrow.set()
         }
+    }
+
+    // MARK: - Eyedropper
+
+    private static let eyedropperLoupeSize: CGFloat = 72
+
+    /// The magnifier and the colour readout that follow the pointer while the
+    /// eyedropper tool is active. The magnifier shows the capture around the
+    /// pointer, and the readout carries the colour of the exact pixel under
+    /// it, the value the pasteboard would receive and the pixel's place.
+    @ViewBuilder
+    private func eyedropperOverlay(zoom: CGFloat, canvasSize: CGSize) -> some View {
+        if model.tool == .eyedropper, let point = model.eyedropperPoint {
+            let sourceRect = ScreenshotSupport.cropLoupeSampleRect(
+                around: point,
+                imageSize: model.imageSize,
+                sideLength: 14,
+                centredOnPixel: true)
+            if let sample = model.baseImage.cropping(to: sourceRect) {
+                let size = Self.eyedropperLoupeSize
+                let crossX = min(max((point.x - sourceRect.minX) / sourceRect.width * size, 0.5),
+                                 size - 0.5)
+                let crossY = min(max((point.y - sourceRect.minY) / sourceRect.height * size, 0.5),
+                                 size - 0.5)
+                let position = eyedropperPosition(for: point, zoom: zoom, canvasSize: canvasSize)
+                ZStack(alignment: .topLeading) {
+                    Image(decorative: sample, scale: 1)
+                        .resizable()
+                        .interpolation(.none)
+                        .frame(width: size, height: size)
+                    Rectangle()
+                        .fill(Color.black.opacity(0.72))
+                        .frame(width: 1, height: size)
+                        .offset(x: crossX - 0.5)
+                    Rectangle()
+                        .fill(Color.black.opacity(0.72))
+                        .frame(width: size, height: 1)
+                        .offset(y: crossY - 0.5)
+                    Circle()
+                        .strokeBorder(Color.white, lineWidth: 1)
+                        .background(Circle().fill(Color.black.opacity(0.3)))
+                        .frame(width: 7, height: 7)
+                        .offset(x: crossX - 3.5, y: crossY - 3.5)
+                }
+                .frame(width: size, height: size)
+                .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 9, style: .continuous)
+                        .strokeBorder(Color.white.opacity(0.9), lineWidth: 1.5)
+                )
+                .shadow(color: .black.opacity(0.45), radius: 8, y: 3)
+                .position(position)
+                .allowsHitTesting(false)
+
+                eyedropperReadout(at: point)
+                    .position(x: position.x, y: position.y + size / 2 + 14)
+                    .allowsHitTesting(false)
+            }
+        }
+    }
+
+    /// The swatch, the value in the format the colour picker copies and the
+    /// pixel's place in the capture.
+    private func eyedropperReadout(at point: CGPoint) -> some View {
+        let color = model.eyedropperColor
+        let value = color.flatMap { ColorSamplerService.shared.formattedValue($0) } ?? ""
+        let x = Int(point.x.rounded(.down))
+        let y = Int(point.y.rounded(.down))
+        return HStack(spacing: 6) {
+            RoundedRectangle(cornerRadius: 3, style: .continuous)
+                .fill(color.map { Color(nsColor: $0) } ?? Color.clear)
+                .frame(width: 12, height: 12)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 3, style: .continuous)
+                        .strokeBorder(Color.primary.opacity(0.25), lineWidth: 1)
+                )
+            Text(value.isEmpty ? "\(x), \(y)" : value)
+                .font(.system(size: 10.5, weight: .semibold, design: .monospaced))
+                .foregroundStyle(Color.primary)
+            Text("\(x), \(y)")
+                .font(.system(size: 10.5, weight: .semibold, design: .monospaced))
+                .foregroundStyle(Color.secondary)
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(.regularMaterial, in: Capsule(style: .continuous))
+        .overlay(
+            Capsule(style: .continuous)
+                .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
+        )
+        .shadow(color: .black.opacity(0.16), radius: 8, y: 2)
+    }
+
+    /// Where the magnifier sits: beside the pointer, and on the other side
+    /// when the canvas runs out of room.
+    private func eyedropperPosition(for point: CGPoint,
+                                    zoom: CGFloat,
+                                    canvasSize: CGSize) -> CGPoint {
+        let size = Self.eyedropperLoupeSize
+        let half = size / 2
+        let gap: CGFloat = 14
+        let pad = model.backdropPaddingPixels
+        let anchor = CGPoint(x: (point.x + pad) * zoom,
+                             y: (point.y + pad) * zoom)
+        var x = anchor.x + half + gap
+        var y = anchor.y - half - gap
+        if x + half > canvasSize.width { x = anchor.x - half - gap }
+        if y - half < 0 { y = anchor.y + half + gap }
+        if canvasSize.width >= size {
+            x = min(max(x, half), canvasSize.width - half)
+        } else {
+            x = canvasSize.width / 2
+        }
+        if canvasSize.height >= size {
+            y = min(max(y, half), canvasSize.height - half)
+        } else {
+            y = canvasSize.height / 2
+        }
+        return CGPoint(x: x, y: y)
     }
 
     // MARK: - Crop loupe
@@ -1015,7 +1147,7 @@ struct ScreenshotEditorView: View {
                 && selected.tool != .image
                 && selected.tool != .pixelate
                 && selected.tool != .spotlight
-        case .sticker, .pixelate, .crop, .spotlight, .image, .expandCanvas:
+        case .sticker, .pixelate, .crop, .spotlight, .image, .expandCanvas, .eyedropper:
             return false
         }
     }
@@ -1861,6 +1993,7 @@ extension ScreenshotSupport.Tool {
         case .spotlight: return "viewfinder"
         case .image: return "photo"
         case .expandCanvas: return "arrow.up.left.and.arrow.down.right"
+        case .eyedropper: return "eyedropper"
         }
     }
 
@@ -1882,6 +2015,7 @@ extension ScreenshotSupport.Tool {
         case .spotlight: return strings.toolSpotlight
         case .image: return strings.pastedImage
         case .expandCanvas: return strings.toolExpandCanvas
+        case .eyedropper: return strings.toolEyedropper
         }
     }
 }

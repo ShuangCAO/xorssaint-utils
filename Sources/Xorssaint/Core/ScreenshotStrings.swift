@@ -219,6 +219,7 @@ struct ScreenshotFeatureStrings {
     let watermarkPositionBottomLeading: String
     let watermarkPositionBottom: String
     let watermarkPositionBottomTrailing: String
+    let toolEyedropper: String
 
     func watermarkColorName(_ color: ScreenshotSupport.ColorID) -> String {
         switch color {
@@ -485,7 +486,8 @@ extension ScreenshotFeatureStrings {
         watermarkPositionTrailing: "Center right",
         watermarkPositionBottomLeading: "Bottom left",
         watermarkPositionBottom: "Bottom center",
-        watermarkPositionBottomTrailing: "Bottom right"
+        watermarkPositionBottomTrailing: "Bottom right",
+        toolEyedropper: "Eyedropper"
     )
 
     static let ptBR = ScreenshotFeatureStrings(
@@ -702,7 +704,8 @@ extension ScreenshotFeatureStrings {
         watermarkPositionTrailing: "Centro à direita",
         watermarkPositionBottomLeading: "Inferior esquerdo",
         watermarkPositionBottom: "Inferior central",
-        watermarkPositionBottomTrailing: "Inferior direito"
+        watermarkPositionBottomTrailing: "Inferior direito",
+        toolEyedropper: "Conta-gotas"
     )
 
     static let tr = ScreenshotFeatureStrings(
@@ -919,7 +922,8 @@ extension ScreenshotFeatureStrings {
         watermarkPositionTrailing: "Orta sağ",
         watermarkPositionBottomLeading: "Sol alt",
         watermarkPositionBottom: "Alt orta",
-        watermarkPositionBottomTrailing: "Sağ alt"
+        watermarkPositionBottomTrailing: "Sağ alt",
+        toolEyedropper: "Renk Damlalığı"
     )
 
     static let ru = ScreenshotFeatureStrings(
@@ -1136,7 +1140,8 @@ extension ScreenshotFeatureStrings {
         watermarkPositionTrailing: "Справа по центру",
         watermarkPositionBottomLeading: "Снизу слева",
         watermarkPositionBottom: "Снизу по центру",
-        watermarkPositionBottomTrailing: "Снизу справа"
+        watermarkPositionBottomTrailing: "Снизу справа",
+        toolEyedropper: "Пипетка"
     )
 
     static let es = ScreenshotFeatureStrings(
@@ -1353,7 +1358,8 @@ extension ScreenshotFeatureStrings {
         watermarkPositionTrailing: "Centro a la derecha",
         watermarkPositionBottomLeading: "Abajo a la izquierda",
         watermarkPositionBottom: "Abajo en el centro",
-        watermarkPositionBottomTrailing: "Abajo a la derecha"
+        watermarkPositionBottomTrailing: "Abajo a la derecha",
+        toolEyedropper: "Cuentagotas"
     )
 
     static let sk = ScreenshotFeatureStrings(
@@ -1570,7 +1576,8 @@ extension ScreenshotFeatureStrings {
         watermarkPositionTrailing: "Vpravo v strede",
         watermarkPositionBottomLeading: "Vľavo dole",
         watermarkPositionBottom: "Dole v strede",
-        watermarkPositionBottomTrailing: "Vpravo dole"
+        watermarkPositionBottomTrailing: "Vpravo dole",
+        toolEyedropper: "Kvapka"
     )
 
     static let de = ScreenshotFeatureStrings(
@@ -1787,7 +1794,8 @@ extension ScreenshotFeatureStrings {
         watermarkPositionTrailing: "Rechts mittig",
         watermarkPositionBottomLeading: "Unten links",
         watermarkPositionBottom: "Unten mittig",
-        watermarkPositionBottomTrailing: "Unten rechts"
+        watermarkPositionBottomTrailing: "Unten rechts",
+        toolEyedropper: "Pipette"
     )
 
     static let fr = ScreenshotFeatureStrings(
@@ -2004,7 +2012,8 @@ extension ScreenshotFeatureStrings {
         watermarkPositionTrailing: "Au centre à droite",
         watermarkPositionBottomLeading: "En bas à gauche",
         watermarkPositionBottom: "En bas au centre",
-        watermarkPositionBottomTrailing: "En bas à droite"
+        watermarkPositionBottomTrailing: "En bas à droite",
+        toolEyedropper: "Pipette"
     )
 
     static let it = ScreenshotFeatureStrings(
@@ -2221,7 +2230,8 @@ extension ScreenshotFeatureStrings {
         watermarkPositionTrailing: "Al centro a destra",
         watermarkPositionBottomLeading: "In basso a sinistra",
         watermarkPositionBottom: "In basso al centro",
-        watermarkPositionBottomTrailing: "In basso a destra"
+        watermarkPositionBottomTrailing: "In basso a destra",
+        toolEyedropper: "Contagocce"
     )
 
     static let ja = ScreenshotFeatureStrings(
@@ -2438,7 +2448,8 @@ extension ScreenshotFeatureStrings {
         watermarkPositionTrailing: "右中央",
         watermarkPositionBottomLeading: "左下",
         watermarkPositionBottom: "下中央",
-        watermarkPositionBottomTrailing: "右下"
+        watermarkPositionBottomTrailing: "右下",
+        toolEyedropper: "スポイト"
     )
 
     static let ko = ScreenshotFeatureStrings(
@@ -2655,7 +2666,8 @@ extension ScreenshotFeatureStrings {
         watermarkPositionTrailing: "오른쪽 가운데",
         watermarkPositionBottomLeading: "왼쪽 아래",
         watermarkPositionBottom: "아래쪽 가운데",
-        watermarkPositionBottomTrailing: "오른쪽 아래"
+        watermarkPositionBottomTrailing: "오른쪽 아래",
+        toolEyedropper: "스포이드"
     )
 
     static let zhHans = ScreenshotFeatureStrings(
@@ -2872,7 +2884,8 @@ extension ScreenshotFeatureStrings {
         watermarkPositionTrailing: "右侧居中",
         watermarkPositionBottomLeading: "左下",
         watermarkPositionBottom: "底部居中",
-        watermarkPositionBottomTrailing: "右下"
+        watermarkPositionBottomTrailing: "右下",
+        toolEyedropper: "取色器"
     )
 
     static let zhTW = ScreenshotFeatureStrings(
@@ -3089,7 +3102,8 @@ extension ScreenshotFeatureStrings {
         watermarkPositionTrailing: "右側中央",
         watermarkPositionBottomLeading: "左下",
         watermarkPositionBottom: "下方中央",
-        watermarkPositionBottomTrailing: "右下"
+        watermarkPositionBottomTrailing: "右下",
+        toolEyedropper: "取色器"
     )
 
     static let zhHK = ScreenshotFeatureStrings(
@@ -3306,7 +3320,8 @@ extension ScreenshotFeatureStrings {
         watermarkPositionTrailing: "右邊中央",
         watermarkPositionBottomLeading: "左下",
         watermarkPositionBottom: "下方中央",
-        watermarkPositionBottomTrailing: "右下"
+        watermarkPositionBottomTrailing: "右下",
+        toolEyedropper: "取色器"
     )
     static let uk = ScreenshotFeatureStrings(
         pageTitle: "Знімок екрана",
@@ -3522,7 +3537,8 @@ extension ScreenshotFeatureStrings {
         watermarkPositionTrailing: "По центру праворуч",
         watermarkPositionBottomLeading: "Внизу ліворуч",
         watermarkPositionBottom: "Внизу по центру",
-        watermarkPositionBottomTrailing: "Внизу праворуч"
+        watermarkPositionBottomTrailing: "Внизу праворуч",
+        toolEyedropper: "Піпетка"
     )
 }
 

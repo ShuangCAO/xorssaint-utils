@@ -45,6 +45,14 @@ final class ScreenshotEditorModel: ObservableObject, BackdropEditing {
                 cropDraft = nil
                 cropLoupePoint = nil
             }
+            if tool == .eyedropper, oldValue != .eyedropper {
+                // The eyedropper only reads, so it hands the rail back to the
+                // tool that was in use once a colour has been picked.
+                toolBeforeEyedropper = oldValue == .eyedropper ? .arrow : oldValue
+            } else if oldValue == .eyedropper {
+                eyedropperPoint = nil
+                eyedropperColor = nil
+            }
         }
     }
     /// Words recognized in the capture and selectable with the select tool.
@@ -163,6 +171,14 @@ final class ScreenshotEditorModel: ObservableObject, BackdropEditing {
     /// Exact image pixel under a crop resize grip. Nil while moving the
     /// whole crop so the loupe appears only when it adds precision.
     @Published private(set) var cropLoupePoint: CGPoint?
+    /// Where the pointer sits while the eyedropper tool is active, in image
+    /// pixels, and the colour of the original picture under it. The colour
+    /// comes from the capture alone, so marks drawn over it never change
+    /// what the pointer reads.
+    @Published private(set) var eyedropperPoint: CGPoint?
+    @Published private(set) var eyedropperColor: NSColor?
+    /// The tool the eyedropper returns to once a colour is picked.
+    private var toolBeforeEyedropper: ScreenshotSupport.Tool = .arrow
     /// Continuous zoom (view points per image pixel); nil fits the window.
     @Published var zoomOverride: CGFloat?
     /// What the view actually laid out last, so pinch and scroll zoom start
@@ -781,10 +797,49 @@ final class ScreenshotEditorModel: ObservableObject, BackdropEditing {
 
     // MARK: - Gestures (image-pixel coordinates)
 
+    /// The eyedropper reads the colour of the original picture under the
+    /// pointer. Marks drawn over it are not part of the sample, so the value
+    /// never depends on what has been annotated so far.
+    func updateEyedropper(at point: CGPoint) {
+        guard tool == .eyedropper else {
+            eyedropperPoint = nil
+            eyedropperColor = nil
+            return
+        }
+        eyedropperPoint = point
+        eyedropperColor = Self.eyedropperColor(at: point, in: baseImage, size: imageSize)
+    }
+
+    /// The colour of the capture under a point in image pixels.
+    static func eyedropperColor(at point: CGPoint, in image: CGImage, size: CGSize) -> NSColor? {
+        guard size.width > 0, size.height > 0 else { return nil }
+        let x = min(max(Int(point.x.rounded(.down)), 0), Int(size.width) - 1)
+        let y = min(max(Int(point.y.rounded(.down)), 0), Int(size.height) - 1)
+        return QuickToolsSupport.sampledColor(in: image, x: x, y: y)
+    }
+
+    /// A picked colour goes to the pasteboard in the format the colour
+    /// picker already uses, and the editor hands the rail back to the tool
+    /// that was in use, so annotating continues without a detour.
+    private func pickEyedropperColor(at point: CGPoint) {
+        guard let color = Self.eyedropperColor(at: point, in: baseImage, size: imageSize) else {
+            NSSound.beep()
+            return
+        }
+        ColorSamplerService.shared.copy(color)
+        tool = toolBeforeEyedropper
+    }
+
     func beginDrag(at point: CGPoint) {
         dragStart = point
         dragRegistered = false
         editingSelectedAnnotation = false
+        // The eyedropper reads the picture and draws nothing, so it never
+        // claims a mark and never moves one. The pointer's colour is tracked
+        // by the hover that follows it.
+        if tool == .eyedropper {
+            return
+        }
         // A spotlight region claims only its handles and edge, so a drag
         // inside the one just drawn lights another region.
         if tool != .select, tool != .crop, tool != .expandCanvas,
@@ -797,6 +852,10 @@ final class ScreenshotEditorModel: ObservableObject, BackdropEditing {
             selectedID = nil
         }
         switch tool {
+        case .eyedropper:
+            // Reached only if the early return above is removed; the
+            // eyedropper draws nothing.
+            break
         case .select:
             beginSelectDrag(at: point)
         case .crop:
@@ -931,6 +990,10 @@ final class ScreenshotEditorModel: ObservableObject, BackdropEditing {
             }
         case .text, .sticker, .counter, .image:
             break
+        case .eyedropper:
+            // The eyedropper keeps the pointer's colour current while it is
+            // held down.
+            updateEyedropper(at: point)
         }
     }
 
@@ -993,6 +1056,9 @@ final class ScreenshotEditorModel: ObservableObject, BackdropEditing {
             return
         }
         switch tool {
+        case .eyedropper:
+            guard isTap else { return }
+            pickEyedropperColor(at: point)
         case .text:
             guard isTap else { return }
             if selectExistingAnnotation(at: point) { return }
@@ -1180,6 +1246,9 @@ final class ScreenshotEditorModel: ObservableObject, BackdropEditing {
                     return annotation.id
                 }
             case .select, .crop, .expandCanvas:
+                continue
+            case .eyedropper:
+                // The eyedropper draws nothing, so no annotation carries it.
                 continue
             }
         }

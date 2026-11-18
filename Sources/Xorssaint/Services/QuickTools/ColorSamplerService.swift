@@ -63,7 +63,9 @@ final class ColorSamplerService: ObservableObject {
         return value
     }
 
-    private func copy(_ color: NSColor) {
+    /// Copies a colour and confirms it with a swatch, for a caller that
+    /// picked the colour itself rather than through the capture surface.
+    func copy(_ color: NSColor) {
         guard let srgb = color.usingColorSpace(.sRGB),
               let value = copyQuietly(color)
         else { return }
