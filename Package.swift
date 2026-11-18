@@ -25,16 +25,9 @@ let package = Package(
             path: "Sources/RecorderGIFCodec",
             sources: ["RecorderGIFCodec.c", "vendor/cgif/cgif_raw.c"]
         ),
-        .target(
-            name: "MenuBarVisibility",
-            path: "Sources/MenuBarVisibility",
-            sources: ["MenuBarVisibility.m"],
-            publicHeadersPath: "include"
-        ),
         .executableTarget(
             name: "Xorssaint",
-            dependencies: ["VMStatisticsCompat", "HIDEventSystem", "CoreAudioTapCompat", "RecorderGIFCodec",
-                           "MenuBarVisibility"],
+            dependencies: ["VMStatisticsCompat", "HIDEventSystem", "CoreAudioTapCompat", "RecorderGIFCodec"],
             path: "Sources/Xorssaint"
         )
     ]

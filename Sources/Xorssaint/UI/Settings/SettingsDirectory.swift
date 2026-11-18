@@ -587,10 +587,8 @@ enum SettingsDirectory {
                                                  FeatureStrings.commandBar(language).appAliasLabel]),
                 SettingsDirectoryItem(page: .menuBarHiding,
                                       title: FeatureStrings.menuBarHiding(language).title,
-                                      icon: AppFeature.menuBarHiding.symbolName,
-                                      keywords: [FeatureStrings.menuBarHiding(language).masterToggle,
-                                                 FeatureStrings.menuBarHiding(language).revealAll,
-                                                 FeatureStrings.menuBarHiding(language).listTitle]),
+                                      icon: "eye.slash",
+                                      keywords: [FeatureStrings.hub(language).openSystemSettings]),
                 SettingsDirectoryItem(page: .quickTools, title: s.quickToolsTab, icon: "wand.and.rays",
                                        featureKeywords: [
                                         (.quickLauncher, [s.launcherName]),

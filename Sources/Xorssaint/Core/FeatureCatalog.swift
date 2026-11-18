@@ -28,7 +28,7 @@ enum AppFeature: String, CaseIterable {
     // Tools
     case quickLauncher, quickToggles, quitApps, colorPicker, screenOCR, cleaningMode, mediaTools,
          cleaner, uninstaller, homebrew, appUpdates, screenshot, cameraPreview, radialMenu, scratchpad,
-         commandBar, screenRecorder, wallpaper, killProcess, portManager, menuBarHiding
+         commandBar, screenRecorder, wallpaper, killProcess, portManager
     // Dynamic Island, then its extensions
     case notch, notchCalendar, notchNotifications, notchGestures, notchTimer, notchAccessories, notchLyrics,
          notchQueue, notchLiveEqualizer, notchDownloads, notchAgents, notchWatch, notchMascot
@@ -81,10 +81,9 @@ extension AppFeature {
                         from: edgeSnapDisabledZones
                     ).isEmpty)
         // Watch asks when an area is chosen and checks on every reading. The
-        // companion uses no permission at all. Menu bar hiding holds a system
-        // restriction that no TCC permission covers, so there is nothing to watch.
+        // companion uses no permission at all.
         case .screenOCR, .cleaningMode, .screenshot, .commandBar, .screenRecorder, .wallpaper, .notchWatch,
-             .notchMascot, .menuBarHiding:
+             .notchMascot:
             return false
         default:
             return true
@@ -116,7 +115,7 @@ extension AppFeature {
             return .energyDisplay
         case .quickLauncher, .quickToggles, .quitApps, .colorPicker, .screenOCR, .cleaningMode, .mediaTools,
              .cleaner, .uninstaller, .homebrew, .appUpdates, .screenshot, .cameraPreview, .radialMenu,
-             .scratchpad, .commandBar, .screenRecorder, .wallpaper, .killProcess, .portManager, .menuBarHiding:
+             .scratchpad, .commandBar, .screenRecorder, .wallpaper, .killProcess, .portManager:
             return .tools
         case .notch, .notchCalendar, .notchNotifications, .notchGestures, .notchTimer, .notchAccessories,
              .notchLyrics, .notchQueue, .notchLiveEqualizer, .notchDownloads, .notchAgents, .notchWatch,
@@ -214,7 +213,6 @@ extension AppFeature {
         case .monitorPower: return "bolt.fill"
         case .connectedDevices: return "cable.connector"
         case .fanControl: return "fanblades.fill"
-        case .menuBarHiding: return "eye.slash"
         }
     }
 
@@ -281,7 +279,6 @@ extension AppFeature {
         case .radialMenu: return [DefaultsKey.radialMenuEnabled]
         case .clipboardHistory: return [DefaultsKey.clipboardHistoryEnabled]
         case .clipy: return [DefaultsKey.clipyEnabled]
-        case .menuBarHiding: return [DefaultsKey.menuBarHidingEnabled]
         case .pastePlain: return [DefaultsKey.pastePlainEnabled]
         case .finderCutPaste: return [DefaultsKey.finderCutPasteEnabled,
                                       DefaultsKey.finderPasteImageAsFile]
@@ -358,10 +355,6 @@ extension AppFeature {
         case .notchCalendar: return [.calendar]
         case .notch: return [.accessibility, .automationPlayback]
         case .mouseAcceleration, .spacesOrder:
-            return []
-        // The restriction it holds is not a TCC permission; the app list comes
-        // from NSWorkspace, which needs no grant.
-        case .menuBarHiding:
             return []
         case .scrollInverter, .scrollHorizontal, .scrollZoom, .focusFollowsMouse, .smoothScroll, .linearScroll, .scrollSpeed, .mouseNavigation, .mouseButtonShortcuts, .middleClick,
              .keyboardDebounce, .textSnippets, .superKey, .mouseClickDebounce,
@@ -501,7 +494,7 @@ extension AppFeature {
             return true
         case .focusFollowsMouse, .scrollHorizontal, .scrollZoom, .linearScroll, .scrollSpeed, .diskImageInstaller, .audioPriority,
              .wallpaper, .killProcess, .portManager, .fanControl, .notchMascot, .spacesOrder, .quitApps,
-             .clipy, .menuBarHiding:
+             .clipy:
             return false
         }
     }

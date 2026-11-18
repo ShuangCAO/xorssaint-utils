@@ -442,8 +442,6 @@ enum DefaultsKey {
     static let menuBarClockEnabled = "menuBarClockEnabled" // date/time text replaces the idle glyph
     static let menuBarClockFormat = "menuBarClockFormat" // Unicode date pattern; empty uses the default
     static let menuBarClockFontSize = "menuBarClockFontSize" // 12–16 pt; 13 matches the system menu bar
-    static let menuBarHidingEnabled = "menuBarHidingEnabled" // hold the visibility restriction over the selected apps
-    static let menuBarHiddenApps = "menuBarHiddenApps"       // [bundle id] whose menu bar icons stay hidden
     static let menuBarMetricOrder = "menuBarMetricOrder" // comma-separated MenuBarMetric raw values
     static let menuBarCombineTemperatures = "menuBarCombineTemperatures" // usage/charge + temperature in one block when possible
     static let menuBarSeparateMetrics = "menuBarSeparateMetrics" // one status item per active metric
@@ -1764,9 +1762,6 @@ enum Defaults {
         DefaultsKey.menuBarClockEnabled: true,
         DefaultsKey.menuBarClockFormat: MenuBarClockSupport.defaultFormat,
         DefaultsKey.menuBarClockFontSize: MenuBarClockSupport.defaultFontSize,
-        // Hiding starts off: an install saves the choice only when the hub's
-        // first-install pass runs, and an empty selection holds nothing anyway.
-        DefaultsKey.menuBarHidingEnabled: false,
         DefaultsKey.windowLayoutHiddenActions: "",
         DefaultsKey.windowLayoutWindowGap: 0,
         DefaultsKey.windowLayoutScreenGap: 0,

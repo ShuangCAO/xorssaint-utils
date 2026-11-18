@@ -411,7 +411,6 @@ extension AppFeature {
         case .uninstaller: return FeatureSettingsDestination(.uninstaller)
         case .killProcess: return FeatureSettingsDestination(.killProcess)
         case .portManager: return FeatureSettingsDestination(.portManager)
-        case .menuBarHiding: return FeatureSettingsDestination(.menuBarHiding)
         case .homebrew: return FeatureSettingsDestination(.homebrew)
         case .appUpdates: return FeatureSettingsDestination(.appUpdates)
         case .screenshot:
@@ -482,7 +481,6 @@ enum FeatureVisibilitySupport {
         case .uninstaller: return [.uninstaller]
         case .killProcess: return [.killProcess]
         case .portManager: return [.portManager]
-        case .menuBarHiding: return [.menuBarHiding]
         case .keyDebounce: return [.keyboardDebounce]
         case .superKey: return [.superKey]
         case .textSnippets: return [.textSnippets]
@@ -491,7 +489,7 @@ enum FeatureVisibilitySupport {
         case .notchMascot: return [.notchMascot]
         case .radialMenu: return [.radialMenu]
         case .commandBar: return [.commandBar]
-        case .general, .features, .shortcuts, .advanced, .about, .releaseNotes:
+        case .general, .features, .shortcuts, .advanced, .about, .releaseNotes, .menuBarHiding:
             return []
         }
     }

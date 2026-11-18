@@ -1691,23 +1691,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
             menu.addItem(cleaningItem)
         }
 
-        // The only always-reachable surface for icons hiding behind the
-        // restriction: it appears once hiding actually hides something, so a
-        // selection the user never made cannot strand them either.
-        if AppFeature.menuBarHiding.isAvailable,
-           UserDefaults.standard.bool(forKey: DefaultsKey.menuBarHidingEnabled),
-           !MenuBarHidingService.shared.hiddenSelection().isEmpty {
-            let hidingText = FeatureStrings.menuBarHiding(L10n.shared.language)
-            let hidingService = MenuBarHidingService.shared
-            let revealItem = NSMenuItem(
-                title: hidingService.isTemporarilyRevealed ? hidingText.restoreHiding : hidingText.revealAll,
-                action: #selector(menuToggleMenuBarHiding),
-                keyEquivalent: ""
-            )
-            revealItem.target = self
-            menu.addItem(revealItem)
-        }
-
         if menu.items.isEmpty == false {
             menu.addItem(.separator())
         }
@@ -1756,10 +1739,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
 
     @objc private func menuCleaningMode() {
         CleaningModeManager.shared.activate()
-    }
-
-    @objc private func menuToggleMenuBarHiding() {
-        MenuBarHidingService.shared.toggleTemporaryReveal()
     }
 
     @objc private func menuActivateDuration(_ sender: NSMenuItem) {
