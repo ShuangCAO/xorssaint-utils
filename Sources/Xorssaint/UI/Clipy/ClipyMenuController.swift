@@ -33,7 +33,10 @@ final class ClipyMenuController {
         panel.isOpaque = false
         panel.backgroundColor = .clear
         panel.hasShadow = true
-        panel.level = .floating
+        // The menu follows the pointer and must stay above the island and
+        // every other surface the app puts on screen. Those live below the
+        // native menus, and so does this one.
+        panel.level = .popUpMenu
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         panel.hidesOnDeactivate = false
         panel.isReleasedWhenClosed = false

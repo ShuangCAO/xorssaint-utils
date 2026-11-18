@@ -122,5 +122,15 @@ enum ClipyTests {
         suite.expect(reloaded.folders.contains("Work")
                      && reloaded.folders.contains("Empty"),
                      "an empty folder survives the round trip")
+
+        // The menu follows the pointer and has to stay above every surface the
+        // app puts on screen. The island sits one level above the status bar
+        // and everything the app draws is below the native menus, so the menu
+        // belongs at the native menu level.
+        let controller = (try? String(contentsOfFile:
+                "Sources/Xorssaint/UI/Clipy/ClipyMenuController.swift", encoding: .utf8)) ?? ""
+        suite.expect(controller.contains("panel.level = .popUpMenu")
+                     && NSWindow.Level.popUpMenu.rawValue > NSWindow.Level.statusBar.rawValue + 1,
+               "the Clipy menu floats above the island and every other surface")
     }
 }
