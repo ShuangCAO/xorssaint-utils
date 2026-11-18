@@ -9,6 +9,7 @@ import UniformTypeIdentifiers
 struct ScreenshotEditorView: View {
     @ObservedObject var model: ScreenshotEditorModel
     let controller: ScreenshotEditorController
+    @Environment(\.colorScheme) private var colorScheme
     @ObservedObject private var l10n = L10n.shared
     @StateObject private var keyboard = ScreenshotShortcutContext()
 
@@ -94,7 +95,7 @@ struct ScreenshotEditorView: View {
     /// actions on the right, the trash for a capture not worth keeping.
     private var topBand: some View {
         ZStack {
-            BrandMark(width: 40, tint: Color(white: 0.92))
+            BrandMark(width: 40, tint: colorScheme == .dark ? Color(white: 0.92) : Color(white: 0.22))
             HStack {
                 Spacer()
                 actionCluster
@@ -105,12 +106,15 @@ struct ScreenshotEditorView: View {
 
     // MARK: - Artboard
 
-    /// Dark canvas surface shared by the editor chrome.
+    /// The canvas surface shared by the editor chrome. It follows the window's
+    /// appearance so a light system gets a light surface.
     private var artboard: some View {
         Rectangle()
-            .fill(Color(white: 0.115))
+            .fill(Color(nsColor: .windowBackgroundColor))
             .overlay {
-                LinearGradient(colors: [Color.white.opacity(0.035), .clear],
+                LinearGradient(colors: [colorScheme == .dark ? Color.white.opacity(0.035)
+                                                          : Color.black.opacity(0.035),
+                                         .clear],
                                startPoint: .top, endPoint: .bottom)
             }
             .allowsHitTesting(false)

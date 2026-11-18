@@ -1415,8 +1415,9 @@ final class ScreenshotEditorController: NSObject, NSWindowDelegate {
         window.styleMask = [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView]
         window.titlebarAppearsTransparent = true
         window.titleVisibility = .hidden
-        // Keep the editor dark so canvas contrast and popovers stay consistent.
-        window.appearance = NSAppearance(named: .darkAqua)
+        // The editor follows the appearance the app already applies everywhere
+        // else, so it matches the panel and Settings instead of staying dark
+        // while the rest of the app is light.
         // Content drags edit annotations. Only the title strip moves the window.
         window.isMovableByWindowBackground = false
         window.isReleasedWhenClosed = false
