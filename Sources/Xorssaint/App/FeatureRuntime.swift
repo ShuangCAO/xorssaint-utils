@@ -293,6 +293,9 @@ final class FeatureRuntime: ObservableObject {
         },
         .urlCleaner: { URLCleanerService.shared.syncWithPreferences() },
         .diskImageInstaller: { DiskImageInstallerService.shared.syncWithPreferences() },
+        // Also covers an uninstall: sync() releases the held restriction as
+        // soon as the feature stops being available.
+        .menuBarHiding: { MenuBarHidingService.shared.sync() },
         .mixer: {
             PreciseVolumeRollerService.shared.syncWithPreferences()
             AppVolumeMixer.shared.syncWithPreferences()
@@ -432,6 +435,12 @@ extension AppFeature {
         case .fanControl:
             return FanControlHardware.hasControllableFan
                 ? nil : FeatureStrings.fanControl(L10n.shared.language).noFans
+        // The visibility restriction this feature holds exists only from the
+        // macOS 27 menu bar re-architecture onward; older systems grey the
+        // row instead of installing something that can never hide an icon.
+        case .menuBarHiding:
+            return MenuBarHidingSupport.isSupportedOS()
+                ? nil : FeatureStrings.menuBarHiding(L10n.shared.language).unavailableOS
         default:
             return nil
         }

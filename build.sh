@@ -264,6 +264,8 @@ if (( TEST )); then
         Sources/Xorssaint/Core/QuitProtectionSupport.swift
         Sources/Xorssaint/Core/QuitProtectionStrings.swift
         Sources/Xorssaint/Core/Defaults.swift
+        Sources/Xorssaint/Core/MenuBarHidingSupport.swift
+        Sources/Xorssaint/Core/MenuBarHidingStrings.swift
         Sources/Xorssaint/Core/NotchStrings.swift
         Sources/Xorssaint/Core/NotchTourStrings.swift
         Sources/Xorssaint/Core/NotchEditorStrings.swift
