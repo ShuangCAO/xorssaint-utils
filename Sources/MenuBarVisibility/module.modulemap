@@ -1,0 +1,5 @@
+module MenuBarVisibility {
+    requires objc
+    header "include/MenuBarVisibility.h"
+    export *
+}

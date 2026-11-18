@@ -211,6 +211,8 @@ CORE_AUDIO_TAP_FLAGS=(-I Sources/CoreAudioTapCompat)
 GIF_CODEC_FLAGS=(-I Sources/RecorderGIFCodec)
 GIF_CODEC_OBJECTS=(build/objects/recorder-gif-codec/RecorderGIFCodec.o
                    build/objects/recorder-gif-codec/cgif_raw.o)
+MENU_BAR_VISIBILITY_FLAGS=(-I Sources/MenuBarVisibility)
+MENU_BAR_VISIBILITY_OBJECTS=(build/objects/menu-bar-visibility/MenuBarVisibility.o)
 if [[ "$SDK" == "$PINNED_SDK" ]]; then
     # Swift 6.4 can read the SDK 26 interfaces when given their compiler version.
     SDK_COMPAT_FLAGS=(-Xfrontend -interface-compiler-version -Xfrontend 6.3.2)
@@ -254,6 +256,12 @@ xcrun clang -O3 -std=c99 -target "$TARGET" -isysroot "$SDK" \
     -c Sources/RecorderGIFCodec/RecorderGIFCodec.c -o "$GIF_CODEC_OBJECTS[1]"
 xcrun clang -O3 -std=c99 -target "$TARGET" -isysroot "$SDK" \
     -c Sources/RecorderGIFCodec/vendor/cgif/cgif_raw.c -o "$GIF_CODEC_OBJECTS[2]"
+# The menu bar shim is Objective-C with an implementation of its own, so it is
+# compiled and linked like the GIF codec instead of being a header-only
+# compatibility layer.
+mkdir -p build/objects/menu-bar-visibility
+xcrun clang -O2 -fobjc-arc -target "$TARGET" -isysroot "$SDK" \
+    -c Sources/MenuBarVisibility/MenuBarVisibility.m -o "$MENU_BAR_VISIBILITY_OBJECTS[1]"
 
 if (( TEST )); then
     python3 Tests/generate_sources.py
@@ -651,9 +659,9 @@ write_swift_output_file_map "$APP_OUTPUT_FILE_MAP" "$APP_OBJECT_DIR" "${APP_SOUR
 swiftc "${APP_OPTIMIZATION_FLAGS[@]}" -incremental -enable-batch-mode -j "$(sysctl -n hw.logicalcpu)" \
     -output-file-map "$APP_OUTPUT_FILE_MAP" \
     -target "$TARGET" -sdk "$SDK" "${SDK_COMPAT_FLAGS[@]}" "${VM_STATISTICS_COMPAT_FLAGS[@]}" "${HID_EVENT_SYSTEM_FLAGS[@]}" \
-    "${CORE_AUDIO_TAP_FLAGS[@]}" "${GIF_CODEC_FLAGS[@]}" \
+    "${CORE_AUDIO_TAP_FLAGS[@]}" "${GIF_CODEC_FLAGS[@]}" "${MENU_BAR_VISIBILITY_FLAGS[@]}" \
     "${BUILD_VARIANT_FLAGS[@]}" \
-    "${APP_SOURCES[@]}" "${GIF_CODEC_OBJECTS[@]}" -o "build/$EXECUTABLE"
+    "${APP_SOURCES[@]}" "${GIF_CODEC_OBJECTS[@]}" "${MENU_BAR_VISIBILITY_OBJECTS[@]}" -o "build/$EXECUTABLE"
 xcrun dyld_info -imports "build/$EXECUTABLE" | awk -f Tests/AudioTapImports.awk
 
 echo "▸ Compiling protected fan helper…"
