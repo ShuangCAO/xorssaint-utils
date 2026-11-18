@@ -24,6 +24,7 @@ struct MetricsTests {
                 SystemSectionBreakdownTests.run(suite)
             }),
             ("menu-bar-clock", { MenuBarClockTests.run(suite) }),
+            ("menu-bar-hiding", { MenuBarHidingTests.run(suite) }),
             ("calendar", { CalendarSupportTests.run(suite) }),
             ("clipy", { ClipyTests.run(suite) }),
             ("clipboard", {
