@@ -9,7 +9,6 @@ import UniformTypeIdentifiers
 struct ScreenshotEditorView: View {
     @ObservedObject var model: ScreenshotEditorModel
     let controller: ScreenshotEditorController
-    @Environment(\.colorScheme) private var colorScheme
     @ObservedObject private var l10n = L10n.shared
     @StateObject private var keyboard = ScreenshotShortcutContext()
 
@@ -95,7 +94,7 @@ struct ScreenshotEditorView: View {
     /// actions on the right, the trash for a capture not worth keeping.
     private var topBand: some View {
         ZStack {
-            BrandMark(width: 40, tint: colorScheme == .dark ? Color(white: 0.92) : Color(white: 0.22))
+            BrandMark(width: 40, tint: Self.brandMarkTint)
             HStack {
                 Spacer()
                 actionCluster
@@ -103,6 +102,16 @@ struct ScreenshotEditorView: View {
         }
         .frame(height: 38)
     }
+
+    /// The mark reads like label text: near-white on a dark surface, near-black
+    /// on a light one. A dynamic colour resolves against whatever appearance
+    /// the window wears, so the editor repaints in the new colours without the
+    /// view having to know which one is in use.
+    private static let brandMarkTint = Color(nsColor: NSColor(name: nil) { appearance in
+        appearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
+            ? NSColor(white: 0.92, alpha: 1)
+            : NSColor(white: 0.22, alpha: 1)
+    })
 
     // MARK: - Artboard
 
@@ -112,9 +121,8 @@ struct ScreenshotEditorView: View {
         Rectangle()
             .fill(Color(nsColor: .windowBackgroundColor))
             .overlay {
-                LinearGradient(colors: [colorScheme == .dark ? Color.white.opacity(0.035)
-                                                          : Color.black.opacity(0.035),
-                                         .clear],
+                // A hint of light on a dark surface, of shade on a light one.
+                LinearGradient(colors: [Color.primary.opacity(0.035), .clear],
                                startPoint: .top, endPoint: .bottom)
             }
             .allowsHitTesting(false)

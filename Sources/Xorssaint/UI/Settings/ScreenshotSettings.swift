@@ -51,11 +51,17 @@ struct ScreenshotCaptureSettings: View {
     @AppStorage(DefaultsKey.screenshotSharingEnabled) private var sharingEnabled = true
     @AppStorage(DefaultsKey.screenshotUploadShortcutEnabled) private var uploadShortcutEnabled = false
     @AppStorage(DefaultsKey.screenshotUploadDuration) private var uploadDuration = ScreenshotShareDuration.oneHour.rawValue
+    @AppStorage(DefaultsKey.screenshotEditorAppearance) private var editorAppearanceRaw =
+        ScreenshotEditorAppearance.fallback.rawValue
     @State private var showingSharedLinks = false
     @State private var showingSharePrivacy = false
 
     private var strings: ScreenshotFeatureStrings {
         FeatureStrings.screenshot(l10n.language)
+    }
+
+    private var appearanceStrings: AppearanceStrings {
+        FeatureStrings.appearance(l10n.language)
     }
 
     var body: some View {
@@ -214,6 +220,22 @@ struct ScreenshotCaptureSettings: View {
                                             showsTitle: false)
             } header: {
                 Text(strings.toolShortcutsTitle)
+            }
+
+            Section {
+                Picker(appearanceStrings.editorLabel, selection: $editorAppearanceRaw) {
+                    Text(appearanceStrings.editorFollowApp)
+                        .tag(ScreenshotEditorAppearance.followApp.rawValue)
+                    Text(appearanceStrings.light)
+                        .tag(ScreenshotEditorAppearance.light.rawValue)
+                    Text(appearanceStrings.dark)
+                        .tag(ScreenshotEditorAppearance.dark.rawValue)
+                }
+                Text(appearanceStrings.editorCaption)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            } header: {
+                Text(appearanceStrings.editorLabel)
             }
 
             if !ScreenshotSharingSupport.isDisabled {

@@ -1381,6 +1381,10 @@ final class ScreenshotEditorController: NSObject, NSWindowDelegate {
     private var keyMonitor: Any?
     private var scrollMonitor: Any?
     private var pointerMonitor: Any?
+    private var appearanceObserver: NSObjectProtocol?
+    /// The appearance the window already wears, so a preference change that
+    /// leaves it alone does not repaint the editor.
+    private var appliedEditorAppearance: ScreenshotEditorAppearance?
 
     var protectedWindowIDs: Set<CGWindowID> {
         guard let window, window.isVisible, window.windowNumber > 0 else { return [] }
@@ -1417,7 +1421,8 @@ final class ScreenshotEditorController: NSObject, NSWindowDelegate {
         window.titleVisibility = .hidden
         // The editor follows the appearance the app already applies everywhere
         // else, so it matches the panel and Settings instead of staying dark
-        // while the rest of the app is light.
+        // while the rest of the app is light. The editor's own setting can
+        // pin it to one side of that.
         // Content drags edit annotations. Only the title strip moves the window.
         window.isMovableByWindowBackground = false
         window.isReleasedWhenClosed = false
@@ -1434,6 +1439,8 @@ final class ScreenshotEditorController: NSObject, NSWindowDelegate {
         window.center()
 
         self.window = window
+        applyEditorAppearance()
+        installAppearanceObserver()
         installKeyMonitor()
         NSApp.activate(ignoringOtherApps: true)
         window.makeKeyAndOrderFront(nil)
@@ -1442,6 +1449,28 @@ final class ScreenshotEditorController: NSObject, NSWindowDelegate {
             guard let self, self.window?.isVisible == true else { return }
             self.model.recognizeText()
             self.model.recognizeQRCodes()
+        }
+    }
+
+    /// The editor's own appearance setting. "Following the app" leaves the
+    /// window on whatever the app applies, so the editor matches the rest of
+    /// Xorssaint.
+    private func applyEditorAppearance() {
+        let choice = ScreenshotEditorAppearance.current
+        guard choice != appliedEditorAppearance else { return }
+        appliedEditorAppearance = choice
+        window?.appearance = choice.nsAppearance
+    }
+
+    /// A change in Settings reaches an editor that is already open, so the
+    /// window repaints in the new appearance instead of waiting for the next
+    /// capture. The notification carries every preference, so the value is
+    /// read back and only applied when it really changed.
+    private func installAppearanceObserver() {
+        appearanceObserver = NotificationCenter.default.addObserver(
+            forName: UserDefaults.didChangeNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            self?.applyEditorAppearance()
         }
     }
 
@@ -1892,6 +1921,10 @@ final class ScreenshotEditorController: NSObject, NSWindowDelegate {
         if let keyMonitor {
             NSEvent.removeMonitor(keyMonitor)
             self.keyMonitor = nil
+        }
+        if let appearanceObserver {
+            NotificationCenter.default.removeObserver(appearanceObserver)
+            self.appearanceObserver = nil
         }
         window?.delegate = nil
         window = nil

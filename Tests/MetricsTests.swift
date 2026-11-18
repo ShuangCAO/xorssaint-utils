@@ -100,6 +100,7 @@ struct MetricsTests {
                 ScreenshotImageLayerTests.run(suite)
                 ScreenshotImageImportTests.run(suite)
                 ScreenshotExternalEditTests.run(suite)
+                ScreenshotEditorAppearanceTests.run(suite)
                 ScreenshotImageFileTests.run(suite)
                 ScreenshotCanvasModelTests.run(suite)
                 ScreenTextCompletionTests.run(suite)
