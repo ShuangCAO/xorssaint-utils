@@ -6,7 +6,11 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Summary
+This update improves microphone muting, display controls, window switching, clipboard history and screenshots.
+
 ### Added
+- Save current preferences to the XDG settings file from Settings > Advanced > Backup. The confirmation shows where the file will be saved. Thanks to @whizzzkid.
 - The menu bar can show a date and time clock instead of the icon. Choose its format and 12–16 pt size in General settings; the icon still returns for updates, a muted microphone and Keep Awake.
 - A month calendar leads the menu panel. Page through months, jump to today, and choose whether weeks start on Monday or Sunday in General settings.
 - The app icon above the panel's tabs can be hidden from General settings to reclaim its vertical space.
@@ -15,8 +19,30 @@ All notable changes to this project are documented here. The format follows
 - CCClip is an optional, independent clipboard menu with its own history and snippets. It opens from its shortcuts, captures plain text by default, and has its own settings page.
 
 ### Changed
+- Clipboard history searches index the start of long entries and search the remaining text in the background. Searches in different panels keep their own results. Thanks to @iva-zhu.
+- The window switcher keeps a list of windows in the background so repeated shortcuts can open it sooner. Current Space filtering and windowless Finder selections are preserved. Thanks to @LeLocTai.
 - Right-click any picture in Finder and choose "Edit with Xorssaint" from the Services menu to open it in the screenshot editor. Only the first of several selected pictures is edited.
 - An edited picture now saves beside its original, in the export format, with a numbered name so neither the original nor an earlier export is ever replaced. Pictures opened from the Shelf are saved the same way.
+
+### Fixed
+- After wake, fan control retries a saved curve if the hardware takes time to respond. It respects System mode and the hardware’s safety limits, and the panel shows when a curve could not be restored. Thanks to @SanRive.
+- The uninstaller and cleaner count files next to symbolic links. Nested app components are detected, and wallpaper scans still skip packages. Thanks to @retomi and @salvatoremiceli.
+- Monitor speakers that stay silent at zero volume can play again when you turn the volume up. Restoring sound respects the configured volume limit. Thanks to @trenaryja.
+- Brightness and speaker controls can reach compatible monitors connected through the built-in HDMI converter on certain Macs. Thanks to @davidmessem.
+- When Show over the menus is off, Dynamic Island leaves room for menu bar icons on macOS 27, including on displays without a camera notch. Thanks to @razeenwasif.
+- Drop images or videos from Finder onto the open Media tool in Dynamic Island. A new drop leaves an active conversion running. Thanks to @KushagraIndurkhya.
+- The disk image installer skips hidden mounts, temporary build images and folders marked with `.vorssaint-no-install`. For images outside Downloads that have no quarantine flag, the option to move the image to the Trash starts unchecked. Thanks to @Zekuath.
+- Mic Mute limits repeated writes to unresponsive virtual inputs, including the Teams loopback driver. Bursts of device notifications still trigger an immediate mute check, and a failed manual unmute is reported. Thanks to @JosueM1109.
+- The volume mixer gives regular apps launched by another app their own controls and saved levels, including Steam games. Thanks to @binjamshid.
+- Clicking a control in the menu bar panel from another app activates the control and keeps the panel open. Thanks to @nodegan.
+- Window Layout still snaps a normal drag when macOS Option-drag tiling is enabled. Holding Option hands that drag to macOS. Thanks to @iva-zhu.
+- Shelf stays responsive while it prepares a file drag from iCloud or another slow volume. Files inside a package remain protected from moves. Thanks to @iva-zhu.
+- Click a window in the frozen screenshot picker to capture its current contents, including visible video, without capturing overlapping apps. Dragging a region still uses the frozen image. Thanks to @iva-zhu.
+- The screenshot editor limits image memory across undo and redo, preserves history after a canceled drawing, and avoids keeping a full capture for a small crop. Thanks to @iva-zhu.
+- Audio device priority recognizes a returning AirPlay receiver when its session identifier changes and merges its existing duplicates. Other audio devices keep their saved priorities, including devices with the same name. Unavailable entries can be removed from either list. Thanks to @EugeneCarldotme and @TC-Virtuoso.
+
+### Contributors
+Thanks to @binjamshid, @davidmessem, @EugeneCarldotme, @iva-zhu, @JosueM1109, @KushagraIndurkhya, @LeLocTai, @nodegan, @razeenwasif, @retomi, @salvatoremiceli, @SanRive, @TC-Virtuoso, @trenaryja, @whizzzkid and @Zekuath.
 
 ## [3.4.4] - 2026-11-11
 

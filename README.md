@@ -1,198 +1,272 @@
 <p align="center">
-  <img src="Resources/Brand/AppIcon-Default.png" width="120" alt="Xorssaint Utils 个人 fork 图标">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/logo-dark.svg">
+    <img src="docs/assets/readme/logo.svg" width="220" alt="Xorssaint logo">
+  </picture>
 </p>
 
-<h1 align="center">Xorssaint Utils · 个人 Fork（非官方）</h1>
+<h1 align="center">Xorssaint</h1>
 
 <p align="center">
-  菜单栏里的 macOS 工具集合。<br>
-  基于 <a href="https://github.com/vorssaint/vorssaint-utils">vorssaint/vorssaint-utils</a> 的非官方个人分支。
+  One menu bar icon doing the job of a dozen paid Mac apps.<br>
+  Install only what you use.
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/macOS-14%2B%20Apple%20Silicon-black" alt="macOS 14+ Apple Silicon">
-  <img src="https://img.shields.io/badge/license-GPL--3.0--or--later-blue" alt="GPL-3.0-or-later">
+  <a href="https://xorssaint.com">Website</a> ·
+  <a href="#install">Install</a> ·
+  <a href="#everything-it-does">Features</a> ·
+  <a href="#private-by-default">Privacy</a> ·
+  <a href="CHANGELOG.md">Changelog</a> ·
+  <a href="mailto:hello@xorssaint.com">Contact</a> ·
+  <a href="https://discord.gg/M6BwWH4BJp">Discord</a>
 </p>
 
-> [!IMPORTANT]
-> **这是非官方 fork，与原作者 Vorssaint 没有隶属关系。**
-> 上游的官网、Homebrew cask 和发布包都指向官方版本；本仓库的修改不会进入官方版本。
-> 如果你需要稳定、已签名并公证的官方版，请使用 [上游仓库](https://github.com/vorssaint/vorssaint-utils)。
+<p align="center">
+  <a href="https://github.com/xorssaint/xorssaint-utils/releases"><img src="https://img.shields.io/github/v/release/xorssaint/xorssaint-utils?label=release&color=4c8dff" alt="Latest release"></a>
+  <a href="https://github.com/xorssaint/xorssaint-utils/releases"><img src="https://img.shields.io/github/downloads/xorssaint/xorssaint-utils/total?color=4c8dff" alt="Downloads"></a>
+  <a href="https://github.com/xorssaint/xorssaint-utils/actions/workflows/ci.yml"><img src="https://github.com/xorssaint/xorssaint-utils/actions/workflows/ci.yml/badge.svg?branch=main&event=push" alt="CI status"></a>
+  <a href="#what-you-need"><img src="https://img.shields.io/badge/macOS-14%2B%20Apple%20Silicon-black" alt="macOS 14 and newer, Apple Silicon"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0--or--later-blue" alt="License GPL 3.0 or later"></a>
+</p>
 
-## 这个 fork 做了什么
+<p align="center">
+  <a href="https://buymeacoffee.com/xorssaint">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" width="217" height="60" alt="Buy Me a Coffee">
+  </a>
+</p>
 
-当前代码基于上游 **3.4.4**（`ce127647`）及之后的本地修改。上游的功能全部保留，本 fork 额外加入：
+<p align="center">
+  For anything private, email
+  <a href="mailto:hello@xorssaint.com"><strong>hello@xorssaint.com</strong></a>.
+</p>
 
-### 菜单栏日期时间
+<p align="center">
+  <a href="https://trendshift.io/repositories/53716?utm_source=repository-badge&amp;utm_medium=badge&amp;utm_campaign=badge-repository-53716" target="_blank" rel="noopener noreferrer"><img src="https://trendshift.io/api/badge/repositories/53716" alt="xorssaint/xorssaint-utils | Trendshift" width="250" height="55"></a>
+  <a href="https://trendshift.io/repositories/53716?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-53716" target="_blank" rel="noopener noreferrer"><img src="https://trendshift.io/api/badge/trendshift/repositories/53716/weekly?language=Swift" alt="xorssaint/xorssaint-utils | Trendshift weekly ranking" width="250" height="55"></a>
+  <a href="https://trendshift.io/repositories/53716?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-53716" target="_blank" rel="noopener noreferrer"><img src="https://trendshift.io/api/badge/trendshift/repositories/53716/monthly?language=Swift" alt="xorssaint/xorssaint-utils | Trendshift monthly ranking" width="250" height="55"></a>
+</p>
 
-- 默认开启，空闲时用日期时间替代菜单栏图标。
-- 默认格式 `y年M月dd日 E HH:mm:ss`，支持 Unicode TR35 自定义格式，可一键恢复默认。
-- 字号可选 12–16 pt，13 pt 接近系统菜单栏字号。
-- 格式包含秒时按秒刷新，不包含秒时按分钟刷新。
-- 有更新、麦克风静音、Keep Awake 等状态信号时，图标重新出现。
-- 可在设置中关闭，恢复原来的图标显示。
+<h2 align="center">Sponsors</h2>
 
-### 日历面板
+<p align="center">
+  Help keep Xorssaint free and open source. Share your product with Mac users.
+</p>
 
-- 日历是菜单面板的第一个 section，默认显示，可单独关闭。
-- 支持周一或周日作为一周开始。
-- 节假日和调休以彩色圆点标注，不显示悬浮文字。
-- 支持切换月份，日期网格按 6 行固定布局对齐。
+<table align="center">
+  <tr>
+    <td align="center" width="520">
+      <br>
+      <strong>Your product here</strong><br>
+      <sub>Your logo · Your name · Your link</sub><br><br>
+      <a href="SPONSORS.md"><strong>Become our first sponsor →</strong></a><br><br>
+    </td>
+  </tr>
+</table>
 
-### CCClip 剪贴板管理器
+<p align="center">
+  <img src="docs/assets/readme/panel-mixer.png" width="196" alt="Volume mixer with per app sliders, one app boosted past 100 percent">
+  <img src="docs/assets/readme/panel-system.png" width="196" alt="System tab with temperatures, usage graphs and memory pressure">
+  <img src="docs/assets/readme/panel-controls.png" width="196" alt="Window controls with the app switcher and Dock features">
+  <img src="docs/assets/readme/panel-utilities.png" width="196" alt="Utilities with cleaner, Homebrew, media tools and clipboard">
+</p>
 
-CCClip 是一个独立于上游剪贴板历史的新功能，灵感来自 [Clipy](https://github.com/Clipy/Clipy)。它不是 Clipy 的完整移植，也不读写上游的剪贴板历史。
+Per app volume, a real system monitor, a better app switcher, window snapping, Dock previews, clipboard history, text snippets, a file shelf, an uninstaller. The utilities Mac users usually buy one by one, together behind a single menu bar icon, with no account, no telemetry and no subscription.
 
-- 在 **Features Hub** 中安装后启用，默认不安装。
-- 默认只捕获纯文本；可分别开启 RTF、RTFD、PDF、文件、URL、图片和 HTML，共 8 种类型。
-- 历史菜单支持分组、计数、⌘1–⌘0 快速选择、首项高亮、缩略图、颜色预览、排序和去重。
-- 默认快捷键 ⇧⌘V，可修改或清空；自动粘贴默认开启。
-- 片段按文件夹组织，先建文件夹再建片段；文件夹可以设置独立快捷键。
-- 数据独立保存在本地，不与上游剪贴板历史或片段混用。
-- Clipy 的 MIT 版权说明位于 **设置 → CCClip**。
+## Install only what you use
 
-### 面板与图标
+Choose individual features or start with a preset. Uninstalled features stop loading and disappear from the interface; reinstalling restores their settings. Setup asks only for the permissions your choices need.
 
-- 可隐藏面板顶部的 Xorssaint 图标，预览同步生效。
-- 顶部 section 切换器支持 mini 模式，预览同步生效。
-- 应用图标改为暖沙色版本，作为这个非官方分支的视觉标识。
+<p align="center">
+  <img src="docs/assets/readme/features-hub.png" width="720" alt="The Features hub in Settings, installing and uninstalling whole features">
+</p>
 
-### 菜单栏图标隐藏（macOS 27）
+Reorder or hide panel sections, choose a compact layout, and export settings to another Mac or [keep them in your dotfiles](docs/TROUBLESHOOTING.md#keeping-settings-in-your-dotfiles). The app supports more than a dozen languages.
 
-菜单栏图标隐藏由 macOS 27 自己管理。Xorssaint 不再自行隐藏图标，也不使用私有 API。
+## Everything it does
 
-- 在 **Features Hub** 安装/卸载；安装后出现在 **设置 → 实用工具 → 菜单栏图标隐藏**。
-- 页面提供说明和「打开系统设置」按钮。
-- 按钮按系统版本启用：macOS 27 及以上可用，macOS 26 及更早版本置灰。
-- 具体隐藏哪些 App、系统项是否显示，由 macOS 系统设置控制。
+### Sound
 
-### 没有改动
+- **Volume mixer.** Set volume per app, boost quiet audio past 100%, and pin or reorder favorites. No audio driver required.
+- **Per app output.** Play music through speakers while a call uses your headset.
+- **Output switcher.** Switch audio outputs with a shortcut and lower the volume when headphones disconnect.
+- **Microphone tools.** Choose a preferred input, adjust its level on supported devices, and apply available microphone mute or input-volume controls with one shortcut. Siri and some apps may still hear you; Mic Mute is not a privacy lock. Its indicator shows that the feature is on, not that every app receives silence.
+- **Music app blocker.** Prevent unwanted Music launches after detected playback-button presses. Requires Accessibility.
 
-- 上游的剪贴板历史、文本片段、快捷键和其他功能仍然保留。
-- CCClip 使用独立存储和独立设置；安装或卸载 CCClip 不会迁移或删除上游的剪贴板数据。
+### Know what your Mac is doing
 
-## 上游功能
+- **System monitor.** CPU, GPU, memory, temperatures, battery health and power use, with history graphs and a view of energy-hungry apps.
+- **Fan Control (beta).** Set manual fan speeds or temperature curves and monitor live RPM.
+- **Menu bar readouts.** Put your chosen readings, usage bars, battery time or fan speed directly in the menu bar.
+- **Network.** See live traffic, session totals and your local IP address, or run a speed test.
+- **Alerts.** Get notified about sustained CPU load, high temperatures, memory pressure, low disk space or low battery.
 
-Xorssaint 把音量混音、系统监控、窗口管理、Dock 预览、截图与录屏、剪贴板历史、文件架、卸载器、Homebrew 管理等工具收进一个菜单栏图标，并按需安装。完整功能列表、截图和隐私说明请看[上游 README](https://github.com/vorssaint/vorssaint-utils#readme)。
+### Windows and the Dock
 
-本 README 只维护与上游不同的部分，避免两份功能列表长期不同步。
+- **App switcher.** Switch between apps and windows with live previews, search and display filters. A simpler mode works without screen capture.
+- **Window layout.** Snap windows into layouts, move them between displays and restore earlier positions using shortcuts, screen edges or modifier-drag gestures.
+- **Dock Preview.** Hover over Dock icons to preview windows across desktops. Switch, close, move or snap them from the preview.
+- **Dock clicks.** Click an active app's Dock icon to minimize, hide or cycle through its windows.
+- **Maximize windows.** Use the green button to fill the screen without creating another Space.
+- **Fixed Space order.** Keep Spaces in the order you set instead of rearranging them by recent use. Turning it off restores your previous setting.
+- **Quit on close.** Quit selected apps when their last window closes.
+- **Quit and close protection.** Prevent accidental ⌘Q or ⌘W with a hold, double press or extra modifier, per app.
 
-## 安装
+<p align="center">
+  <img src="docs/assets/readme/quit-protection-hold.png" width="300" alt="The hold-to-confirm prompt showing progress below the Command-Q quit shortcut hint">
+</p>
 
-本 fork 不提供经过 Apple Developer ID 签名和公证的安装包。`brew install --cask vorssaint` 安装的是**上游官方版**，不是这个仓库。
+<p align="center">
+  <img src="docs/assets/readme/window-switcher.gif" width="540" alt="The window switcher showing live thumbnails of open windows">
+</p>
 
-### 环境要求
+### Keyboard and mouse
 
-- Apple Silicon Mac
-- macOS 14 Sonoma 或更新版本
-- Xcode Command Line Tools：`xcode-select --install`
+- **Text snippets.** Expand short triggers into text with clipboard, date and time variables, or insert snippets from a searchable menu.
+- **Smooth scrolling.** Give your mouse wheel a fluid glide with adjustable speed and response.
+- **Pointer acceleration.** Disable mouse acceleration and restore your previous setting when turned off.
+- **Linear scrolling.** Make every mouse wheel notch scroll the same number of lines, however fast the wheel spins.
+- **Focus follows mouse.** Bring the window under the pointer forward after an adjustable pause.
+- **Scroll direction.** Invert vertical and horizontal mouse scrolling independently of the trackpad.
+- **Scroll sideways while holding a key.** Turn vertical wheel movement into horizontal scrolling while holding a chosen key.
+- **Side buttons.** Use mouse Back and Forward buttons in Finder, browsers and compatible apps.
+- **Mouse button shortcuts.** Assign keys to extra buttons and side wheels, or use button-drag gestures for Spaces and Mission Control.
+- **Middle click.** Turn a three-finger trackpad press into a middle click.
+- **Apps to leave alone.** Exclude chosen apps from mouse enhancements.
+- **Extra click filter.** Ignore accidental rapid clicks from worn mouse buttons without delaying normal clicks.
+- **Key debounce.** Filter repeated letters caused by a worn keyboard.
+- **Super key.** Use Caps Lock or a right-side modifier as a shortcut combination, with a separate tap action and app exclusions.
+- **Keyboard shortcuts.** Manage feature shortcuts in one place, including optional takeover of supported macOS shortcuts while a feature is active.
 
-### 从源码构建
+### Clipboard, files and links
+
+- **Clipboard history.** Search local text, image and file history, pin favorites, preview entries and paste with shortcuts.
+- **Auto clear clipboard.** Clear the system clipboard after a delay, sleep or lock, while keeping saved history.
+- **Paste as plain text.** Paste without formatting while preserving the original clipboard content.
+- **Shelf.** Park files, text and links near your cursor while dragging, then drop or share them later.
+- **Finder shortcuts.** Move files with ⌘X and ⌘V, rename with F2, or paste copied images as PNG files.
+- **Clean URL.** Remove tracking parameters from links, manually or automatically.
+- **Disk image installer.** Install an app from a mounted disk image and eject it, with optional download cleanup. Place an empty `.xorssaint-no-install` file in a build folder to skip prompts for images in that folder and its subfolders. Removing the file restores prompts. Hidden mounts and images in system temporary folders are always skipped. Other visible mounts can prompt, including scripted mounts in unmarked folders. For an untagged image outside Downloads, moving it to Trash requires selecting that option for the current install.
+
+### Everyday tools
+
+- **Dynamic Island.** Keep music, notifications, calendars, timers, downloads and everyday controls around the camera cutout, or a simulated one on other Macs. Customize sections and shortcuts, with optional lyrics, a live equalizer, camera preview and file tools.
+- **AI agents.** Follow Claude, Codex, OpenCode and GitHub Copilot in the Dynamic Island: plan limits and when they reset where available, tokens, API value, models, projects and live work, with a notice when a long task finishes. Codex's banked resets can be used from there too, and each extra Codex account (`CODEX_HOME`) can have a limits card of its own. Copilot uses local CLI/app session logs; its token totals update when shutdown metrics arrive, and aggregate API-value estimates use base rates.
+- **Command Bar.** Search apps, windows, files, clipboard history, snippets and app menu commands from one field. Calculate, convert units, find emoji or run saved scripts.
+- **Quick panel.** Open a floating palette of favorite tools with ⌃⌘V.
+- **Quick toggles.** Switch appearance, hide desktop icons, eject disks, empty the Trash, lock the screen and more.
+- **Quit apps.** See every open app in one list and quit them one by one, all at once or all but the one in front.
+- **Radial menu.** Open a customizable wheel of apps, files, shortcuts and tools around the pointer, with profiles and submenus.
+- **Scratchpad.** Keep autosaved notes in tabs, with Markdown preview and export, in a floating window or Dynamic Island.
+- **Cleaning Mode.** Lock keyboard input while cleaning, with a black screen or a small visible indicator.
+
+### Capture and create
+
+- **Screen capture.** Switch between screenshots, recording, text recognition and color picking in one selector with a pixel magnifier.
+- **Screenshot.** Capture an area, window, screen or scrolling page. Annotate, crop, redact, add backgrounds and watermarks, pin captures, send them through the Share menu or share an expiring link.
+- **Screen recording.** Record with separate system-audio and microphone tracks. Trim, cut, add automatic zooms, blur private details and export video or GIFs, or share an expiring link.
+- **Camera preview.** Check your camera in a floating mirror or Dynamic Island before a call.
+- **Copy text from screen.** Recognize text offline from any screen area, or read a QR code.
+- **Color picker.** Copy a screen color as HEX, RGB, HSL or SwiftUI code.
+- **Media tools.** Compress and edit videos, batch-convert images, add watermarks, make GIFs and extract text, all locally.
+
+### App management
+
+- **App updates.** Check store apps, package-managed apps and supported developer feeds in one list. Install managed updates together or open an app's own updater.
+- **Cleaner.** Remove caches, logs and app leftovers, manually or on a schedule.
+- **Messaging downloads.** Review, organize or move messaging downloads to the Trash using retention rules.
+- **Uninstaller.** Remove apps and review their related caches, preferences and helpers before moving them to the Trash.
+- **Homebrew manager.** Search, install and remove formulae and casks without opening a terminal.
+- **Port manager.** Find processes listening on network ports and stop them with Kill Process when installed.
+
+### Energy and display
+
+- **Keep awake.** Keep your Mac working on a timer, with the lid closed, or while selected apps, power or external displays are present.
+- **Displays.** Control individual displays and brightness, with hardware control where supported, half or quarter steps for the brightness keys, optional extra dimming below a monitor's minimum, software dimming as a fallback, and the volume and mute of a monitor's built-in speakers.
+- **Extra brightness.** Use a MacBook Pro XDR display's HDR headroom to go beyond its normal maximum brightness.
+- **Bluetooth on sleep.** Disconnect Bluetooth during sleep and restore it on wake only if Xorssaint turned it off.
+
+## Install
+
+With [Homebrew](https://brew.sh):
 
 ```sh
-git clone https://github.com/ShuangCAO/xorssaint-utils.git
+brew install --cask xorssaint
+```
+
+Or grab the disk image from the [releases page](https://github.com/xorssaint/xorssaint-utils/releases) and drag Xorssaint into Applications.
+
+Builds are signed with an Apple Developer ID and notarized, so macOS opens them without a fuss and your permissions survive updates.
+
+## Uninstall
+
+With Homebrew:
+
+```sh
+brew uninstall --cask xorssaint
+```
+
+To remove Xorssaint completely, including its settings and permissions:
+
+```sh
+./Tools/uninstall.sh
+```
+
+## Private by default
+
+Xorssaint is local-first, with no account, analytics or tracking. The network is touched only by things you can see: update checks, the speed test, Homebrew actions, optional online lyric lookup, temporary screenshot or recording links and feedback you explicitly send. The full story is in the [privacy notes](docs/PRIVACY.md).
+
+Permissions get the same treatment. Every one is optional, the app explains each in plain words, shows which features actually use it, and even tells you when a permission you granted is no longer needed by anything, with a shortcut to revoke it.
+
+<p align="center">
+  <img src="docs/assets/readme/permissions.png" width="720" alt="The Permissions page showing what each permission does, which features use it, and an unused permission warning">
+</p>
+
+See the [permissions guide](docs/PERMISSIONS.md) for which features need access and what remains available without it.
+
+## What you need
+
+- A Mac with Apple Silicon
+- macOS 14 Sonoma or newer
+
+### Build it yourself
+
+```sh
+git clone https://github.com/xorssaint/xorssaint-utils.git
 cd xorssaint-utils
-
-# Developer 变体：独立 bundle id，可以和官方版共存
-./build.sh --dev
-./build.sh --dev --install
-
-# Release 变体：使用 com.xorssaint.utils，和官方版冲突
-./build.sh
-./build.sh --install
+./build.sh --dev            # build the separate Developer variant
+./build.sh --dev --install  # install and launch it
 ```
 
-第一次使用建议先构建 Developer 变体。它使用 `com.xorssaint.utils.dev`，权限和设置与官方版、Release 变体互相独立。
+Xcode Command Line Tools are the only requirement. The [contributing guide](CONTRIBUTING.md) covers the layout and conventions. Official builds come only from the maintainer: the GPL covers the source, while the Xorssaint name, icon and look are covered by [TRADEMARKS.md](TRADEMARKS.md), so forks need their own identity.
 
-### 测试与安装包
+## When something misbehaves
 
-```sh
-./build.sh --test          # 运行测试
-./build.sh                 # Release 构建
-./Tools/make-dmg.sh        # 生成 dist/Xorssaint-<version>.dmg
-```
+See [troubleshooting](docs/TROUBLESHOOTING.md) for launch problems, permissions and missing previews, or [support](SUPPORT.md) for help.
 
-如果 Releases 中有 DMG，那是本 fork 自行构建的未公证版本；首次打开可能需要在 **系统设置 → 隐私与安全性** 中允许。
+## Documentation
 
-### 卸载
+- [Privacy](docs/PRIVACY.md), what does and does not leave your Mac
+- [Permissions](docs/PERMISSIONS.md), every macOS permission in plain words
+- [Troubleshooting](docs/TROUBLESHOOTING.md), the common fixes
+- [Contributing](CONTRIBUTING.md), build, layout and conventions
+- [Support](SUPPORT.md), where to get help
+- [Security](SECURITY.md), how to report a vulnerability
 
-把 App 移到废纸篓，并按需删除对应的 Application Support 目录：
+## Community
 
-- Release：`~/Library/Application Support/com.xorssaint.utils`
-- Developer：`~/Library/Application Support/com.xorssaint.utils.dev`
+Xorssaint went from first commit to the front of GitHub trending in three days, top of the Swift charts, and issues and pull requests have shaped every release since. Bug reports, feature ideas and translations are all welcome, starting from the [contributing guide](CONTRIBUTING.md).
 
-## 权限与数据
+Xorssaint is free and will stay that way. If it earned its place in your menu bar, a star helps other people find it, and a [coffee](https://buymeacoffee.com/xorssaint) keeps the maintainer awake, with or without the Keep awake feature.
 
-CCClip 的自动粘贴需要**辅助功能**权限；如果全局快捷键不生效，也请检查 **系统设置 → 隐私与安全性 → 辅助功能**。上游其他功能按需申请屏幕录制、输入监控、自动化、麦克风和相机等权限，完整说明见[权限文档](docs/PERMISSIONS.md)。
+## Acknowledgements
 
-CCClip 的数据保存在：
+- App icon designed by [@divisionseven](https://github.com/divisionseven)
 
-```text
-~/Library/Application Support/<bundle id>/Clipy
-```
+## License
 
-其中 Release 的 bundle id 是 `com.xorssaint.utils`，Developer 是 `com.xorssaint.utils.dev`。目录和文件权限为仅当前用户可读写。
+[GPL 3.0 or later](LICENSE), copyright 2026 Xorssaint. The license covers the source code; the Xorssaint name, logo and look are covered separately in [TRADEMARKS.md](TRADEMARKS.md).
 
-本 fork 没有为新增功能加入账号、云同步或遥测。CCClip 的剪贴板内容只保存在本地；默认只捕获纯文本，可以在设置中关闭捕获或清空历史。
-
-首次从旧的 Vorssaint 版本启动时，应用会把旧 `com.vorssaint.utils[.dev]` 的设置和 Application Support 目录复制到新的 Xorssaint bundle，旧数据保留不删。辅助功能、屏幕录制等系统权限与 Bundle ID 绑定，需要重新授权。
-
-自动更新、截图/录屏分享链接和反馈上传在本 fork 中已禁用；截图和录屏本身仍然完全本地可用。
-
-## 与上游同步
-
-本仓库的 `main` 通过 rebase 跟随上游，本地功能提交保持在上游 `main` 之上，不向上游推送。
-
-```sh
-git fetch upstream
-git rebase upstream/main
-```
-
-如果上游改动了同一批文件，rebase 时可能出现冲突；解决后重新构建并运行测试即可。
-
-## 已知限制
-
-- CCClip 是独立实现，不导入 Clipy 的历史或配置，也不保证与 Clipy 行为完全一致。
-- 默认只捕获纯文本；其他类型需要在 CCClip 设置中手动开启。
-- 自动更新已禁用；更新方式是从源码重新构建，或手动下载你自己发布的构建。
-- 截图/录屏分享链接和反馈上传已禁用，只保留本地截图、录屏和系统分享面板。
-- 没有 Apple Developer ID 签名和公证，公开分发前需要自行处理签名、Bundle ID 和商标问题。
-- 仅支持 Apple Silicon 和 macOS 14 及以上。
-- 上游部分功能依赖具体硬件、macOS 版本或额外权限。
-
-## 分发注意
-
-上游的 [TRADEMARKS.md](TRADEMARKS.md) 要求非官方 fork 在对外分发时使用不同的名称、App 图标、Bundle ID、签名身份和更新源。当前仓库主要用于个人源码构建；如果你要公开发布二进制，请先按该文件完成品牌和标识替换，避免被误认为官方版本。
-
-## 文档
-
-- [上游 README](https://github.com/vorssaint/vorssaint-utils#readme)
-- [隐私说明](docs/PRIVACY.md)
-- [权限说明](docs/PERMISSIONS.md)
-- [故障排查](docs/TROUBLESHOOTING.md)
-- [贡献指南](CONTRIBUTING.md)
-- [许可证](LICENSE)
-- [商标说明](TRADEMARKS.md)
-
-## 许可证与致谢
-
-- 原始项目：[vorssaint/vorssaint-utils](https://github.com/vorssaint/vorssaint-utils)，© 2026 Vorssaint，GPL-3.0-or-later。
-- 本 fork 的修改：© 2026 ShuangCAO 及贡献者，同样以 GPL-3.0-or-later 发布。
-- 上游项目 Vorssaint 的名称、Logo 和视觉标识归上游所有，并受 [TRADEMARKS.md](TRADEMARKS.md) 约束；Xorssaint 是非官方分支名称。
-- CCClip 的交互灵感来自 [Clipy](https://github.com/Clipy/Clipy)（MIT）；相关版权说明见 **设置 → CCClip**。
-- 感谢上游所有贡献者。
-
-## English
-
-This is an unofficial personal fork of [Vorssaint Utils](https://github.com/vorssaint/vorssaint-utils). It keeps the upstream feature set and adds a configurable menu bar clock, a calendar panel, and **CCClip**, an independent clipboard manager inspired by [Clipy](https://github.com/Clipy/Clipy).
-
-Build from source with Xcode Command Line Tools:
-
-```sh
-git clone https://github.com/ShuangCAO/xorssaint-utils.git
-cd xorssaint-utils
-./build.sh --dev
-./build.sh --dev --install
-```
-
-This fork is not affiliated with the upstream project. The upstream Vorssaint name and visual identity belong to the upstream authors; Xorssaint is an unofficial fork name. Original code is GPL-3.0-or-later; fork modifications are released under the same license.
+<p align="center">
+  <sub>Made by <a href="https://x.com/xorssaint">@xorssaint</a></sub>
+</p>

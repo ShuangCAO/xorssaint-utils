@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Vorssaint
+// Copyright (C) 2026 Xorssaint
 
 import AppKit
 import CoreGraphics
@@ -91,6 +91,10 @@ enum StatusItemAnchorSupport {
                 || event.type == .rightMouseDown || event.type == .rightMouseUp,
               (0...0.25).contains(uptime - event.timestamp) else { return false }
         return CGRect(origin: .zero, size: lastFrame.size).contains(event.locationInWindow)
+    }
+
+    static func isPanelSelfClick(eventWindowNumber: Int, panelWindowNumber: Int?) -> Bool {
+        eventWindowNumber > 0 && eventWindowNumber == panelWindowNumber
     }
 
     /// Opening the panel activates Xorssaint so its controls take keys, which

@@ -329,6 +329,7 @@ if (( TEST )); then
         Sources/Xorssaint/Services/Notch/NotchCalendarSupport.swift
         Sources/Xorssaint/Services/Notch/NotchKeepAwakeSupport.swift
         Sources/Xorssaint/Services/Notch/NotchSupport.swift
+        Sources/Xorssaint/Services/Notch/NotchMenuBarSpace.swift
         Sources/Xorssaint/Services/Notch/NotchAudioLevelSupport.swift
         Sources/Xorssaint/Services/Notch/NotchVolumeKeyGate.swift
         Sources/Xorssaint/Services/Notch/NotchMusicSupport.swift

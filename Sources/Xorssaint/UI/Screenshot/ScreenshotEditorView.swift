@@ -442,6 +442,11 @@ struct ScreenshotEditorView: View {
         DragGesture(minimumDistance: 0)
             .onChanged { value in
                 let point = imagePoint(from: value.location, zoom: zoom)
+                if model.tool == .eyedropper {
+                    // The eyedropper only reads, so the pointer's colour is
+                    // refreshed here rather than through the drag.
+                    model.updateEyedropper(at: point)
+                }
                 if !dragInFlight {
                     if model.tool == .expandCanvas { expansionDragZoom = zoom }
                     dragInFlight = true
@@ -470,6 +475,11 @@ struct ScreenshotEditorView: View {
                     return
                 }
                 model.endDrag(at: point, isTap: isTap)
+                if isTap, model.tool == .eyedropper {
+                    // A click picks the colour under the pointer and hands the
+                    // rail back to the tool that was in use.
+                    model.pickEyedropperColor(at: point)
+                }
                 if model.editingTextID != nil {
                     editingText = ""
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
