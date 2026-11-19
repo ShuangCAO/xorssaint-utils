@@ -158,15 +158,9 @@ CCClip 的数据保存在：
 
 ## 与上游同步
 
-本仓库的 `main` 通过合并上游 `main` 跟随上游，本地功能提交保持在上游 `main` 之上，不向上游推送。
+本仓库的 `main` 跟随上游 `main`，本地功能提交保持在上游之上，不向上游推送。
 
-```sh
-git fetch git@github.com:vorssaint/vorssaint-utils.git \
-    'refs/heads/*:refs/remotes/upstream/*'
-git merge upstream/main
-```
-
-如果上游改动了同一批文件，合并时可能出现冲突；解决后重新构建并运行测试即可。
+上游与本 fork 改动到同一处文件时需要手动解决冲突，解决后重新构建并运行测试。
 
 ## 已知限制
 
